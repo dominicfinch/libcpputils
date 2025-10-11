@@ -1,0 +1,7 @@
+[submodule "dep/jsoncpp"]
+	path = dep/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp
+	branch = 1.9.5
+#[submodule "dep/openssl"]
+#	path = dep/openssl
+#	url = https://github.com/openssl/openssl.git
