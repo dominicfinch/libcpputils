@@ -37,7 +37,7 @@ bool ECC::generate_own_keypair() {
 
     bool success = false;
     if (EVP_PKEY_keygen_init(ctx) > 0 &&
-        EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx, NID_X9_62_prime256v1) > 0 &&
+        EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx, NID_secp521r1 /* OLD: NID_X9_62_prime256v1 */) > 0 &&
         EVP_PKEY_keygen(ctx, &_keypair) > 0) {
         success = true;
     }
@@ -183,7 +183,7 @@ bool ECC::sign_with_own_key(const std::vector<uint8_t>& data, std::vector<uint8_
     EVP_MD_CTX* ctx = EVP_MD_CTX_new();
     if (!ctx) return false;
 
-    if (EVP_DigestSignInit(ctx, nullptr, EVP_sha256(), nullptr, _keypair) <= 0 ||
+    if (EVP_DigestSignInit(ctx, nullptr, EVP_sha512(), nullptr, _keypair) <= 0 ||
         EVP_DigestSignUpdate(ctx, data.data(), data.size()) <= 0) {
         EVP_MD_CTX_free(ctx);
         return false;
@@ -208,7 +208,7 @@ bool ECC::verify_with_peer_key(const std::vector<uint8_t>& data, std::vector<uin
     EVP_MD_CTX* ctx = EVP_MD_CTX_new();
     if (!ctx) return false;
 
-    if (EVP_DigestVerifyInit(ctx, nullptr, EVP_sha256(), nullptr, _peer_key) <= 0 ||
+    if (EVP_DigestVerifyInit(ctx, nullptr, EVP_sha512(), nullptr, _peer_key) <= 0 ||
         EVP_DigestVerifyUpdate(ctx, data.data(), data.size()) <= 0) {
         EVP_MD_CTX_free(ctx);
         return false;
@@ -255,8 +255,8 @@ bool ECC::encrypt(const std::vector<uint8_t>& plaintext, std::vector<uint8_t>& c
     std::vector<uint8_t> secret;
     if (!derive_shared_secret_with_peer(secret)) return false;
 
-    std::vector<uint8_t> key(32);
-    if (!EVP_Digest(secret.data(), secret.size(), key.data(), nullptr, EVP_sha256(), nullptr))
+    std::vector<uint8_t> key(64);
+    if (!EVP_Digest(secret.data(), secret.size(), key.data(), nullptr, EVP_sha512(), nullptr))
         return false;
 
     iv.resize(12);
@@ -300,8 +300,8 @@ bool ECC::decrypt(const std::vector<uint8_t>& ciphertext, std::vector<uint8_t>& 
     std::vector<uint8_t> secret;
     if (!derive_shared_secret_with_peer(secret)) return false;
 
-    std::vector<uint8_t> key(32);
-    if (!EVP_Digest(secret.data(), secret.size(), key.data(), nullptr, EVP_sha256(), nullptr))
+    std::vector<uint8_t> key(64);
+    if (!EVP_Digest(secret.data(), secret.size(), key.data(), nullptr, EVP_sha512(), nullptr))
         return false;
 
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();

@@ -1,5 +1,5 @@
 
-#include "sc_transceiver.h"
+#include "sc/transceiver.h"
 #include "sc_transceiver_tests.h"
 #include <iostream>
 

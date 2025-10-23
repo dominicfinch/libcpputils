@@ -5,7 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/dep/jsoncpp/include",
-                "${workspaceFolder}/code/lib/include"
+                "${workspaceFolder}/code/lib/include",
+                "${workspaceFolder}/code/apps/sec-chat/client/include",
+                "${workspaceFolder}/code/apps/sec-chat/server/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

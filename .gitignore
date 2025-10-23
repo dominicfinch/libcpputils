@@ -1,2 +1,6 @@
 
+.vscode/
 build/
+
+code/apps/sec-chat/server/include/constants.h
+code/apps/sec-chat/client/include/constants.h

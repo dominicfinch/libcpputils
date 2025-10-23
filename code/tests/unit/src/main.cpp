@@ -150,6 +150,11 @@ int main()
         runner->execute_test(results, "test_rsa_sign_invalid_algorithm", test_rsa_sign_invalid_algorithm);
         runner->execute_test(results, "test_rsa_verify_invalid_algorithm", test_rsa_verify_invalid_algorithm);
     });
+
+    testRunner.add_test_set("sc_contact_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+        std::cout << "\nRunning SCContact tests...\n";
+        // TODO
+    });
     
     testRunner.add_test_set("sc_transceiver_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning SCTransceiver tests...\n";
@@ -172,6 +177,11 @@ int main()
         runner->execute_test(results, "test_encrypt_decrypt_string_secp384r1", test_encrypt_decrypt_string_secp384r1);
         runner->execute_test(results, "test_encrypt_decrypt_string_secp521r1", test_encrypt_decrypt_string_secp521r1);
         runner->execute_test(results, "test_encrypt_decrypt_binary", test_encrypt_decrypt_binary);
+    });
+
+    testRunner.add_test_set("uuid_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+        std::cout << "\nRunning UUID tests...\n";
+        runner->execute_test(results, "test_uuid_generate", test_uuid_generate);
     });
 
     std::cout << "Running all unit tests...\n";

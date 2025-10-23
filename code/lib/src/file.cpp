@@ -48,4 +48,51 @@ namespace iar { namespace utils {
         return true;
     }
 
+    bool read_json_file(const std::string& fpath, Json::Value& contents, std::ios_base::openmode mode)
+    {
+        bool success = false;
+        std::string fileContentStr;
+
+        if(read_file_contents(fpath, fileContentStr, mode))
+        {
+            Json::CharReaderBuilder rbuilder;
+            Json::CharReader * reader = rbuilder.newCharReader();
+            std::string parseErrors;        // Note: this var is thrown away
+
+            if(reader->parse(fileContentStr.data(), fileContentStr.data() + fileContentStr.size(),
+                &contents, &parseErrors))
+            {
+                success = true;
+            }
+            delete reader;
+        }
+        return success;
+    }
+
+    bool write_json_file(const std::string& fpath, const Json::Value& contents, std::ios_base::openmode mode)
+    {
+        // Open output file stream with specified mode
+        std::ofstream ofs(fpath, mode);
+        if (!ofs.is_open()) {
+            //std::cerr << "Error: Could not open file for writing: " << fpath << std::endl;
+            return false;
+        }
+
+        try {
+            // Configure writer for pretty output
+            Json::StreamWriterBuilder writerBuilder;
+            writerBuilder["indentation"] = "  "; // 2 spaces for readability
+            std::unique_ptr<Json::StreamWriter> writer(writerBuilder.newStreamWriter());
+
+            // Write JSON data to file
+            writer->write(contents, &ofs);
+            ofs.close();
+        } catch (const std::exception& e) {
+            //std::cerr << "Error while writing JSON to file: " << e.what() << std::endl;
+            return false;
+        }
+
+        return true;
+    }
+
 }}

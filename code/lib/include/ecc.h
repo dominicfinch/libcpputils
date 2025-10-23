@@ -47,9 +47,9 @@ namespace iar {
             EVP_PKEY* _peer_key;
             std::mutex _lock_mutex;
 
-            const size_t GCM_KEY_SIZE = 32;   // 256-bit AES key
-            const size_t GCM_IV_SIZE  = 12;   // Recommended IV size for GCM
-            const size_t GCM_TAG_SIZE = 16;   // 128-bit GCM tag
+            //const size_t GCM_KEY_SIZE = 32;   // 256-bit AES key
+            //const size_t GCM_IV_SIZE  = 12;   // Recommended IV size for GCM
+            //const size_t GCM_TAG_SIZE = 16;   // 128-bit GCM tag
         };
 
     }
