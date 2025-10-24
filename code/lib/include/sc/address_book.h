@@ -12,6 +12,7 @@ namespace iar { namespace utils {
     {
         public:
             
+            
 
         private:
             std::map<std::string, SCContact> _book;

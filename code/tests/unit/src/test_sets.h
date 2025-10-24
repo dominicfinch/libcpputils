@@ -14,6 +14,7 @@
 #include "tests/dh_tests.h"
 #endif
 
+#include "tests/certificate_tests.h"
 #include "tests/ecc_tests.h"
 #include "tests/hash_tests.h"
 #include "tests/hex_tests.h"

@@ -6,7 +6,7 @@
 bool iar::utils::SCContact::autoGenerateKeys()
 {
     auto success = _rsaKeyPair.generate_keypair() &&
-        _aesKey.generate_key()  &&
+        //_aesKey.generate_key()  &&
         _eccKeyPair.generate_own_keypair();
     
     return success;

@@ -11,11 +11,10 @@ namespace iar { namespace app {
     public:
         SecChatServer(jsonrpc::AbstractServerConnector &connector): AbstractServer<SecChatServer>(connector)
         {
-            this->bindAndAddMethod(
-                jsonrpc::Procedure("open_channel", jsonrpc::PARAMS_BY_NAME,
-                    jsonrpc::JSON_OBJECT, "rsa.pubkey",
-                    jsonrpc::JSON_OBJECT, "ecc.pubkey",
-                    jsonrpc::JSON_OBJECT, NULL),
+            bindAndAddMethod(
+                jsonrpc::Procedure("open_channel", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_OBJECT,
+                    "rsa.pubkey", jsonrpc::JSON_STRING,
+                    "ecc.pubkey", jsonrpc::JSON_STRING, NULL),
                 &SecChatServer::open_channel);
         }
 
@@ -25,6 +24,7 @@ namespace iar { namespace app {
         void view_contacts(const Json::Value& request, Json::Value& response);
 
     private:
+        utils::SCContact     _serverContact;
         utils::SCAddressBook _addressBook;
     };
 

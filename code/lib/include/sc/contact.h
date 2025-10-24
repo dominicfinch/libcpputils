@@ -26,6 +26,7 @@ namespace iar { namespace utils {
             void Name(const std::string& name) { _name = name; }
 
             AES& aesKey() { return _aesKey; }
+            //DES3& des3Key() { return _desKey; }
             ECC& eccKey() { return _eccKeyPair; }
             RSA& rsaKey() { return _rsaKeyPair; }
 
@@ -61,6 +62,7 @@ namespace iar { namespace utils {
             RSA _rsaKeyPair;
             ECC _eccKeyPair;
             AES _aesKey;
+            //DES3 _desKey;
     };
 
 }}

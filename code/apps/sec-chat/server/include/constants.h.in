@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _SEC_CHAT_SERVER_COMMON_H_
+#define _SEC_CHAT_SERVER_COMMON_H_
 
 #define GIT_BRANCH              "@GIT_BRANCH@"
 #define GIT_COMMIT              "@GIT_COMMIT@"
@@ -9,3 +10,7 @@
 #define APP_PATCH_VERSION       @APP_PATCH_VERSION@
 #define APP_REVIS_VERSION       @APP_REVIS_VERSION@
 #define APP_VERSION_STR         "@APP_MAJOR_VERSION@.@APP_MINOR_VERSION@.@APP_PATCH_VERSION@.@APP_REVIS_VERSION@"
+
+#define DEFAULT_SERVER_PORT     8080
+
+#endif

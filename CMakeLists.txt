@@ -33,5 +33,6 @@ add_subdirectory(code/tests/unit)
 
 # Build apps
 add_subdirectory(code/apps/sec-chat/server)
-add_subdirectory(code/apps/sec-chat/client)
+add_subdirectory(code/apps/sec-chat/client-cli)
+add_subdirectory(code/apps/sec-chat/client-ui)
 

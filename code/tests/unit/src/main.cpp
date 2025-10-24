@@ -74,6 +74,30 @@ int main()
         runner->execute_test(results, "test_base64_encode_decode", test_base64_encode_decode);
     });
 
+    testRunner.add_test_set("certificate_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+        std::cout << "\nRunning Certificate tests...\n";
+        runner->execute_test(results, "test_certificatebuilder_set_subject", test_certificatebuilder_set_subject);
+        runner->execute_test(results, "test_certificatebuilder_set_validity_days", test_certificatebuilder_set_validity_days);
+        runner->execute_test(results, "test_certificatebuilder_set_serial_number", test_certificatebuilder_set_serial_number);
+        runner->execute_test(results, "test_certificatebuilder_set_public_key_from_rsa", test_certificatebuilder_set_public_key_from_rsa);
+        runner->execute_test(results, "test_certificatebuilder_set_public_key_from_ecc", test_certificatebuilder_set_public_key_from_ecc);
+        runner->execute_test(results, "test_certificatebuilder_self_sign_with_rsa", test_certificatebuilder_self_sign_with_rsa);
+        runner->execute_test(results, "test_certificatebuilder_self_sign_with_ecc", test_certificatebuilder_self_sign_with_ecc);
+        runner->execute_test(results, "test_certificatebuilder_sign_with_ca_rsa", test_certificatebuilder_sign_with_ca_rsa);
+        runner->execute_test(results, "test_certificatebuilder_sign_with_ca_ecc", test_certificatebuilder_sign_with_ca_ecc);
+        runner->execute_test(results, "test_certificatebuilder_save_pem", test_certificatebuilder_save_pem);
+        runner->execute_test(results, "test_certificatebuilder_save_der", test_certificatebuilder_save_der);
+        runner->execute_test(results, "test_certificatebuilder_get_certificate_pem", test_certificatebuilder_get_certificate_pem);
+        runner->execute_test(results, "test_certificatebuilder_get_certificate_der", test_certificatebuilder_get_certificate_der);
+        runner->execute_test(results, "test_certificatebuilder_export_to_pkcs12", test_certificatebuilder_export_to_pkcs12);
+
+        runner->execute_test(results, "test_load_from_pem", test_load_from_pem);
+        runner->execute_test(results, "test_load_from_pem_file", test_load_from_pem_file);
+        runner->execute_test(results, "test_load_from_der_file", test_load_from_der_file);
+        runner->execute_test(results, "test_get_common_name", test_get_common_name);
+        runner->execute_test(results, "test_verify_signature_self_signed", test_verify_signature_self_signed);
+    });
+
     testRunner.add_test_set("des3_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning DES3 tests...\n";
         runner->execute_test(results, "test_des3_cbc_encrypt_decrypt", test_des3_cbc_encrypt_decrypt);

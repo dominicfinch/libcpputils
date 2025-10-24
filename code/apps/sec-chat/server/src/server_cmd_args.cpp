@@ -25,29 +25,30 @@ int iar::app::SecChatServerCmdArgParser::parse(int argc, char* argv[]) {
     if (_help->count > 0) {
         std::cout << "Usage: " << argv[0] << " [options]\n";
         arg_print_glossary(stdout, _argtable, "  %-25s %s\n");
-        return 0;
+        return -1;
     }
 
     if (_version->count > 0) {
         std::cout << APP_PRETTY_NAME << "  " << APP_VERSION_STR << "\n";
         std::cout << "  branch: " << GIT_BRANCH << "\n";
         std::cout << "  commit: " << GIT_COMMIT << "\n";
-        return 0;
+        return -1;
     }
 
     if (nerrors > 0) {
         arg_print_errors(stderr, _end, argv[0]);
         std::cerr << "Try '" << argv[0] << " --help' for more information.\n";
-        return nerrors;
+        nerrors++;
     }
 
     if (_config->count > 0) {
         std::string filepath = _config->filename[0];
         if (!load_config(filepath)) { return 1; }
     } else {
-        std::cout << "No config file provided.\n";
+        std::cout << " - No config file provided.\n";
+        nerrors++;
     }
-    return 0;
+    return nerrors;
 }
 
 bool iar::app::SecChatServerCmdArgParser::load_config(const std::string& path)

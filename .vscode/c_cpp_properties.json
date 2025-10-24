@@ -6,7 +6,7 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/dep/jsoncpp/include",
                 "${workspaceFolder}/code/lib/include",
-                "${workspaceFolder}/code/apps/sec-chat/client/include",
+                "${workspaceFolder}/code/apps/sec-chat/client-cli/include",
                 "${workspaceFolder}/code/apps/sec-chat/server/include"
             ],
             "defines": [],
