@@ -3,29 +3,69 @@
 #include <jsonrpccpp/server/connectors/httpserver.h>
 #include <jsonrpccpp/server.h>
 
-#include "sc/address_book.h"
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/rotating_file_sink.h>
+#include <pqxx/pqxx>
 
-namespace iar { namespace app { 
+
+#include "ecc.h"
+
+namespace iar { namespace app {
+
+    struct ServerInfo {
+        int port_number;
+        bool ssl_enabled = false;
+        std::string ssl_cert;
+        std::string ssl_key;
+        int threads;
+    };
+
+    struct DatabaseInfo {
+        std::string host;
+        std::string user;
+        std::string pass;
+        int port;
+        std::string db_name;
+        std::string ssl_mode;
+        std::string ssl_rootcert;
+        std::string ssl_cert;
+        std::string ssl_key;
+    };
+
+    struct LogInfo {
+        std::string level;
+        std::string pattern;
+        std::string output;
+        std::string output_path;
+        int max_size;
+        int max_files;
+    };
     
     class SecChatServer : public jsonrpc::AbstractServer<SecChatServer> {
     public:
-        SecChatServer(jsonrpc::AbstractServerConnector &connector): AbstractServer<SecChatServer>(connector)
-        {
-            bindAndAddMethod(
-                jsonrpc::Procedure("open_channel", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_OBJECT,
-                    "rsa.pubkey", jsonrpc::JSON_STRING,
-                    "ecc.pubkey", jsonrpc::JSON_STRING, NULL),
-                &SecChatServer::open_channel);
-        }
+        SecChatServer(jsonrpc::AbstractServerConnector &connector);
 
-        // Methods to open a channel
-        void open_channel(const Json::Value& request, Json::Value& response);
-        void close_channel(const Json::Value& request, Json::Value& response);
-        void view_contacts(const Json::Value& request, Json::Value& response);
+        bool Initialise(const Json::Value& config);
+
+
+
+    protected:
+        
+        void registerDevice(const Json::Value& request, Json::Value& response);
+
 
     private:
-        utils::SCContact     _serverContact;
-        utils::SCAddressBook _addressBook;
+        bool initialize_logging(const Json::Value& config, LogInfo& lInfo);
+        bool initialize_database(const Json::Value& config, DatabaseInfo& dInfo);
+
+        LogInfo logInfo;
+        DatabaseInfo dbInfo;
+        
+        std::shared_ptr<spdlog::logger> logPtr;
+        iar::utils::ECC eccKey;
+        
     };
 
 

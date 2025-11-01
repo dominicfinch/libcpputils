@@ -5,3 +5,5 @@ build/
 code/apps/sec-chat/server/include/constants.h
 code/apps/sec-chat/client-cli/include/constants.h
 code/apps/sec-chat/client-ui/include/constants.h
+
+code/apps/sec-chat/client-ui/src/*.meta.cpp

@@ -24,10 +24,14 @@ configure_file(${PROJECT_INC_DIR}/constants.h.in ${PROJECT_INC_DIR}/constants.h)
 add_executable(${PROJECT_NAME} ${PROJECT_SRC_FILESET})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INC_DIR} ${PROJECT_EXT_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE cpputils jsonrpccpp-server jsonrpccpp-common jsoncpp_lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    cpputils pqxx jsonrpccpp-server jsonrpccpp-common jsoncpp_lib)
 
 ########################
 ## Post build tasks ##
 ########################
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_CURRENT_SOURCE_DIR}/settings.json ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-settings.json)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_CURRENT_SOURCE_DIR}/etc ${CMAKE_BINARY_DIR}/etc)

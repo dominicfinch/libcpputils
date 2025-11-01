@@ -57,6 +57,28 @@ bool ECC::load_peer_public_key_from_pem(const std::string& pem) {
     return _peer_key != nullptr;
 }
 
+bool ECC::load_own_public_key_from_pem(const std::string& pem) {
+    BIO* bio = BIO_new_mem_buf(pem.data(), pem.size());
+    if (!bio) return false;
+
+    //if (_peer_key) EVP_PKEY_free(_peer_key);
+    _keypair = PEM_read_bio_PUBKEY(bio, nullptr, nullptr, nullptr);
+    BIO_free(bio);
+
+    return _keypair != nullptr;
+}
+
+bool ECC::load_own_private_key_from_pem(const std::string& pem) {
+    BIO* bio = BIO_new_mem_buf(pem.data(), pem.size());
+    if (!bio) return false;
+
+    //if (_keypair) EVP_PKEY_free(_keypair);
+    _keypair = PEM_read_bio_PrivateKey(bio, nullptr, nullptr, nullptr);
+    BIO_free(bio);
+
+    return _keypair != nullptr;
+}
+
 bool ECC::export_public_key(const std::string& path) {
     bool success = false;
     std::string pubkey;

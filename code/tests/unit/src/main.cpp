@@ -134,6 +134,19 @@ int main()
         runner->execute_test(results, "test_signing_and_verification", test_signing_and_verification);
         runner->execute_test(results, "test_encryption_decryption_binary", test_encryption_decryption_binary);
         runner->execute_test(results, "test_encryption_decryption_strings", test_encryption_decryption_strings);
+        runner->execute_test(results, "test_ecc_load_own_public_key_from_pem", test_ecc_load_own_public_key_from_pem);
+        runner->execute_test(results, "test_ecc_load_own_private_key_from_pem", test_ecc_load_own_private_key_from_pem);
+    });
+
+    testRunner.add_test_set("ecdsa_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+        std::cout << "\nRunning ECDSA tests...\n";
+        runner->execute_test(results, "test_ecdsa_generate_keypair_and_export_import", test_ecdsa_generate_keypair_and_export_import);
+        runner->execute_test(results, "test_ecdsa_sign_and_verify_sha384", test_ecdsa_sign_and_verify_sha384);
+        runner->execute_test(results, "test_ecdsa_sign_and_verify_sha512", test_ecdsa_sign_and_verify_sha512);
+        runner->execute_test(results, "test_ecdsa_import_invalid_key", test_ecdsa_import_invalid_key);
+        runner->execute_test(results, "test_ecdsa_export_without_key", test_ecdsa_export_without_key);
+        runner->execute_test(results, "test_ecdsa_verify_fails_on_wrong_signature", test_ecdsa_verify_fails_on_wrong_signature);
+        runner->execute_test(results, "test_ecdsa_generate_invalid_bits", test_ecdsa_generate_invalid_bits);
     });
 
     testRunner.add_test_set("hash_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {

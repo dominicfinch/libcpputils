@@ -25,10 +25,10 @@ namespace iar { namespace utils {
             const std::string& Name() { return _name; }
             void Name(const std::string& name) { _name = name; }
 
-            AES& aesKey() { return _aesKey; }
-            //DES3& des3Key() { return _desKey; }
+            //AES& aesKey() { return _aesKey; }
             ECC& eccKey() { return _eccKeyPair; }
-            RSA& rsaKey() { return _rsaKeyPair; }
+            //DES3& des3Key() { return _desKey; }
+            //RSA& rsaKey() { return _rsaKeyPair; }
 
 
             ////////////////////////////////////////////////////
@@ -53,16 +53,21 @@ namespace iar { namespace utils {
 
             bool autoGenerateKeys();
 
-            Json::Value exportContact();
-            bool importContact(const Json::Value& value);
-            
+            Json::Value toJSON(bool full=false);
+
+            bool toZIPFile(const std::string& fpath, bool full=true);
+            bool toZIPData(std::string& content, bool full=true);
+
+            bool fromJSON(const Json::Value& value);
+            bool fromZIPFile(const std::string& fpath);
+            bool fromZIPData(std::string& content);
 
         private:
             std::string _name;
-            RSA _rsaKeyPair;
             ECC _eccKeyPair;
-            AES _aesKey;
+            //AES _aesKey;
             //DES3 _desKey;
+            //RSA _rsaKeyPair;
     };
 
 }}

@@ -5,51 +5,41 @@
 #include <memory>
 #include <iostream>
 
-#include "ecc.h"
-#include "rsa.h"
 #include "sc/contact.h"
-#include "constants.h"
-
 #include <jsonrpccpp/client/connectors/httpclient.h>
 #include <jsonrpccpp/client.h>
 
 namespace iar { namespace app {
 
+    struct ClientInfo {
+        std::string host;
+        std::string ssl_cert;
+        std::string ssl_key;
+        int threads;
+        int port_number;
+        bool ssl_enabled = false;
+    };
+
     class SecChatClient
     {
         public:
-
-
-            bool Initialize(const Json::Value& config) {
-                // Open port
-                auto port_number = config["port"].asInt();
-                port_number = port_number == 0 ? DEFAULT_SERVER_PORT : port_number;
-
-                auto host = config["host"].asString();
-                host = host.empty() ? "0.0.0.0" : host;
-                
-                std::stringstream ss;
-                ss << "http://" << host << ":" << port_number;
-                //std::cout << " - Connecting to: " << ss.str() << "\n";    // TODO: Integrate logging
-
-                jsonrpc::HttpClient httpClient(ss.str());
-                //_rpcClient = std::make_unique<jsonrpc::Client>(jsonrpc::Client(httpClient));
-                return true;
-            }
+            bool Initialize(const Json::Value& config);
 
             // Thin wrapper around jsonrpc call
-            Json::Value CallMethod(const std::string& method, const Json::Value& content)
-            {
-                std::cout << "CALLING RPC METHOD!\n";
-                return _rpcClient->CallMethod(method, content);
+            Json::Value CallMethod(const std::string& method, const Json::Value& content) {
+                std::cout << "CALLING METHOD!\n";
+                return rpcClientPtr->CallMethod(method, content);
             }
 
-            utils::SCContact& Self() { return _ownContact; }
+            utils::SCContact& Self() { return ownContact; }
 
         private:
-            utils::SCContact _ownContact;
-            jsonrpc::HttpClient * _httpClient = nullptr;
-            jsonrpc::Client * _rpcClient = nullptr;
+
+            ClientInfo  cInfo;
+            utils::SCContact ownContact;
+
+            std::unique_ptr<jsonrpc::HttpClient> httpClientPtr;
+            std::unique_ptr<jsonrpc::Client> rpcClientPtr;
     };
 
 }}

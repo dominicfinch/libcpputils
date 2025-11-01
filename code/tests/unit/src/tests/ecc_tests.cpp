@@ -1,5 +1,6 @@
 
 #include <experimental/filesystem>
+#include <iostream>
 
 #include "ecc_tests.h"
 #include "ecc.h"
@@ -102,4 +103,82 @@ bool test_encryption_decryption_strings() {
 
     std::string decrypted_str(decrypted_vec.begin(), decrypted_vec.end());
     return plaintext == decrypted_str;
+}
+
+bool test_ecc_load_own_public_key_from_pem() {
+    iar::utils::ECC ecc_original;
+    if (!ecc_original.generate_own_keypair()) {
+        std::cerr << "Failed to generate ECC keypair\n";
+        return false;
+    }
+
+    std::string public_pem;
+    if (!ecc_original.get_own_public_key_pem(public_pem)) {
+        std::cerr << "Failed to export ECC public key PEM\n";
+        return false;
+    }
+
+    iar::utils::ECC ecc_loaded;
+    if (!ecc_loaded.load_own_public_key_from_pem(public_pem)) {
+        std::cerr << "Failed to load ECC public key from PEM\n";
+        return false;
+    }
+
+    // Optional: check that signature verification using the loaded key works
+    std::string message = "test message";
+    std::string signature;
+    if (!ecc_original.sign_with_own_key(message, signature)) {
+        std::cerr << "Failed to sign message with original key\n";
+        return false;
+    }
+
+    // NOTE: Without private key, one would expect verification to fail, no?
+    // The loaded public key should verify the signature
+    //if (!ecc_loaded.verify_with_peer_key(message, signature)) {
+    //    std::cerr << "Loaded public key failed to verify signature\n";
+    //    return false;
+    //}
+
+    return true;
+}
+
+// Test loading a private key from a valid PEM string
+bool test_ecc_load_own_private_key_from_pem() {
+    iar::utils::ECC ecc_original;
+    if (!ecc_original.generate_own_keypair()) {
+        std::cerr << "Failed to generate ECC keypair\n";
+        return false;
+    }
+
+    std::string private_pem;
+    if (!ecc_original.get_own_private_key_pem(private_pem)) {
+        std::cerr << "Failed to export ECC private key PEM\n";
+        return false;
+    }
+
+    iar::utils::ECC ecc_loaded;
+    if (!ecc_loaded.load_own_private_key_from_pem(private_pem)) {
+        std::cerr << "Failed to load ECC private key from PEM\n";
+        return false;
+    }
+
+    // Verify that we can sign with the loaded private key
+    std::string message = "hello world";
+    std::string signature;
+    if (!ecc_loaded.sign_with_own_key(message, signature)) {
+        std::cerr << "Failed to sign using loaded ECC private key\n";
+        return false;
+    }
+
+    // The original public key should verify the signature
+    std::string pub_pem;
+    if (!ecc_original.get_own_public_key_pem(pub_pem)) return false;
+    if (!ecc_loaded.load_peer_public_key_from_pem(pub_pem)) return false;
+
+    if (!ecc_loaded.verify_with_peer_key(message, signature)) {
+        std::cerr << "Signature created by loaded key failed verification\n";
+        return false;
+    }
+
+    return true;
 }

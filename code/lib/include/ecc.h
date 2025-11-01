@@ -19,11 +19,16 @@ namespace iar {
 
             bool load_peer_public_key_from_pem(const std::string& pem);
 
+            bool load_own_public_key_from_pem(const std::string& pem);
+            bool load_own_private_key_from_pem(const std::string& fpath);
+
+            // Import / Export //
             bool export_public_key(const std::string& fpath);
             bool export_private_key(const std::string& fpath);
 
             bool import_private_key(const std::string& fpath);
             bool import_public_key(const std::string& fpath);
+            //
 
             bool get_own_public_key_pem(std::string& pem);
             bool get_own_private_key_pem(std::string& pem);

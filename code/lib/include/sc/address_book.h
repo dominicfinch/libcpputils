@@ -12,11 +12,15 @@ namespace iar { namespace utils {
     {
         public:
             
-            
+            void setRootDir(const std::string& dir) { rootDir = dir; }
+
+            std::map<std::string, SCContact>& Book() { return _book; }
+
 
         private:
             std::map<std::string, SCContact> _book;
-            
+            std::string baseDir = "address-book/";
+            std::string rootDir;
     };
 
 }}
