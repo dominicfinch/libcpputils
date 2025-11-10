@@ -74,6 +74,7 @@ int main()
         runner->execute_test(results, "test_base64_encode_decode", test_base64_encode_decode);
     });
 
+#ifndef EXCLUDE_CERT_TESTS
     testRunner.add_test_set("certificate_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning Certificate tests...\n";
         runner->execute_test(results, "test_certificatebuilder_set_subject", test_certificatebuilder_set_subject);
@@ -97,6 +98,7 @@ int main()
         runner->execute_test(results, "test_get_common_name", test_get_common_name);
         runner->execute_test(results, "test_verify_signature_self_signed", test_verify_signature_self_signed);
     });
+#endif
 
     testRunner.add_test_set("des3_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning DES3 tests...\n";
@@ -138,15 +140,20 @@ int main()
         runner->execute_test(results, "test_ecc_load_own_private_key_from_pem", test_ecc_load_own_private_key_from_pem);
     });
 
-    testRunner.add_test_set("ecdsa_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
-        std::cout << "\nRunning ECDSA tests...\n";
-        runner->execute_test(results, "test_ecdsa_generate_keypair_and_export_import", test_ecdsa_generate_keypair_and_export_import);
-        runner->execute_test(results, "test_ecdsa_sign_and_verify_sha384", test_ecdsa_sign_and_verify_sha384);
-        runner->execute_test(results, "test_ecdsa_sign_and_verify_sha512", test_ecdsa_sign_and_verify_sha512);
-        runner->execute_test(results, "test_ecdsa_import_invalid_key", test_ecdsa_import_invalid_key);
-        runner->execute_test(results, "test_ecdsa_export_without_key", test_ecdsa_export_without_key);
-        runner->execute_test(results, "test_ecdsa_verify_fails_on_wrong_signature", test_ecdsa_verify_fails_on_wrong_signature);
-        runner->execute_test(results, "test_ecdsa_generate_invalid_bits", test_ecdsa_generate_invalid_bits);
+    testRunner.add_test_set("ed25519_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+        std::cout << "\nRunning ED25519 tests...\n";
+        runner->execute_test(results, "test_ed25519_generate_keypair", test_ed25519_generate_keypair);
+        runner->execute_test(results, "test_ed25519_export_import_private_key", test_ed25519_export_import_private_key);
+        runner->execute_test(results, "test_ed25519_export_import_public_key", test_ed25519_export_import_public_key);
+        runner->execute_test(results, "test_ed25519_encrypt_decrypt_vector", test_ed25519_encrypt_decrypt_vector);
+        runner->execute_test(results, "test_ed25519_encrypt_decrypt_string", test_ed25519_encrypt_decrypt_string);
+        runner->execute_test(results, "test_ed25519_sign_verify_vector", test_ed25519_sign_verify_vector);
+        runner->execute_test(results, "test_ed25519_sign_verify_string", test_ed25519_sign_verify_string);
+        runner->execute_test(results, "test_ed25519_sign_verify_roundtrip", test_ed25519_sign_verify_roundtrip);
+        runner->execute_test(results, "test_ed25519_private_key_pem_roundtrip", test_ed25519_private_key_pem_roundtrip);
+        runner->execute_test(results, "test_ed25519_public_key_pem_roundtrip", test_ed25519_public_key_pem_roundtrip);
+        runner->execute_test(results, "test_ed25519_set_private_key_pem_invalid", test_ed25519_set_private_key_pem_invalid);
+        runner->execute_test(results, "test_ed25519_set_public_key_pem_invalid", test_ed25519_set_public_key_pem_invalid);
     });
 
     testRunner.add_test_set("hash_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {

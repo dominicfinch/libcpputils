@@ -14,9 +14,12 @@
 #include "tests/dh_tests.h"
 #endif
 
+#ifndef EXCLUDE_CERT_TESTS
 #include "tests/certificate_tests.h"
-#include "tests/ecdsa_tests.h"
+#endif
+
 #include "tests/ecc_tests.h"
+#include "tests/ed25519_tests.h"
 #include "tests/hash_tests.h"
 #include "tests/hex_tests.h"
 #include "tests/llist_tests.h"

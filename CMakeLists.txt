@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.22)
 project(cpputils LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -29,6 +29,7 @@ add_subdirectory(dep/jsoncpp)
 add_subdirectory(code/lib)
 
 # Build unit tests
+add_subdirectory(code/tests/component)
 add_subdirectory(code/tests/unit)
 
 # Build apps
