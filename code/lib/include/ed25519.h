@@ -5,11 +5,13 @@
 #include <memory>
 #include <openssl/evp.h>
 
-namespace iar::utils {
-static bool hkdf_sha256(const std::vector<uint8_t>& salt,
-                        const std::vector<uint8_t>& ikm,
-                        const std::vector<uint8_t>& info,
-                        std::vector<uint8_t>& okm,
+namespace iar {
+    namespace utils
+    {
+static bool hkdf_sha256(const std::vector<uint8_t>&salt,
+                        const std::vector<uint8_t>&ikm,
+                        const std::vector<uint8_t>&info,
+                        std::vector<uint8_t>&okm,
                         size_t L);
 
 static void lexicographic_concat(const std::string& label,
@@ -45,7 +47,7 @@ public:
 
     bool export_public_key(const std::string& path);
     bool export_private_key(const std::string& path);
-    
+
     bool import_private_key(const std::string& path);
     bool import_public_key(const std::string& path);
 
@@ -68,8 +70,9 @@ public:
 
 private:
     //std::unique_ptr<EVP_PKEY, decltype(&EVP_PKEY_free)> pkey_;
-    EVP_PKEY * ed25519_key_ = nullptr;
+    EVP_PKEY* ed25519_key_ = nullptr;
     static std::string get_openssl_error();
 };
 
+    }
 } // namespace iar::utils

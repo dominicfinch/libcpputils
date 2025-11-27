@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <experimental/filesystem>
 
 #include "aes_tests.h"

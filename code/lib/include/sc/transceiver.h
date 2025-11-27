@@ -14,7 +14,7 @@
 #include <string>
 #include <cstdint>
 #include <json/json.h>
-#include <uuid/uuid.h>
+#include "uuid.h"
 
 
 namespace iar { namespace utils {
@@ -31,7 +31,7 @@ namespace iar { namespace utils {
 
             void RandomInitialize()
             {
-                uuid_generate_random(_uid);
+                _uid = generate_uuid();
                 //_rsaKeyPair.generate_keypair();
                 _eccKeyPair.generate_own_keypair();
                 //_aesKey.generate_key();
@@ -40,9 +40,7 @@ namespace iar { namespace utils {
 
             const std::string uid()
             {
-                char str[37]; // UUID string representation (36 chars + null terminator)
-                uuid_unparse(_uid, str);
-                return std::string(str);
+                return _uid;
             }
 
             //RSA& rsaKP() { return _rsaKeyPair; }
@@ -53,13 +51,14 @@ namespace iar { namespace utils {
             SCContact& operator=(const SCContact& other)
             {
                 if (this != &other) {
-                    uuid_copy(_uid, other._uid);
+                    _uid = other._uid;
+                    // TODO
                 }
                 return *this;
             }
 
             bool operator==(const SCContact& other) const {
-                return uuid_compare(_uid, other._uid) == 0;
+                return _uid == other._uid;
             }
 
             Json::Value Export();
@@ -67,7 +66,7 @@ namespace iar { namespace utils {
 
 
         private:
-            uuid_t _uid;
+            std::string _uid;
             //RSA _rsaKeyPair;
             ECC _eccKeyPair;
             //AES _aesKey;

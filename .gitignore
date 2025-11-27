@@ -1,6 +1,10 @@
 
+.idea/
+.vs/
 .vscode/
 build/
+cmake-build-debug/
+cmake-build-release/
 
 code/apps/sec-chat/server/include/constants.h
 code/apps/sec-chat/client-cli/include/constants.h
