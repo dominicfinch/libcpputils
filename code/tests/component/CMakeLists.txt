@@ -1,12 +1,12 @@
 cmake_minimum_required (VERSION 3.22)
 
-project("sec-chat-component-tests")
+project("cpputils-componenttests")
 set(CMAKE_CXX_STANDARD 17)
 
 set(PROJECT_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(PROJECT_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-set(APP_PRETTY_NAME "Security Chat Component Tests")
+set(APP_PRETTY_NAME "Component Tests")
 set(APP_PROJECT_NAME "${PROJECT_NAME}")
 set(APP_MAJOR_VERSION   1)
 set(APP_MINOR_VERSION   0)

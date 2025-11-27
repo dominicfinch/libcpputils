@@ -18,8 +18,8 @@
         "pass": "@Postgres123",
         "port": 5432,
         "db": "whispernet",
-        "ssl.mode": "disable",  //  disable / allow / prefer / require / verify-ca / verify-full
-        "ssl.rootcert": "",     //  Path to CA certificate for server verification
+        "ssl.mode": "require",  //  disable / allow / prefer / require / verify-ca / verify-full
+        "ssl.rootcert": "etc/server-ca.pem",     //  Path to CA certificate for server verification
         "ssl.cert": "",         //  Optional client certificate
         "ssl.key": ""           //  Optional client private key
     },

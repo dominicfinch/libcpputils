@@ -289,7 +289,7 @@ namespace iar {
                     EVP_MD_CTX_destroy(sign_ctx);
                 }
                 else {
-                    //printf(" - Error: Unsupported hash algorithm");
+                    fprintf(stderr, " - Error: Unsupported hash algorithm\n");
                 }
             }
             return success;
@@ -310,7 +310,7 @@ namespace iar {
                                     success = true;
                                 }
                                 else if (rc == 0) {
-                                    //printf(" - Error: RSA verification failed");
+                                    fprintf(stderr, " - Error: RSA verification failed\n");
                                 }
                             }
                         }
@@ -318,7 +318,7 @@ namespace iar {
                     EVP_MD_CTX_destroy(sign_ctx);
                 }
                 else {
-                    //printf(" - Error: Unsupported hash algorithm");
+                    fprintf(stderr, " - Error: Unsupported hash algorithm\n");
                 }
             }
             return success;

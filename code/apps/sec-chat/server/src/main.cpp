@@ -28,8 +28,8 @@ bool initalize_channel(const Json::Value& config, iar::app::ServerInfo& sInfo) {
     if(sInfo.ssl_enabled) {
         if(!sInfo.ssl_cert.empty() && !sInfo.ssl_key.empty())
         {
-            std::cout << "sInfo.ssl_cert: " << sInfo.ssl_cert << "\n";
-            std::cout << "sInfo.ssl_key: " << sInfo.ssl_key << "\n";
+            //std::cout << "sInfo.ssl_cert: " << sInfo.ssl_cert << "\n";
+            //std::cout << "sInfo.ssl_key: " << sInfo.ssl_key << "\n";
 
             httpServerPtr = std::make_unique<jsonrpc::HttpServer>(sInfo.port_number, sInfo.ssl_cert, sInfo.ssl_key, sInfo.threads);
             secChatServerPtr = std::make_unique<iar::app::SecChatServer>(*httpServerPtr.get());

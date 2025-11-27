@@ -265,10 +265,12 @@ bool ECC::verify_with_peer_key(const std::string& data, const std::string& signa
 bool ECC::encrypt(const std::string& plaintext, std::string& ciphertext, std::vector<uint8_t>& iv, std::string& tag)
 {
     std::vector<uint8_t> plaintext_vect(plaintext.begin(), plaintext.end());
-    std::vector<uint8_t> tag_vect(tag.begin(), tag.end());
+    std::vector<uint8_t> tag_vect;
     std::vector<uint8_t> ciphertext_vect;
+
     auto result = encrypt(plaintext_vect, ciphertext_vect, iv, tag_vect);
-    // base64 encode ciphertext_vect
+    ciphertext = Base64::encode(ciphertext_vect);
+    tag = Base64::encode(tag_vect);
     return result;
 }
 
@@ -309,12 +311,17 @@ bool ECC::encrypt(const std::vector<uint8_t>& plaintext, std::vector<uint8_t>& c
 
 bool ECC::decrypt(const std::string& ciphertext, std::string& plaintext, const std::vector<uint8_t>& iv, const std::string& tag)
 {
-    std::vector<uint8_t> ciphertext_vect(ciphertext.begin(), ciphertext.end());
-    std::vector<uint8_t> tag_vect(tag.begin(), tag.end());
+    // Decode ciphertext & tag
+    auto ciphertext_vect = Base64::decode(ciphertext);
+    auto tag_vect = Base64::decode(tag);
     std::vector<uint8_t> plaintext_vect;
-    //auto result = encrypt(plaintext_vect, ciphertext_vect, iv, tag_vect);
-    // base64 decode ciphertext_vect
-    return false;
+
+    auto result = decrypt(ciphertext_vect, plaintext_vect, iv, tag_vect);
+    
+    std::stringstream ss;
+    ss << plaintext_vect.data();
+    plaintext = ss.str();
+    return result;
 }
 
 bool ECC::decrypt(const std::vector<uint8_t>& ciphertext, std::vector<uint8_t>& plaintext, const std::vector<uint8_t>& iv, const std::vector<uint8_t>& tag)
