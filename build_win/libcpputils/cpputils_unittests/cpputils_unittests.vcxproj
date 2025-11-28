@@ -46,7 +46,7 @@
   <!-- DEBUG: WIN32 -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\code\lib\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MDd</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MTd</LibraryPath>
     <SourcePath>$(VC_SourcePath);..\..\..\code\lib\src</SourcePath>
     <PublicIncludeDirectories>..\..\..\code\lib\include</PublicIncludeDirectories>
     <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
@@ -71,7 +71,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MDd;..\..\..\dep\windows\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MTd;..\..\..\dep\windows\x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>libcrypto.lib;libssl.lib;jsoncpp_static.lib</AdditionalDependencies>
     </Lib>
     <ProjectReference>
@@ -85,7 +85,7 @@
   <!-- DEBUG: WIN64 -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\code\lib\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);C:\Program Files\OpenSSL-Win64\lib\VC\x64\MDd</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);C:\Program Files\OpenSSL-Win64\lib\VC\x64\MTd</LibraryPath>
     <SourcePath>$(VC_SourcePath);..\..\..\code\lib\src</SourcePath>
     <PublicIncludeDirectories>..\..\..\code\lib\include</PublicIncludeDirectories>
     <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
@@ -110,7 +110,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files\OpenSSL-Win64\lib\VC\x64\MDd;..\..\..\dep\windows\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\OpenSSL-Win64\lib\VC\x64\MTd;..\..\..\dep\windows\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>libcrypto.lib;libssl.lib;jsoncpp_static.lib</AdditionalDependencies>
     </Lib>
     <ProjectReference>
@@ -177,8 +177,8 @@
 
 	<ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 	  <!-- Add the DLLs you want to copy -->
-	  <MyDllToCopy Include="C:\Program Files\OpenSSL-Win64\bin\libcrypto-3.dll" />
-	  <MyDllToCopy Include="C:\Program Files\OpenSSL-Win64\bin\libssl-3.dll" />
+	  <MyDllToCopy Include="C:\Program Files\OpenSSL-Win64\bin\libcrypto-3-x64.dll" />
+	  <MyDllToCopy Include="C:\Program Files\OpenSSL-Win64\bin\libssl-3-x64.dll" />
 	</ItemGroup>
 
 	<Target Name="CopyMyDLLs" AfterTargets="Build">

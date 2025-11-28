@@ -14,6 +14,13 @@
 #include "ed25519.h"
 #include "base64.h"
 
+#ifdef WIN32
+extern "C" {
+#include <openssl/applink.c>
+}
+#endif // WIN32
+
+
 namespace iar { namespace utils {
 
 static bool hkdf_sha256(const std::vector<uint8_t>& salt,
@@ -611,8 +618,8 @@ bool ED25519::decrypt(const std::vector<uint8_t>& ciphertext, std::vector<uint8_
     if (outlen2 <= 0) { OPENSSL_cleanse(key.data(), key.size()); OPENSSL_cleanse(shared.data(), shared.size()); return false; }
 
     plaintext.resize(outlen1 + outlen2);
-    if(plaintext.back() == '\0')
-        plaintext.erase(plaintext.end());
+    if (plaintext.back() == '\0')
+        plaintext.pop_back();
 
     OPENSSL_cleanse(key.data(), key.size());
     OPENSSL_cleanse(shared.data(), shared.size());

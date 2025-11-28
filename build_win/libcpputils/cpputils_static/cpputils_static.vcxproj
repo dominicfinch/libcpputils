@@ -44,9 +44,9 @@
   <PropertyGroup Label="UserMacros" />
   <!-- DEBUG: WIN32 -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\code\lib\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MDd</LibraryPath>
-    <SourcePath>$(VC_SourcePath);..\..\..\code\lib\src</SourcePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\code\lib\include;..\..\..\code\apps\sec-chat\server\include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MTd</LibraryPath>
+    <SourcePath>$(VC_SourcePath);..\..\..\code\lib\src;..\..\..\code\apps\sec-chat\server\src</SourcePath>
     <PublicIncludeDirectories>..\..\..\code\lib\include</PublicIncludeDirectories>
     <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
     <PublicModuleDirectories>..\..\..\code\lib\src</PublicModuleDirectories>
@@ -70,7 +70,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MDd;..\..\..\dep\windows\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MTd;..\..\..\dep\windows\x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>libcrypto.lib;libssl.lib;jsoncpp_static.lib</AdditionalDependencies>
     </Lib>
     <ProjectReference>
@@ -79,9 +79,9 @@
   </ItemDefinitionGroup>
   <!-- DEBUG: WIN64 -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\code\lib\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);C:\Program Files\OpenSSL-Win64\lib\VC\x64\MDd</LibraryPath>
-    <SourcePath>$(VC_SourcePath);..\..\..\code\lib\src</SourcePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\code\lib\include; ..\..\..\code\apps\sec-chat\server\include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);C:\Program Files\OpenSSL-Win64\lib\VC\x64\MTd</LibraryPath>
+    <SourcePath>$(VC_SourcePath);..\..\..\code\lib\src;..\..\..\code\apps\sec-chat\server\src</SourcePath>
     <PublicIncludeDirectories>..\..\..\code\lib\include</PublicIncludeDirectories>
     <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
     <PublicModuleDirectories>..\..\..\code\lib\src</PublicModuleDirectories>
@@ -105,7 +105,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files\OpenSSL-Win64\lib\VC\x64\MDd;..\..\..\dep\windows\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\OpenSSL-Win64\lib\VC\x64\MTd;..\..\..\dep\windows\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>libcrypto.lib;libssl.lib;jsoncpp_static.lib</AdditionalDependencies>
     </Lib>
     <ProjectReference>

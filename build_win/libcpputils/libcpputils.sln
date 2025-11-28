@@ -13,6 +13,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{79959ABD
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpputils_unittests", "cpputils_unittests\cpputils_unittests.vcxproj", "{13150E9F-5FCB-BB05-BB9A-220B5C5F4CA6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sec-chat-server", "sec-chat-server\sec-chat-server.vcxproj", "{3E818D47-18D2-4375-9DE5-97182C162F4C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sec-chat-client-ui", "sec-chat-client-ui\sec-chat-client-ui.vcxproj", "{141EF1EE-4024-4C42-9405-42D95A376DBA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sec-chat-client-cli", "sec-chat-client-cli\sec-chat-client-cli.vcxproj", "{70B246E7-DC3F-46CF-B69E-34791F8B7D2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -27,6 +33,18 @@ Global
 		{13150E9F-5FCB-BB05-BB9A-220B5C5F4CA6}.Debug|x64.Build.0 = Debug|x64
 		{13150E9F-5FCB-BB05-BB9A-220B5C5F4CA6}.Debug|x86.ActiveCfg = Debug|Win32
 		{13150E9F-5FCB-BB05-BB9A-220B5C5F4CA6}.Debug|x86.Build.0 = Debug|Win32
+		{3E818D47-18D2-4375-9DE5-97182C162F4C}.Debug|x64.ActiveCfg = Debug|x64
+		{3E818D47-18D2-4375-9DE5-97182C162F4C}.Debug|x64.Build.0 = Debug|x64
+		{3E818D47-18D2-4375-9DE5-97182C162F4C}.Debug|x86.ActiveCfg = Debug|Win32
+		{3E818D47-18D2-4375-9DE5-97182C162F4C}.Debug|x86.Build.0 = Debug|Win32
+		{141EF1EE-4024-4C42-9405-42D95A376DBA}.Debug|x64.ActiveCfg = Debug|x64
+		{141EF1EE-4024-4C42-9405-42D95A376DBA}.Debug|x64.Build.0 = Debug|x64
+		{141EF1EE-4024-4C42-9405-42D95A376DBA}.Debug|x86.ActiveCfg = Debug|Win32
+		{141EF1EE-4024-4C42-9405-42D95A376DBA}.Debug|x86.Build.0 = Debug|Win32
+		{70B246E7-DC3F-46CF-B69E-34791F8B7D2D}.Debug|x64.ActiveCfg = Debug|x64
+		{70B246E7-DC3F-46CF-B69E-34791F8B7D2D}.Debug|x64.Build.0 = Debug|x64
+		{70B246E7-DC3F-46CF-B69E-34791F8B7D2D}.Debug|x86.ActiveCfg = Debug|Win32
+		{70B246E7-DC3F-46CF-B69E-34791F8B7D2D}.Debug|x86.Build.0 = Debug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -34,6 +52,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{F5B56B26-21FF-4A3C-B7C4-0494CFE97B6B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{13150E9F-5FCB-BB05-BB9A-220B5C5F4CA6} = {79959ABD-4E36-4B4D-ACE8-3EA59EA602F9}
+		{3E818D47-18D2-4375-9DE5-97182C162F4C} = {AD63B896-7247-4677-BE5B-A56AA24B6AC3}
+		{141EF1EE-4024-4C42-9405-42D95A376DBA} = {AD63B896-7247-4677-BE5B-A56AA24B6AC3}
+		{70B246E7-DC3F-46CF-B69E-34791F8B7D2D} = {AD63B896-7247-4677-BE5B-A56AA24B6AC3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA524519-E993-4449-832A-01DD5802FBDC}

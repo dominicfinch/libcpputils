@@ -8,6 +8,7 @@
 
 using namespace iar::utils;
 
+
 bool test_ed25519_generate_keypair() {
     ED25519 key;
     return key.generate_keypair();
