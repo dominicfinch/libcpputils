@@ -2,9 +2,15 @@
 .idea/
 .vs/
 .vscode/
+
 build/
 cmake-build-debug/
 cmake-build-release/
+
+Debug/
+Release/
+
+build_win/libcpputils/cpputils_unittests/*.txt
 
 code/apps/sec-chat/server/include/constants.h
 code/apps/sec-chat/client-cli/include/constants.h

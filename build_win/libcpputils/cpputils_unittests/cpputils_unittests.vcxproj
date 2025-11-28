@@ -2,9 +2,9 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
-	  <Configuration>Debug</Configuration>
-	  <Platform>Win32</Platform>
-	</ProjectConfiguration>
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
@@ -16,7 +16,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>cpputilsunittests</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-	<ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -58,7 +58,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;EXCLUDE_BCHAIN_TESTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;EXCLUDE_BCHAIN_TESTS;EXCLUDE_CERT_TESTS;EXCLUDE_DH_TESTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -77,6 +77,10 @@
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <!-- DEBUG: WIN64 -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -93,7 +97,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;EXCLUDE_BCHAIN_TESTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;EXCLUDE_BCHAIN_TESTS;EXCLUDE_CERT_TESTS;EXCLUDE_DH_TESTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -164,6 +168,25 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	  <!-- Add the DLLs you want to copy -->
+	  <MyDllToCopy Include="C:\Program Files (x86)\OpenSSL-Win32\bin\libcrypto-3.dll" />
+	  <MyDllToCopy Include="C:\Program Files (x86)\OpenSSL-Win32\bin\libssl-3.dll" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	  <!-- Add the DLLs you want to copy -->
+	  <MyDllToCopy Include="C:\Program Files\OpenSSL-Win64\bin\libcrypto-3.dll" />
+	  <MyDllToCopy Include="C:\Program Files\OpenSSL-Win64\bin\libssl-3.dll" />
+	</ItemGroup>
+
+	<Target Name="CopyMyDLLs" AfterTargets="Build">
+	  <Copy 
+		SourceFiles="@(MyDllToCopy)"
+		DestinationFolder="$(OutDir)"
+		SkipUnchangedFiles="true"
+	  />
+	</Target>
+
 </Project>
