@@ -40,11 +40,13 @@ int main()
         runner->execute_test(results, "test_aes_decrypt_tampered_ciphertext_fails", test_aes_decrypt_tampered_ciphertext_fails);
     });
 
+#ifndef EXCLUDE_BCHAIN_TESTS
     testRunner.add_test_set("bchain_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning BCHAIN tests...\n";
         runner->execute_test(results, "test_blockchain_serialize_roundtrip", test_blockchain_serialize_roundtrip);
         runner->execute_test(results, "test_blockchain_save_load_jsoncpp", test_blockchain_save_load_jsoncpp);
     });
+#endif
 
     testRunner.add_test_set("btree_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning BTREE tests...\n";

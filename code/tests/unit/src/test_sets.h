@@ -4,7 +4,11 @@
 #include "runner.h"
 
 #include "tests/aes_tests.h"
+
+#ifndef EXCLUDE_BCHAIN_TESTS
 #include "tests/bchain_tests.h"
+#endif
+
 #include "tests/btree_tests.h"
 #include "tests/b58_tests.h"
 #include "tests/b64_tests.h"

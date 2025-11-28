@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+	  <Configuration>Debug</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{13150E9F-5FCB-BB05-BB9A-220B5C5F4CA6}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>cpputilsunittests</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+	<ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <!-- DEBUG: WIN32 -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\code\lib\include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MDd</LibraryPath>
+    <SourcePath>$(VC_SourcePath);..\..\..\code\lib\src</SourcePath>
+    <PublicIncludeDirectories>..\..\..\code\lib\include</PublicIncludeDirectories>
+    <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
+    <PublicModuleDirectories>..\..\..\code\lib\src</PublicModuleDirectories>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Program Files (x86)\OpenSSL-Win32\include</ExternalIncludePath>
+    <ExcludePath />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;EXCLUDE_BCHAIN_TESTS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\..\..\code\lib\include;..\..\..\dep\jsoncpp\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MDd;..\..\..\dep\windows\x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;jsoncpp_static.lib</AdditionalDependencies>
+    </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <!-- DEBUG: WIN64 -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\code\lib\include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);C:\Program Files\OpenSSL-Win64\lib\VC\x64\MDd</LibraryPath>
+    <SourcePath>$(VC_SourcePath);..\..\..\code\lib\src</SourcePath>
+    <PublicIncludeDirectories>..\..\..\code\lib\include</PublicIncludeDirectories>
+    <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
+    <PublicModuleDirectories>..\..\..\code\lib\src</PublicModuleDirectories>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Program Files\OpenSSL-Win64\include</ExternalIncludePath>
+    <ExcludePath />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;EXCLUDE_BCHAIN_TESTS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\..\..\code\lib\include;..\..\..\dep\jsoncpp\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>C:\Program Files\OpenSSL-Win64\lib\VC\x64\MDd;..\..\..\dep\windows\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;jsoncpp_static.lib</AdditionalDependencies>
+    </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <!-- unit test inc & src files -->
+  <ItemGroup>
+    <ClInclude Include="..\..\..\code\tests\unit\src\runner.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\aes_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\b58_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\b64_tests.h" />
+    <!-- <ClInclude Include="..\..\..\code\tests\unit\src\tests\bchain_tests.h" /> -->
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\btree_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\certificate_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\des3_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\dh_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\ecc_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\ed25519_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\hash_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\hex_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\llist_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\rsa_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\sc_contact_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\sc_transceiver_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\uuid_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\tests\wallet_tests.h" />
+    <ClInclude Include="..\..\..\code\tests\unit\src\test_sets.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\code\tests\unit\src\main.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\runner.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\aes_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\b58_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\b64_tests.cpp" />
+    <!-- <ClCompile Include="..\..\..\code\tests\unit\src\tests\bchain_tests.cpp" /> -->
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\btree_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\certificate_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\des3_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\dh_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\ecc_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\ed25519_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\hash_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\hex_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\llist_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\rsa_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\sc_contact_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\sc_transceiver_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\uuid_tests.cpp" />
+    <ClCompile Include="..\..\..\code\tests\unit\src\tests\wallet_tests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\cpputils_static\cpputils_static.vcxproj">
+      <Project>{f5b56b26-21ff-4a3c-b7c4-0494cfe97b6b}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

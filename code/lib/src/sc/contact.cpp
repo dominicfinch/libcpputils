@@ -2,7 +2,7 @@
 #include "sc/contact.h"
 #include "base64.h"
 #include "file.h"
-#include "zip_file.h"
+//#include "zip_file.h"
 
 bool iar::utils::SCContact::autoGenerateKeys()
 {

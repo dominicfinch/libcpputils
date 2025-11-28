@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
+	  <ProjectConfiguration Include="Debug|Win32">
+		<Configuration>Debug</Configuration>
+		<Platform>Win32</Platform>
+	  </ProjectConfiguration>
+	  <ProjectConfiguration Include="Debug|x64">
+		<Configuration>Debug</Configuration>
+		<Platform>x64</Platform>
+	  </ProjectConfiguration>
+	</ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -42,7 +42,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  
   <!-- DEBUG: WIN32 -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\code\lib\include</IncludePath>
@@ -71,18 +70,17 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MDd</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcrypto.lib;libssl.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\OpenSSL-Win32\lib\VC\x86\MDd;..\..\..\dep\windows\x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;jsoncpp_static.lib</AdditionalDependencies>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
-  
   <!-- DEBUG: WIN64 -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\code\lib\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\Program Files\OpenSSL-Win64\lib\VC\x86\MDd</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);C:\Program Files\OpenSSL-Win64\lib\VC\x64\MDd</LibraryPath>
     <SourcePath>$(VC_SourcePath);..\..\..\code\lib\src</SourcePath>
     <PublicIncludeDirectories>..\..\..\code\lib\include</PublicIncludeDirectories>
     <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
@@ -107,15 +105,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files\OpenSSL-Win64\lib\VC\x64\MDd</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcrypto.lib;libssl.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\OpenSSL-Win64\lib\VC\x64\MDd;..\..\..\dep\windows\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;jsoncpp_static.lib</AdditionalDependencies>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
-  
-  
   <ItemGroup>
     <ClInclude Include="..\..\..\code\lib\include\aes.h" />
     <ClInclude Include="..\..\..\code\lib\include\base58.h" />
@@ -133,10 +129,16 @@
     <ClInclude Include="..\..\..\code\lib\include\llist.h" />
     <ClInclude Include="..\..\..\code\lib\include\macros.h" />
     <ClInclude Include="..\..\..\code\lib\include\rsa.h" />
+    <ClInclude Include="..\..\..\code\lib\include\sc\address_book.h" />
+    <ClInclude Include="..\..\..\code\lib\include\sc\chat.h" />
+    <ClInclude Include="..\..\..\code\lib\include\sc\contact.h" />
+    <ClInclude Include="..\..\..\code\lib\include\sc\message.h" />
+    <ClInclude Include="..\..\..\code\lib\include\sc\router.h" />
+    <ClInclude Include="..\..\..\code\lib\include\sc\stream.h" />
+    <ClInclude Include="..\..\..\code\lib\include\sc\transceiver.h" />
     <ClInclude Include="..\..\..\code\lib\include\string_helpers.h" />
     <ClInclude Include="..\..\..\code\lib\include\uuid.h" />
     <ClInclude Include="..\..\..\code\lib\include\wallet.h" />
-    <ClInclude Include="framework.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\code\lib\src\aes.cpp" />
@@ -152,6 +154,13 @@
     <ClCompile Include="..\..\..\code\lib\src\hash.cpp" />
     <ClCompile Include="..\..\..\code\lib\src\hex.cpp" />
     <ClCompile Include="..\..\..\code\lib\src\rsa.cpp" />
+    <ClCompile Include="..\..\..\code\lib\src\sc\address_book.cpp" />
+    <ClCompile Include="..\..\..\code\lib\src\sc\chat.cpp" />
+    <ClCompile Include="..\..\..\code\lib\src\sc\contact.cpp" />
+    <ClCompile Include="..\..\..\code\lib\src\sc\message.cpp" />
+    <ClCompile Include="..\..\..\code\lib\src\sc\router.cpp" />
+    <ClCompile Include="..\..\..\code\lib\src\sc\stream.cpp" />
+    <ClCompile Include="..\..\..\code\lib\src\sc\transceiver.cpp" />
     <ClCompile Include="..\..\..\code\lib\src\string_helpers.cpp" />
     <ClCompile Include="..\..\..\code\lib\src\uuid.cpp" />
     <ClCompile Include="..\..\..\code\lib\src\wallet.cpp" />
