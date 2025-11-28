@@ -37,3 +37,5 @@ add_subdirectory(code/apps/sec-chat/server)
 add_subdirectory(code/apps/sec-chat/client-cli)
 add_subdirectory(code/apps/sec-chat/client-ui)
 
+add_subdirectory(code/apps/sec-fdisk)
+

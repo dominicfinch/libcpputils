@@ -10,10 +10,13 @@ cmake-build-release/
 
 Debug/
 Release/
+logs/
 
 build_win/libcpputils/cpputils_unittests/*.txt
 
 code/apps/sec-chat/server/include/constants.h
+code/apps/sec-chat/server/include/server_constants.h
+
 code/apps/sec-chat/client-cli/include/constants.h
 code/apps/sec-chat/client-ui/include/constants.h
 
