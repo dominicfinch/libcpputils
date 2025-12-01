@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.22)
 
-project("cpputils")
+project("libcpputils")
 set(CMAKE_CXX_STANDARD 17)
 
 option(BUILD_SHARED_LIB "Build the shared library" ON)

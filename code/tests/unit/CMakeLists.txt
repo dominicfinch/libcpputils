@@ -28,4 +28,4 @@ endif(EXCLUDE_CERT_TESTS)
 
 #target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INC_DIR})
 add_executable(${PROJECT_NAME} ${PROJECT_SRC_FILESET})
-target_link_libraries(${PROJECT_NAME} PRIVATE cpputils)
+target_link_libraries(${PROJECT_NAME} PRIVATE libcpputils)
