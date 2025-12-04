@@ -7,7 +7,7 @@
 #include <functional>
 
 
-iar::app::SecChatServer::SecChatServer(jsonrpc::AbstractServerConnector &connector): AbstractServer<SecChatServer>(connector)
+iar::app::SecurityService::SecurityService(jsonrpc::AbstractServerConnector &connector): AbstractServer<SecurityService>(connector)
 {
     // Register JSON-RPC method: registerDevice
     this->bindAndAddMethod(
@@ -19,69 +19,84 @@ iar::app::SecChatServer::SecChatServer(jsonrpc::AbstractServerConnector &connect
             "device_id",   jsonrpc::JSON_STRING,
             "public_key",  jsonrpc::JSON_STRING,
             nullptr),
-        &SecChatServer::registerDevice
+        &SecurityService::registerDevice
     );
 
 
 
 }
 
-bool iar::app::SecChatServer::Initialise(const Json::Value& config)
+iar::app::SecurityService::~SecurityService()
 {
-    auto logConfig = config["logging"];
+    loggersInfo.clear();
+}
+
+bool iar::app::SecurityService::Initialise(const Json::Value& config)
+{
+    auto lconfigs = config["logging"];
     auto dbConfig = config["database"];
-    auto success = initialize_logging(logConfig, logInfo) &&
+
+    loggersInfo.clear();
+    auto success = initialize_logging(lconfigs, loggersInfo) &&
         initialize_database(dbConfig, dbInfo);
 
     return success;
 }
 
 
-bool iar::app::SecChatServer::initialize_logging(const Json::Value& config, iar::app::LogInfo& lInfo)
+bool iar::app::SecurityService::initialize_logging(const Json::Value& config, std::vector<iar::app::LogInfo>& loggersInfo)
 {
+    for(auto lc : config) {
+        LogInfo lInfo;
 
-    lInfo.level = config["level"].asString();
-    lInfo.pattern = config["pattern"].asString();
-    lInfo.output = config["output"].asString();
-    lInfo.output_path = config["output-path"].asString();
-    lInfo.max_size = config["max-size"].asInt();
-    lInfo.max_files = config["max-files"].asInt();
+        lInfo.level = config["level"].asString();
+        lInfo.pattern = config["pattern"].asString();
+        lInfo.output = config["output"].asString();
+        lInfo.output_path = config["output-path"].asString();
+        lInfo.max_size = config["max-size"].asInt();
+        lInfo.max_files = config["max-files"].asInt();
 
-    //logPtr = std::make_shared<spdlog::logger>(spdlog::logger());
-    if(lInfo.output.compare("console") == 0 )
-    {
-        logPtr = spdlog::stdout_color_mt("console-log");
-    } else if(lInfo.output.compare("file") == 0)
-    {
-        logPtr = spdlog::basic_logger_mt("file-log", lInfo.output_path);
-    } else if(lInfo.output.compare("rotating-file") == 0) {
-        logPtr = spdlog::rotating_logger_mt("rot-file-log", lInfo.output_path, lInfo.max_size, lInfo.max_files);
-    }
-
-    if(logPtr.use_count() > 0) {
-        logPtr->set_pattern(lInfo.pattern);
-        spdlog::level::level_enum lvl;
-        if(lInfo.level == "trace") {
-            lvl = spdlog::level::trace;
-        } else if(lInfo.level == "debug") {
-            lvl = spdlog::level::debug;
-        } else if(lInfo.level == "info") {
-            lvl = spdlog::level::info;
-        } else if(lInfo.level == "warn") {
-            lvl = spdlog::level::warn;
-        } else if(lInfo.level == "error") {
-            lvl = spdlog::level::err;
-        } else if(lInfo.level == "critical") {
-            lvl = spdlog::level::critical;
+        //logPtr = std::make_shared<spdlog::logger>(spdlog::logger());
+        std::shared_ptr<spdlog::logger> logPtr;
+        if(lInfo.output.compare("console") == 0 )
+        {
+            logPtr = spdlog::stdout_color_mt("console-log");
+        } else if(lInfo.output.compare("file") == 0)
+        {
+            logPtr = spdlog::basic_logger_mt("file-log", lInfo.output_path);
+        } else if(lInfo.output.compare("rotating-file") == 0) {
+            logPtr = spdlog::rotating_logger_mt("rot-file-log", lInfo.output_path, lInfo.max_size, lInfo.max_files);
         }
-        logPtr->set_level(lvl);
-        logPtr->info("Created new logger instance '{}'", logPtr->name());
-    }
 
+        if(logPtr.use_count() > 0) {
+            logPtr->set_pattern(lInfo.pattern);
+            spdlog::level::level_enum lvl;
+            if(lInfo.level == "trace") {
+                lvl = spdlog::level::trace;
+            } else if(lInfo.level == "debug") {
+                lvl = spdlog::level::debug;
+            } else if(lInfo.level == "info") {
+                lvl = spdlog::level::info;
+            } else if(lInfo.level == "warn") {
+                lvl = spdlog::level::warn;
+            } else if(lInfo.level == "error") {
+                lvl = spdlog::level::err;
+            } else if(lInfo.level == "critical") {
+                lvl = spdlog::level::critical;
+            }
+            logPtr->set_level(lvl);
+
+            loggersInfo.push_back(lInfo);
+            loggers.push_back(logPtr);
+            logPtr->info("Created new logger instance '{}'", logPtr->name());
+        } else {
+            std::cout << " - Error: Unrecognized output specified: '" << lInfo.output << "'\n";
+        }
+    }
     return true;
 }
 
-bool iar::app::SecChatServer::initialize_database(const Json::Value& config, iar::app::DatabaseInfo& dInfo)
+bool iar::app::SecurityService::initialize_database(const Json::Value& config, iar::app::DatabaseInfo& dInfo)
 {
     dInfo.host = config["host"].asString();
     dInfo.user = config["user"].asString();
@@ -113,7 +128,7 @@ bool iar::app::SecChatServer::initialize_database(const Json::Value& config, iar
 }
 
 
-void iar::app::SecChatServer::registerDevice(const Json::Value& request, Json::Value& response)
+void iar::app::SecurityService::registerDevice(const Json::Value& request, Json::Value& response)
 {
     try {
         // Extract parameters

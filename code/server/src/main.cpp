@@ -14,7 +14,7 @@
 #include "server.h"
 
 std::unique_ptr<jsonrpc::HttpServer> httpServerPtr;
-std::unique_ptr<iar::app::SecChatServer> secChatServerPtr;
+std::unique_ptr<iar::app::SecurityService> secChatServerPtr;
 
 bool initalize_channel(const Json::Value& config, iar::app::ServerInfo& sInfo) {
     auto success = false;
@@ -30,9 +30,8 @@ bool initalize_channel(const Json::Value& config, iar::app::ServerInfo& sInfo) {
         {
             //std::cout << "sInfo.ssl_cert: " << sInfo.ssl_cert << "\n";
             //std::cout << "sInfo.ssl_key: " << sInfo.ssl_key << "\n";
-
             httpServerPtr = std::make_unique<jsonrpc::HttpServer>(sInfo.port_number, sInfo.ssl_cert, sInfo.ssl_key, sInfo.threads);
-            secChatServerPtr = std::make_unique<iar::app::SecChatServer>(*httpServerPtr.get());
+            secChatServerPtr = std::make_unique<iar::app::SecurityService>(*httpServerPtr.get());
             success = true;
         } else {
             // If ssl enabled then cert and key must be set
@@ -40,7 +39,7 @@ bool initalize_channel(const Json::Value& config, iar::app::ServerInfo& sInfo) {
         }
     } else {
         httpServerPtr = std::make_unique<jsonrpc::HttpServer>(sInfo.port_number, sInfo.ssl_cert, sInfo.ssl_key, sInfo.threads);
-        secChatServerPtr = std::make_unique<iar::app::SecChatServer>(*httpServerPtr.get());
+        secChatServerPtr = std::make_unique<iar::app::SecurityService>(*httpServerPtr.get());
         success = true;
     }
     return success;
@@ -49,12 +48,11 @@ bool initalize_channel(const Json::Value& config, iar::app::ServerInfo& sInfo) {
 
 int main(int argc, char * argv[])
 {
-    iar::app::SecChatServerCmdArgParser cmdArgParser;
+    iar::app::SecurityServiceCmdArgParser cmdArgParser;
 
     if(cmdArgParser.parse(argc, argv) == 0)
     {
         iar::app::ServerInfo serverInfo;
-
         auto config = cmdArgParser.config();
         if(initalize_channel(config, serverInfo))
         {

@@ -3,7 +3,7 @@
 #include "file.h"
 #include <iostream>
 
-iar::app::SecChatServerCmdArgParser::SecChatServerCmdArgParser::SecChatServerCmdArgParser() {
+iar::app::SecurityServiceCmdArgParser::SecurityServiceCmdArgParser() {
     _help   = arg_lit0("h", "help", "Display this help and exit");
     _version = arg_lit0("v", "version", "Display version information");
     _config  = arg_file0("c", "config", "<file>", "Path to JSON configuration file");
@@ -15,11 +15,11 @@ iar::app::SecChatServerCmdArgParser::SecChatServerCmdArgParser::SecChatServerCmd
     _argtable[3] = _end;
 }
 
-iar::app::SecChatServerCmdArgParser::SecChatServerCmdArgParser::~SecChatServerCmdArgParser() {
+iar::app::SecurityServiceCmdArgParser::~SecurityServiceCmdArgParser() {
     arg_freetable(_argtable, sizeof(_argtable) / sizeof(_argtable[0]));
 }
 
-int iar::app::SecChatServerCmdArgParser::parse(int argc, char* argv[]) {
+int iar::app::SecurityServiceCmdArgParser::parse(int argc, char* argv[]) {
     int nerrors = arg_parse(argc, argv, _argtable);
 
     if (_help->count > 0) {
@@ -51,7 +51,7 @@ int iar::app::SecChatServerCmdArgParser::parse(int argc, char* argv[]) {
     return nerrors;
 }
 
-bool iar::app::SecChatServerCmdArgParser::load_config(const std::string& path)
+bool iar::app::SecurityServiceCmdArgParser::load_config(const std::string& path)
 {
     return iar::utils::read_json_file(path, _parsedConfig);
 }

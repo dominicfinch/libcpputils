@@ -12,10 +12,10 @@ namespace app {
 
 
 
-    class SecChatServerCmdArgParser {
+    class SecurityServiceCmdArgParser {
     public:
-        SecChatServerCmdArgParser();
-        ~SecChatServerCmdArgParser();
+        SecurityServiceCmdArgParser();
+        ~SecurityServiceCmdArgParser();
 
         int parse(int argc, char* argv[]);
 

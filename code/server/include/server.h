@@ -43,9 +43,12 @@ namespace iar { namespace app {
         int max_files;
     };
     
-    class SecChatServer : public jsonrpc::AbstractServer<SecChatServer> {
+
+    
+    class SecurityService : public jsonrpc::AbstractServer<SecurityService> {
     public:
-        SecChatServer(jsonrpc::AbstractServerConnector &connector);
+        SecurityService(jsonrpc::AbstractServerConnector &connector);
+        ~SecurityService();
 
         bool Initialise(const Json::Value& config);
 
@@ -57,14 +60,14 @@ namespace iar { namespace app {
 
 
     private:
-        bool initialize_logging(const Json::Value& config, LogInfo& lInfo);
+        bool initialize_logging(const Json::Value& config, std::vector<LogInfo>& lInfo);
         bool initialize_database(const Json::Value& config, DatabaseInfo& dInfo);
 
-        LogInfo logInfo;
+        std::vector<LogInfo> loggersInfo;
         DatabaseInfo dbInfo;
         
-        std::shared_ptr<spdlog::logger> logPtr;
-        iar::utils::ECC eccKey;
+        std::vector<std::shared_ptr<spdlog::logger>> loggers;
+        //iar::utils::ECC eccKey;
         
     };
 
