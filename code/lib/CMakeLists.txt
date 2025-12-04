@@ -31,6 +31,7 @@ else()
     add_library(${PROJECT_NAME} ${PROJECT_SRC_FILESET})
 endif(BUILD_SHARED_LIB)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INC_DIR} ${PROJECT_EXT_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC jsoncpp_lib ${LIBS_LINK})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INC_DIR} /usr/include/jsoncpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC -ljsoncpp ${LIBS_LINK})
 set_target_properties(${PROJECT_NAME} PROPERTIES EXPORT_NAME ${PROJECT_NAME})
+
