@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.22)
 
-project("cpputils-unittests")
+project("libcpputils-unittests")
 set(CMAKE_CXX_STANDARD 17)
 
 option(EXCLUDE_DH_TESTS "Exclude Diffie-Hellman tests in build" ON)
@@ -28,4 +28,4 @@ endif(EXCLUDE_CERT_TESTS)
 
 #target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INC_DIR})
 add_executable(${PROJECT_NAME} ${PROJECT_SRC_FILESET})
-target_link_libraries(${PROJECT_NAME} PRIVATE libcpputils)
+target_link_libraries(${PROJECT_NAME} PRIVATE cpputils)

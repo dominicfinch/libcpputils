@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.22)
 
-project("cpputils-componenttests")
+project("libcpputils-componenttests")
 set(CMAKE_CXX_STANDARD 17)
 
 set(PROJECT_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -22,7 +22,7 @@ file(GLOB PROJECT_SRC_FILESET
 add_executable(${PROJECT_NAME} ${PROJECT_SRC_FILESET})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INC_DIR} ${PROJECT_EXT_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE libcpputils jsoncpp_lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE cpputils jsoncpp_lib)
 
 ########################
 ## Post build tasks ##

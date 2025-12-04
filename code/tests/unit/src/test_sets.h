@@ -22,6 +22,7 @@
 #include "tests/certificate_tests.h"
 #endif
 
+#include "tests/chacha_tests.h"
 #include "tests/ecc_tests.h"
 #include "tests/ed25519_tests.h"
 #include "tests/hash_tests.h"

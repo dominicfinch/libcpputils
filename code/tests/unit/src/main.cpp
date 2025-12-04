@@ -102,6 +102,15 @@ int main()
     });
 #endif
 
+    testRunner.add_test_set("chacha_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+        std::cout << "\nRunning CHACHA tests...\n";
+        runner->execute_test(results, "test_chacha_generate_and_has_key", test_chacha_generate_and_has_key);
+        runner->execute_test(results, "test_chacha_save_load_pem", test_chacha_save_load_pem);
+        runner->execute_test(results, "test_chacha_encrypt_decrypt_vector", test_chacha_encrypt_decrypt_vector);
+        runner->execute_test(results, "test_chacha_encrypt_decrypt_string", test_chacha_encrypt_decrypt_string);
+        runner->execute_test(results, "test_chacha_tamper_detection", test_chacha_tamper_detection);
+    });
+
     testRunner.add_test_set("des3_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning DES3 tests...\n";
         runner->execute_test(results, "test_des3_cbc_encrypt_decrypt", test_des3_cbc_encrypt_decrypt);
