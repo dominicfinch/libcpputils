@@ -23,5 +23,9 @@ execute_process(
         OUTPUT_VARIABLE GIT_COMMIT
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+# Dependencies
+add_subdirectory(dep/libcpputils)
+
+# Application projects
 add_subdirectory(code/server)
 #add_subdirectory(code/client)

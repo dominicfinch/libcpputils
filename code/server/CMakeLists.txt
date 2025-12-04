@@ -23,12 +23,14 @@ configure_file(${PROJECT_INC_DIR}/constants.h.in ${PROJECT_INC_DIR}/constants.h)
 
 add_executable(${PROJECT_NAME} ${PROJECT_SRC_FILESET})
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_INC_DIR}
     ${PROJECT_EXT_DIR}
     ${PROJECT_DEP_DIR}/libcpputils/code/lib/include
-    ${PROJECT_DEP_DIR}/jsoncpp/include)
-#target_link_libraries(${PROJECT_NAME} PRIVATE cpputils pqxx jsonrpccpp-server jsonrpccpp-common jsoncpp_lib)
+    /usr/include/jsoncpp)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE cpputils pqxx jsonrpccpp-server jsonrpccpp-common -ljsoncpp)
+
 
 ########################
 ## Post build tasks ##

@@ -1,8 +1,8 @@
 #ifndef _SEC_CHAT_SERVER_COMMON_H_
 #define _SEC_CHAT_SERVER_COMMON_H_
 
-#define GIT_BRANCH              "HEAD"
-#define GIT_COMMIT              ""
+#define GIT_BRANCH              "master"
+#define GIT_COMMIT              "183d115a083d57513884e612388d98bfde4f47d1"
 
 #define APP_PRETTY_NAME         "IAR Security Service"
 #define APP_MAJOR_VERSION       1
