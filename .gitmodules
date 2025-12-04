@@ -1,0 +1,11 @@
+[submodule "dep/jsoncpp"]
+	path = dep/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp
+	branch = 1.9.5
+[submodule "dep/libcpputils"]
+    path = dep/libcpputils
+    url = ssh://git@gitlab.securethingz.com:10022/Dominic.Finch/libcpputils.git
+    branch = master
+#[submodule "dep/openssl"]
+#	path = dep/openssl
+#	url = https://github.com/openssl/openssl.git

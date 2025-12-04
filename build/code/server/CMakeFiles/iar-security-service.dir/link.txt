@@ -1,0 +1,1 @@
+/usr/bin/c++ "CMakeFiles/iar-security-service.dir/src/database.cpp.o" "CMakeFiles/iar-security-service.dir/src/main.cpp.o" "CMakeFiles/iar-security-service.dir/src/server.cpp.o" "CMakeFiles/iar-security-service.dir/src/server_cmd_args.cpp.o" "CMakeFiles/iar-security-service.dir/__/__/dep/ext/argtable3/argtable3.c.o" -o iar-security-service 
