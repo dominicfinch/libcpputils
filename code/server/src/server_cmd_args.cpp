@@ -1,3 +1,7 @@
+/*
+ © Copyright 2025 Dominic Finch
+*/
+
 #include "server_cmd_args.h"
 #include "constants.h"
 #include "file.h"

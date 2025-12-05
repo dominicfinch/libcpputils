@@ -1,3 +1,7 @@
+/*
+ © Copyright 2025 Dominic Finch
+*/
+
 #include "database.h"
 
 // Singleton instance

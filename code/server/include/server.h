@@ -1,3 +1,7 @@
+/*
+ © Copyright 2025 Dominic Finch
+*/
+
 #pragma once
 
 #include <jsonrpccpp/server/connectors/httpserver.h>

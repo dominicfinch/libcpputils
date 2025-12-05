@@ -1,3 +1,7 @@
+/*
+ © Copyright 2025 Dominic Finch
+*/
+
 #include <iostream>
 #include "main_window.h"
 

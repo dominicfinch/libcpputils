@@ -16,4 +16,6 @@ logs/
 code/client/include/constants.h
 code/server/include/constants.h
 
+code/server/include/server_constants.h
+
 build_win/libcpputils/cpputils_unittests/*.txt

@@ -1,3 +1,6 @@
+/*
+ © Copyright 2025 Dominic Finch
+*/
 
 #include "main_window.h"
 #include <QtWidgets/QMenuBar>

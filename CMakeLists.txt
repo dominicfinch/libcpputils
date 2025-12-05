@@ -1,3 +1,7 @@
+#
+# © Copyright 2025 Dominic Finch
+#
+
 cmake_minimum_required(VERSION 3.22)
 project(iar-security-service LANGUAGES CXX)
 

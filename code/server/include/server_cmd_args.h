@@ -1,3 +1,7 @@
+/*
+ © Copyright 2025 Dominic Finch
+*/
+
 #ifndef _SEC_CHAT_SERVER_CMD_ARGS_H_
 #define _SEC_CHAT_SERVER_CMD_ARGS_H_
 

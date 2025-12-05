@@ -6,7 +6,6 @@ class QLabel;
 class QVBoxLayout;
 class QHBoxLayout;
 class QPushButton;
-class QGraphicsWebView;  // For embedded map
 
 
 namespace iar { namespace ui {
