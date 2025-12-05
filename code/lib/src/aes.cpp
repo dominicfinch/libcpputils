@@ -1,3 +1,6 @@
+/*
+ © Copyright 2025 Dominic Finch
+*/
 
 #include <openssl/aes.h>
 #include <openssl/rand.h>

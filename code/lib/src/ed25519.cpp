@@ -1,3 +1,7 @@
+/*
+ © Copyright 2025 Dominic Finch
+*/
+
 #include "ed25519.h"
 #include <openssl/evp.h>
 #include <openssl/pem.h>

@@ -1,3 +1,7 @@
+﻿/*
+ © Copyright 2025 Dominic Finch
+*/
+
 #pragma once
 // ChaCha.h - ChaCha20-Poly1305 helper (OpenSSL 3.0+)
 // Provides symmetric key generation, encrypt/decrypt, file PEM export/import,

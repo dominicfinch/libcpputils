@@ -1,6 +1,9 @@
 
-#ifndef IAR_UTILS_BASE64_H
-#define IAR_UTILS_BASE64_H
+/*
+ © Copyright 2025 Dominic Finch
+*/
+
+#pragma once
 
 #include <string>
 #include <vector>
@@ -24,4 +27,3 @@ namespace iar { namespace utils {
 
 }}
 
-#endif

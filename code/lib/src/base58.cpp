@@ -1,4 +1,8 @@
 
+/*
+ © Copyright 2025 Dominic Finch
+*/
+
 #include "base58.h"
 #include <algorithm>
 #include <stdexcept>

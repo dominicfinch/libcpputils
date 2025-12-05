@@ -1,5 +1,7 @@
+/*
+ © Copyright 2025 Dominic Finch
+*/
 
-// ChaCha.cpp
 #include "chacha.h"
 
 #include <openssl/evp.h>

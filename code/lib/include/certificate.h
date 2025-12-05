@@ -1,4 +1,12 @@
+﻿/*
+ © Copyright 2025 Dominic Finch
+*/
+
 #pragma once
+
+/*
+ © Copyright 2025 Dominic Finch
+*/
 
 #pragma once
 

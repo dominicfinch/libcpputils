@@ -1,6 +1,8 @@
+/*
+ © Copyright 2025 Dominic Finch
+*/
 
-#ifndef IAR_UTILS_FILE_HPP
-#define IAR_UTILS_FILE_HPP
+#pragma once
 
 #include <fstream>
 #include <istream>
@@ -28,4 +30,3 @@ namespace iar { namespace utils {
 
 }}
 
-#endif

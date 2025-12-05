@@ -1,6 +1,8 @@
+/*
+ © Copyright 2025 Dominic Finch
+*/
 
-#ifndef IAR_UTILS_HEX_H
-#define IAR_UTILS_HEX_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -17,6 +19,3 @@ namespace iar { namespace utils {
         static bool decode(const std::string& input, std::string& output);
     };
 }}
-
-
-#endif
