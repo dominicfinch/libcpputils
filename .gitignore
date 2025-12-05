@@ -12,6 +12,7 @@ Debug/
 Release/
 logs/
 
+*.meta.cpp
 code/server/include/constants.h
 
 build_win/libcpputils/cpputils_unittests/*.txt

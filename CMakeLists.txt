@@ -28,4 +28,4 @@ add_subdirectory(dep/libcpputils)
 
 # Application projects
 add_subdirectory(code/server)
-#add_subdirectory(code/client)
+add_subdirectory(code/client)

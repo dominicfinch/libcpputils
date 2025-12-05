@@ -44,7 +44,7 @@ namespace iar { namespace app {
     };
     
 
-    
+
     class SecurityService : public jsonrpc::AbstractServer<SecurityService> {
     public:
         SecurityService(jsonrpc::AbstractServerConnector &connector);
@@ -52,10 +52,12 @@ namespace iar { namespace app {
 
         bool Initialise(const Json::Value& config);
 
-
+        void LogMessage(const Json::Value& obj, spdlog::level::level_enum lvl = spdlog::level::level_enum::info);
+        void LogMessage(const std::string& msg, spdlog::level::level_enum lvl = spdlog::level::level_enum::info);
 
     protected:
         
+        void registerClient(const Json::Value& request, Json::Value& response);
         void registerDevice(const Json::Value& request, Json::Value& response);
 
 

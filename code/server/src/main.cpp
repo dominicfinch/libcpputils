@@ -10,11 +10,12 @@
 #include "server_cmd_args.h"
 
 #include "file.h"
+#include "string_helpers.h"
 #include "certificate.h"
 #include "server.h"
 
 std::unique_ptr<jsonrpc::HttpServer> httpServerPtr;
-std::unique_ptr<iar::app::SecurityService> secChatServerPtr;
+std::unique_ptr<iar::app::SecurityService> secServerPtr;
 
 bool initalize_channel(const Json::Value& config, iar::app::ServerInfo& sInfo) {
     auto success = false;
@@ -28,18 +29,22 @@ bool initalize_channel(const Json::Value& config, iar::app::ServerInfo& sInfo) {
     if(sInfo.ssl_enabled) {
         if(!sInfo.ssl_cert.empty() && !sInfo.ssl_key.empty())
         {
-            //std::cout << "sInfo.ssl_cert: " << sInfo.ssl_cert << "\n";
-            //std::cout << "sInfo.ssl_key: " << sInfo.ssl_key << "\n";
-            httpServerPtr = std::make_unique<jsonrpc::HttpServer>(sInfo.port_number, sInfo.ssl_cert, sInfo.ssl_key, sInfo.threads);
-            secChatServerPtr = std::make_unique<iar::app::SecurityService>(*httpServerPtr.get());
-            success = true;
+            if(iar::utils::file_exists(sInfo.ssl_cert) && iar::utils::file_exists(sInfo.ssl_key))
+            {
+                httpServerPtr = std::make_unique<jsonrpc::HttpServer>(sInfo.port_number, sInfo.ssl_cert, sInfo.ssl_key, sInfo.threads);
+                secServerPtr = std::make_unique<iar::app::SecurityService>(*httpServerPtr.get());
+                success = true;
+            } else
+            {
+                std::cout << " - Error: Unable to resolve file paths for:\n\tssl.cert: " << sInfo.ssl_cert << "\n\tssl.key: " << sInfo.ssl_key << "\n";
+            }
         } else {
             // If ssl enabled then cert and key must be set
             std::cout << " - Error: If ssl enabled then cert and key must be set\n";
         }
     } else {
-        httpServerPtr = std::make_unique<jsonrpc::HttpServer>(sInfo.port_number, sInfo.ssl_cert, sInfo.ssl_key, sInfo.threads);
-        secChatServerPtr = std::make_unique<iar::app::SecurityService>(*httpServerPtr.get());
+        httpServerPtr = std::make_unique<jsonrpc::HttpServer>(sInfo.port_number, "", "", sInfo.threads);
+        secServerPtr = std::make_unique<iar::app::SecurityService>(*httpServerPtr.get());
         success = true;
     }
     return success;
@@ -56,10 +61,11 @@ int main(int argc, char * argv[])
         auto config = cmdArgParser.config();
         if(initalize_channel(config, serverInfo))
         {
-            if (secChatServerPtr->Initialise(config) && secChatServerPtr->StartListening()) {
-                std::cout << "JSON-RPC server listening on port " << serverInfo.port_number << std::endl;
+            if ( secServerPtr->Initialise(config) && httpServerPtr->StartListening() )
+            {
+                secServerPtr->LogMessage(iar::utils::stringFormat("JSON-RPC server listening on port ", serverInfo.port_number));
                 std::cin.get(); // wait for user input
-                secChatServerPtr->StopListening();
+                secServerPtr->StopListening();
             } else {
                 std::cerr << "Error starting server" << std::endl;
             }
