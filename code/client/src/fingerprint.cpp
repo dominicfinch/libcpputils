@@ -4,8 +4,11 @@
 #include <fstream>
 
 #ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <winbio.h>
+
+#pragma comment(lib, "Winbio.lib")
 #elif defined(__linux__)
 #include <fprint.h>
 #include <glib.h>
@@ -17,6 +20,7 @@ namespace iar::app {
 struct FingerprintReader::Impl {
 #ifdef _WIN32
     WINBIO_SESSION_HANDLE session = nullptr;
+    WINBIO_UNIT_ID unitId = 0;
 #elif defined(__linux__)
     FpContext* context = nullptr;
     FpDevice* dev = nullptr;
@@ -31,16 +35,30 @@ FingerprintReader::~FingerprintReader() { shutdown(); delete impl; }
 // ------------------------ Initialize ------------------------
 bool FingerprintReader::initialize() {
 #ifdef _WIN32
-    HRESULT hr = WinBioOpenSession(
+    HRESULT hr;
+
+    hr = WinBioOpenSession(
         WINBIO_TYPE_FINGERPRINT,
         WINBIO_POOL_SYSTEM,
         WINBIO_FLAG_DEFAULT,
-        nullptr, 0,
-        nullptr,
+        nullptr,        // Array of biometric units
+        0,              // Count of biometric units
+        nullptr,        // Database ID
         &impl->session
     );
-    return SUCCEEDED(hr);
 
+    if (FAILED(hr))
+        return false;
+
+    // Find a sensor
+    WINBIO_UNIT_ID unitIdArray[10];
+    SIZE_T unitCount = 0;
+    hr = WinBioEnumBiometricUnits(WINBIO_TYPE_FINGERPRINT, unitIdArray, 10, &unitCount);
+    if (FAILED(hr) || unitCount == 0)
+        return false;
+
+    impl->unitId = unitIdArray[0];
+    return true;
 #elif defined(__linux__)
     impl->context = fp_context_new();
     if (!impl->context) {
@@ -87,7 +105,22 @@ void FingerprintReader::shutdown() {
 // ------------------------ Enrollment ------------------------
 FingerprintResult FingerprintReader::enroll(const std::string& userId) {
 #ifdef _WIN32
-    return FingerprintResult::NotSupported;
+    HRESULT hr;
+    WINBIO_IDENTITY identity = {0};
+    BOOLEAN isNewTemplate = FALSE;
+
+    hr = WinBioEnrollCapture(impl->session, &isNewTemplate);
+    if (FAILED(hr)) return FingerprintResult::Error;
+
+    hr = WinBioEnrollCommit(impl->session, &identity, nullptr);
+    if (FAILED(hr)) return FingerprintResult::Error;
+
+    // Serialize identity into a file
+    std::ofstream f(userId + ".fp", std::ios::binary);
+    if (!f.is_open()) return FingerprintResult::Error;
+
+    f.write(reinterpret_cast<char*>(&identity), sizeof(identity));
+    return FingerprintResult::Success;
 #elif defined(__linux__)
     if (!impl->initialized) return FingerprintResult::NoDevice;
 
@@ -115,7 +148,20 @@ FingerprintResult FingerprintReader::enroll(const std::string& userId) {
 // ------------------------ Verification ------------------------
 FingerprintResult FingerprintReader::verify(const std::string& userId) {
 #ifdef _WIN32
-    return FingerprintResult::NotSupported;
+    HRESULT hr;
+    WINBIO_IDENTITY storedId = {0};
+
+    // Load stored identity
+    std::ifstream f(userId + ".fp", std::ios::binary);
+    if (!f.is_open()) return FingerprintResult::Error;
+
+    f.read(reinterpret_cast<char*>(&storedId), sizeof(storedId));
+
+    BOOLEAN match = FALSE;
+    hr = WinBioVerify(impl->session, &storedId, nullptr, &match, nullptr);
+    if (FAILED(hr)) return FingerprintResult::Error;
+
+    return match ? FingerprintResult::Match : FingerprintResult::NoMatch;
 #elif defined(__linux__)
     if (!impl->initialized) return FingerprintResult::NoDevice;
 

@@ -21,7 +21,7 @@ file(GLOB PROJECT_SRC_FILESET
     ${PROJECT_SRC_DIR}/*.cpp)
 
 #message(${PROJECT_SRC_FILESET})
-#configure_file(${PROJECT_INC_DIR}/constants.h.in ${PROJECT_INC_DIR}/constants.h)
+configure_file(${PROJECT_INC_DIR}/constants.h.in ${PROJECT_INC_DIR}/constants.h)
 
 # Needed for Qt
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
