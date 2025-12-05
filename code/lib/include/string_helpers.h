@@ -2,7 +2,6 @@
 #pragma once
 
 #include "macros.h"
-
 #include <sstream>
 #include <algorithm>
 #include <cctype>
@@ -58,6 +57,8 @@ namespace iar {
         }
 
         std::vector<std::string> split(const std::string qstr, const char * delim = ",", bool filter_empties = true);
+
+        bool is_uuid_basic(const std::string &s);
 
         template <class ... Args>
         std::string stringFormat(const std::string& format, Args ... args ) {

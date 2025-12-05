@@ -1,5 +1,6 @@
 
 #include "string_helpers.h"
+#include <regex>
 
 namespace iar {
     namespace utils {
@@ -119,6 +120,14 @@ namespace iar {
                     splits.push_back(pstr.substr(0, p0));
             } while(p0 != std::string::npos);
             return splits;
+        }
+
+        bool is_uuid_basic(const std::string &s)
+        {
+            static const std::regex re(
+                R"(^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$)"
+            );
+            return std::regex_match(s, re);
         }
     }
 }
