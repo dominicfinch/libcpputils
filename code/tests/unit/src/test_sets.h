@@ -3,8 +3,6 @@
 #include <string>
 #include "runner.h"
 
-#include "tests/aes_tests.h"
-
 #ifndef EXCLUDE_BCHAIN_TESTS
 #include "tests/bchain_tests.h"
 #endif
@@ -18,10 +16,14 @@
 #include "tests/dh_tests.h"
 #endif
 
-#ifndef EXCLUDE_CERT_TESTS
+#include "tests/certificate_builder_tests.h"
 #include "tests/certificate_tests.h"
-#endif
+#include "tests/p12_repository_tests.h"
+#include "tests/pkcs12_manager_tests.h"
+#include "tests/private_key_tests.h"
+#include "tests/trust_store_tests.h"
 
+#include "tests/aes_tests.h"
 #include "tests/chacha_tests.h"
 #include "tests/ecc_tests.h"
 #include "tests/ed25519_tests.h"

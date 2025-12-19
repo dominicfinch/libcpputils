@@ -4,7 +4,7 @@ project("libcpputils-unittests")
 set(CMAKE_CXX_STANDARD 17)
 
 option(EXCLUDE_DH_TESTS "Exclude Diffie-Hellman tests in build" ON)
-option(EXCLUDE_CERT_TESTS "Exclude certificate builder tests in build" ON)
+#option(EXCLUDE_CERT_TESTS "Exclude certificate builder tests in build" ON)
 option(EXCLUDE_BCHAIN_TESTS "Exclude blockchain tests in build" OFF)
 
 ################
@@ -22,9 +22,9 @@ if(EXCLUDE_DH_TESTS)
     add_compile_definitions(EXCLUDE_DH_TESTS)
 endif(EXCLUDE_DH_TESTS)
 
-if(EXCLUDE_CERT_TESTS)
-    add_compile_definitions(EXCLUDE_CERT_TESTS)
-endif(EXCLUDE_CERT_TESTS)
+#if(EXCLUDE_CERT_TESTS)
+#    add_compile_definitions(EXCLUDE_CERT_TESTS)
+#endif(EXCLUDE_CERT_TESTS)
 
 file(GLOB PROJECT_SRC_FILESET
     ${PROJECT_SRC_DIR}/*.cpp

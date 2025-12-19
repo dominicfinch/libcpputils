@@ -76,7 +76,6 @@ int main()
         runner->execute_test(results, "test_base64_encode_decode", test_base64_encode_decode);
     });
 
-#ifndef EXCLUDE_CERT_TESTS
     testRunner.add_test_set("certificate_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning Certificate tests...\n";
         runner->execute_test(results, "test_certificatebuilder_set_subject", test_certificatebuilder_set_subject);
@@ -94,13 +93,14 @@ int main()
         runner->execute_test(results, "test_certificatebuilder_get_certificate_der", test_certificatebuilder_get_certificate_der);
         runner->execute_test(results, "test_certificatebuilder_export_to_pkcs12", test_certificatebuilder_export_to_pkcs12);
 
+        /*
         runner->execute_test(results, "test_load_from_pem", test_load_from_pem);
         runner->execute_test(results, "test_load_from_pem_file", test_load_from_pem_file);
         runner->execute_test(results, "test_load_from_der_file", test_load_from_der_file);
         runner->execute_test(results, "test_get_common_name", test_get_common_name);
         runner->execute_test(results, "test_verify_signature_self_signed", test_verify_signature_self_signed);
+        */
     });
-#endif
 
     testRunner.add_test_set("chacha_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning CHACHA tests...\n";
