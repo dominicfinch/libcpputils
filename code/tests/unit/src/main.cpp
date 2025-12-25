@@ -42,9 +42,9 @@ int main()
         runner->execute_test(results, "test_aes_encrypt_decrypt_string_cfb", test_aes_encrypt_decrypt_string_cfb);
         runner->execute_test(results, "test_aes_encrypt_decrypt_string_ecb", test_aes_encrypt_decrypt_string_ecb);
         runner->execute_test(results, "test_aes_encrypt_decrypt_binary", test_aes_encrypt_decrypt_binary);
+        runner->execute_test(results, "test_aes_encrypt_decrypt_file", test_aes_encrypt_decrypt_file);
         
         /*
-        runner->execute_test(results, "test_aes_encrypt_decrypt_file", test_aes_encrypt_decrypt_file);
         runner->execute_test(results, "test_aes_encrypt_decrypt_stream", test_aes_encrypt_decrypt_stream);
         runner->execute_test(results, "test_aes_decrypt_tampered_ciphertext_fails", test_aes_decrypt_tampered_ciphertext_fails);
         */

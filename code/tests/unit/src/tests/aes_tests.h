@@ -13,6 +13,7 @@ bool test_aes_encrypt_decrypt_string_cbc();
 bool test_aes_encrypt_decrypt_string_ecb();
 bool test_aes_encrypt_decrypt_string_cfb();
 bool test_aes_encrypt_decrypt_binary();
+bool test_aes_encrypt_decrypt_file();
 
 /*
 bool test_aes_encrypt_decrypt_file();

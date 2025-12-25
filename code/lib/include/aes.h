@@ -34,6 +34,7 @@ namespace iar {
             ~AES();
 
             void clear_key();
+            void set_use_hkdf(bool state) { _raw_key_mode = state; }
             bool generate_key(unsigned int keysize = DEFAULT_AES_KEYSIZE);
 
             std::string hex_encoded_key();
@@ -54,8 +55,8 @@ namespace iar {
             bool encrypt(const std::string& input, std::string& output);
             bool decrypt(const std::string& input, std::string& output);
 
-            //bool encrypt_file(const std::string& input_path, const std::string& output_path, const std::string& tag_path);
-            //bool decrypt_file(const std::string& input_path, const std::string& output_path, const std::string& tag_path);
+            bool encrypt_file(const std::string& in, const std::string& out);
+            bool decrypt_file(const std::string& in, const std::string& out);
 
             //bool encrypt_stream(std::istream& in, std::ostream& out, std::ostream* tag_out);
             //bool decrypt_stream(std::istream& in, std::ostream& out, std::istream* tag_in);
@@ -71,7 +72,7 @@ namespace iar {
             std::vector<uint8_t> _iv;
 
             const size_t SALT_LEN = 16;
-
+            bool _raw_key_mode = false;
             AESMode _mode = AESMode::GCM;
             std::mutex _lock_mutex;
         };

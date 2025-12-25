@@ -123,14 +123,18 @@ namespace iar {
                 return false;
 
             // --- Derive per-message session key ---
-            session_key.resize(_master_key.size());
-            if (hkdf_sha256(
-                    salt,
-                    _master_key,
-                    {'A','E','S','-','S','E','S','S'},
-                    session_key,
-                    session_key.size()) <= 0)
-                return false;
+            if(!_raw_key_mode) {
+                session_key.resize(_master_key.size());
+                if (hkdf_sha256(
+                        salt,
+                        _master_key,
+                        {'A','E','S','-','S','E','S','S'},
+                        session_key,
+                        session_key.size()) <= 0)
+                    return false;
+            } else {
+                session_key = _master_key;
+            }
 
             EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
             if (!ctx) return false;
@@ -210,14 +214,18 @@ namespace iar {
                 return false;
 
             // --- Re-derive same session key ---
-            session_key.resize(_master_key.size());
-            if (hkdf_sha256(
-                    salt,
-                    _master_key,
-                    {'A','E','S','-','S','E','S','S'},
-                    session_key,
-                    session_key.size()) <= 0)
-                return false;
+            if(!_raw_key_mode) {
+                session_key.resize(_master_key.size());
+                if (hkdf_sha256(
+                        salt,
+                        _master_key,
+                        {'A','E','S','-','S','E','S','S'},
+                        session_key,
+                        session_key.size()) <= 0)
+                    return false;
+            } else {
+                session_key = _master_key;
+            }
 
             EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
             if (!ctx) return false;
@@ -366,159 +374,33 @@ namespace iar {
             return true;
         }
 
-        /*
-        bool AES::encrypt_file(const std::string& input_path, const std::string& output_path, const std::string& tag_path)
+        bool AES::encrypt_file(const std::string& in, const std::string& out)
         {
-            std::vector<uint8_t> iv(16);
-            RAND_bytes(iv.data(), iv.size());
+            std::ifstream f(in, std::ios::binary);
+            std::vector<uint8_t> data((std::istreambuf_iterator<char>(f)), {});
 
-            std::ifstream infile(input_path, std::ios::binary);
-            std::ofstream outfile(output_path, std::ios::binary);
-            if (!infile || !outfile) return false;
+            std::vector<uint8_t> enc;
+            if (!encrypt(data, enc)) return false;
 
-            EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
-            if (!ctx) return false;
-
-            std::vector<uint8_t> tag;
-            bool success = false;
-            try {
-                const EVP_CIPHER* cipher = get_cipher();
-
-                if (EVP_EncryptInit_ex(ctx, cipher, nullptr, nullptr, nullptr) != 1)
-                    throw std::runtime_error("EncryptInit failed");
-
-                if (_mode == AESMode::GCM &&
-                    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, iv.size(), nullptr) != 1)
-                    throw std::runtime_error("Set GCM IV length failed");
-
-                if (EVP_EncryptInit_ex(ctx, nullptr, nullptr, _key.data(), iv.data()) != 1)
-                    throw std::runtime_error("EncryptInit (key/iv) failed");
-
-                std::vector<uint8_t> in_buf(AES_BUFFER_SIZE);
-                std::vector<uint8_t> out_buf(AES_BUFFER_SIZE + EVP_CIPHER_block_size(cipher));
-
-                int out_len = 0;
-
-                while (infile.good()) {
-                    infile.read(reinterpret_cast<char*>(in_buf.data()), in_buf.size());
-                    std::streamsize read_bytes = infile.gcount();
-                    if (read_bytes == 0) break;
-
-                    if (EVP_EncryptUpdate(ctx, out_buf.data(), &out_len, in_buf.data(), read_bytes) != 1)
-                        throw std::runtime_error("EncryptUpdate failed");
-
-                    outfile.write(reinterpret_cast<char*>(out_buf.data()), out_len);
-                }
-
-                if (_mode != AESMode::GCM) {
-                    if (EVP_EncryptFinal_ex(ctx, out_buf.data(), &out_len) != 1)
-                        throw std::runtime_error("EncryptFinal failed");
-                    outfile.write(reinterpret_cast<char*>(out_buf.data()), out_len);
-                } else {
-                    // No final block written for GCM
-                    if (_mode == AESMode::GCM) {
-                        if (EVP_EncryptFinal_ex(ctx, nullptr, &out_len) != 1)
-                            throw std::runtime_error("EncryptFinal failed");
-
-                        tag.resize(16);
-                        if (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, tag.size(), tag.data()) != 1)
-                            throw std::runtime_error("Get GCM tag failed");
-
-                        if (!tag_path.empty()) {
-                            std::ofstream tag_file(tag_path, std::ios::binary);
-                            tag_file.write(reinterpret_cast<const char*>(tag.data()), tag.size());
-                        }
-                    } else {
-                        if (EVP_EncryptFinal_ex(ctx, out_buf.data(), &out_len) != 1)
-                            throw std::runtime_error("EncryptFinal failed");
-                        outfile.write(reinterpret_cast<char*>(out_buf.data()), out_len);
-                    }
-
-                    if (!tag_path.empty()) {
-                        std::ofstream tag_file(tag_path, std::ios::binary);
-                        tag_file.write(reinterpret_cast<const char*>(tag.data()), tag.size());
-                    }
-                }
-
-                success = true;
-
-            } catch (const std::exception& e) {
-                fprintf(stderr, "File encryption failed: %s\n", e.what());
-            }
-
-            EVP_CIPHER_CTX_free(ctx);
-            return success;
+            std::ofstream o(out, std::ios::binary);
+            o.write((char*)enc.data(), enc.size());
+            return true;
         }
 
-        bool AES::decrypt_file(const std::string& input_path, const std::string& output_path, const std::string& tag_path) {
-            if (_key.empty()) return false;
+        bool AES::decrypt_file(const std::string& in, const std::string& out)
+        {
+            std::ifstream f(in, std::ios::binary);
+            std::vector<uint8_t> data((std::istreambuf_iterator<char>(f)), {});
 
-            std::ifstream infile(input_path, std::ios::binary);
-            std::ofstream outfile(output_path, std::ios::binary);
-            if (!infile || !outfile) return false;
+            std::vector<uint8_t> enc;
+            if (!decrypt(data, enc)) return false;
 
-            std::vector<uint8_t> tag;
-            if (_mode == AESMode::GCM && !tag_path.empty()) {
-                std::ifstream tag_file(tag_path, std::ios::binary);
-                if (!tag_file) return false;
-
-                tag.resize(16);
-                tag_file.read(reinterpret_cast<char*>(tag.data()), tag.size());
-            }
-
-            EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
-            if (!ctx) return false;
-
-            bool success = false;
-            try {
-                const EVP_CIPHER* cipher = get_cipher();
-
-                if (EVP_DecryptInit_ex(ctx, cipher, nullptr, nullptr, nullptr) != 1)
-                    throw std::runtime_error("DecryptInit failed");
-
-                if (_mode == AESMode::GCM &&
-                    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, _iv.size(), nullptr) != 1)
-                    throw std::runtime_error("Set GCM IV length failed");
-                
-                if (_mode == AESMode::GCM) {
-                    if (tag.empty()) throw std::runtime_error("Missing GCM tag");
-                    if (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, tag.size(), tag.data()) != 1)
-                        throw std::runtime_error("Set GCM tag failed");
-                }
-
-                if (EVP_DecryptInit_ex(ctx, nullptr, nullptr, _key.data(), _iv.data()) != 1)
-                    throw std::runtime_error("DecryptInit (key/iv) failed");
-
-                std::vector<uint8_t> in_buf(AES_BUFFER_SIZE);
-                std::vector<uint8_t> out_buf(AES_BUFFER_SIZE + EVP_CIPHER_block_size(cipher));
-
-                int out_len = 0;
-
-                while (infile.good()) {
-                    infile.read(reinterpret_cast<char*>(in_buf.data()), in_buf.size());
-                    std::streamsize read_bytes = infile.gcount();
-                    if (read_bytes == 0) break;
-
-                    if (EVP_DecryptUpdate(ctx, out_buf.data(), &out_len, in_buf.data(), read_bytes) != 1)
-                        throw std::runtime_error("DecryptUpdate failed");
-
-                    outfile.write(reinterpret_cast<char*>(out_buf.data()), out_len);
-                }
-
-                if (EVP_DecryptFinal_ex(ctx, out_buf.data(), &out_len) != 1)
-                    throw std::runtime_error("DecryptFinal failed");
-
-                outfile.write(reinterpret_cast<char*>(out_buf.data()), out_len);
-                success = true;
-
-            } catch (const std::exception& e) {
-                fprintf(stderr, "File decryption failed: %s\n", e.what());
-            }
-
-            EVP_CIPHER_CTX_free(ctx);
-            return success;
+            std::ofstream o(out, std::ios::binary);
+            o.write((char*)enc.data(), enc.size());
+            return true;
         }
 
+        /*
         bool AES::encrypt_stream(std::istream& in, std::ostream& out, std::ostream* tag_out) {
             // Read the full input from stream
             std::string input((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());

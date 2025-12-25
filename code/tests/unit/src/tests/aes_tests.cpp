@@ -221,7 +221,6 @@ bool test_aes_encrypt_decrypt_binary_low_level_cfb()
     return pt == msg;
 }
 
-
 bool test_aes_encrypt_decrypt_binary() {
     iar::utils::AES aes;
     if (!aes.generate_key())
@@ -239,7 +238,6 @@ bool test_aes_encrypt_decrypt_binary() {
     return decrypted == input;
 }
 
-/*
 bool test_aes_encrypt_decrypt_file() {
     iar::utils::AES aes;
     if (!aes.generate_key())
@@ -248,10 +246,10 @@ bool test_aes_encrypt_decrypt_file() {
     std::string input_text = "Sensitive file contents";
     std::ofstream("aes_input.txt") << input_text;
 
-    if (!aes.encrypt_file("aes_input.txt", "aes_output.enc", "aes_tag.dat"))
+    if (!aes.encrypt_file("aes_input.txt", "aes_output.enc"))
         return false;
 
-    if (!aes.decrypt_file("aes_output.enc", "aes_output.txt", "aes_tag.dat"))
+    if (!aes.decrypt_file("aes_output.enc", "aes_output.txt"))
         return false;
 
     std::ifstream decrypted("aes_output.txt");
@@ -264,7 +262,7 @@ bool test_aes_encrypt_decrypt_file() {
 
     return result == input_text;
 }
-
+/*
 bool test_aes_encrypt_decrypt_stream() {
     iar::utils::AES aes;
     if (!aes.generate_key()) return false;
