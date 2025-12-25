@@ -5,6 +5,7 @@
 #include <openssl/aes.h>
 #include <openssl/rand.h>
 #include <sstream>
+#include <iostream>
 
 #include "aes.h"
 #include "base64.h"
@@ -12,6 +13,7 @@
 #include "file.h"
 #include "macros.h"
 #include "string_helpers.h"
+#include "crypto_common.h"
 
 namespace iar {
     namespace utils {
@@ -25,142 +27,158 @@ namespace iar {
         }
 
         void AES::clear_key() {
-            std::fill(_key.begin(), _key.end(), 0);
+            std::fill(_master_key.begin(), _master_key.end(), 0);
+            //std::fill(_key.begin(), _key.end(), 0);
             std::fill(_iv.begin(), _iv.end(), 0);
-            _key.clear();
+            std::fill(_salt.begin(), _salt.end(), 0);
+
+            _master_key.clear();
+            //_key.clear();
             _iv.clear();
+            _salt.clear();
         }
 
         bool AES::generate_key(unsigned int keysize) {
             if((keysize == S_AES_KEY_SIZE) || (keysize == M_AES_KEY_SIZE) || (keysize == L_AES_KEY_SIZE))
             {
-                _key.resize(keysize / 8);
-                _iv.resize(16);
-                auto key_allocate_success = RAND_bytes(_key.data(), keysize / 8) > 0;
-                auto iv_allocate_success = RAND_bytes(_iv.data(), 16) > 0;
-                return key_allocate_success && iv_allocate_success;
+                auto ivlen = 0;
+                if(_mode == AESMode::GCM)
+                    ivlen = 12;
+                else if(_mode == AESMode::CFB || _mode == AESMode::CBC)
+                    ivlen = 16;
+                
+                _master_key.resize(keysize / 8);
+                _iv.resize(ivlen);
+                _salt.resize(SALT_LEN);
+
+                if (RAND_bytes(_master_key.data(), keysize / 8) != 1) return false;
+                if (RAND_bytes(_iv.data(), ivlen) != 1) return false;
+                if (RAND_bytes(_salt.data(), SALT_LEN) != 1) return false;
+
+                return true;
             }
             return false;
         }
 
         std::string AES::hex_encoded_key() {
-            std::string encodedKey = utils::Hex::encode(_key);
+            std::string encodedKey = utils::Hex::encode(_master_key);
             return encodedKey;
+        }
+        
+        std::string AES::hex_encoded_salt() {
+            std::string encodedSalt = utils::Hex::encode(_salt);
+            return encodedSalt;
         }
 
         std::string AES::hex_encoded_iv() {
-            std::string encodedIv = utils::Hex::encode(_iv);
-            return encodedIv;
+            std::string encodedIV = utils::Hex::encode(_iv);
+            return encodedIV;
         }
-
-        bool AES::import_key(const std::string& fpath) {
-            bool success = false;
+        
+        bool AES::import_key(const std::string& fpath)
+        {
             if (file_exists(fpath)) {
                 std::string content;
                 if(utils::read_file_contents(fpath, content)) {
-                    auto splits = utils::split(content, ":");
-
-                    if(splits.size() == 2)
+                    auto splits = utils::split(content, "\n");
+                    for(auto split : splits)
                     {
-                        clear_key();
-                        _key = utils::Hex::decode(splits.front());
-                        _iv = utils::Hex::decode(splits.back());
-                        success = true;
+                        auto line_split = utils::split(split, "=");
+
+                        utils::ltrim(line_split[0]);
+                        if(utils::toLower(line_split[0]) == "salt") {
+                            _salt = utils::Hex::decode(line_split[1]);
+                        } else if(utils::toLower(line_split[0]) == "key") {
+                            _master_key = utils::Hex::decode(line_split[1]);
+                        } else if(utils::toLower(line_split[0]) == "iv") {
+                            _iv = utils::Hex::decode(line_split[1]);
+                        }
                     }
+                    return true;
                 }
             }
-            return success;
+            return false;
         }
 
-        bool AES::export_key(const std::string& fpath) {
-            bool success = false;
+        bool AES::export_key(const std::string& fpath) 
+        {
             std::stringstream ss;
-            ss << hex_encoded_key() << ":" << hex_encoded_iv();
+            ss << "salt=" << hex_encoded_salt() << "\n";
+            ss << "key=" << hex_encoded_key() << "\n";
+            ss << "iv=" << hex_encoded_iv() << "\n";
             return utils::write_file_contents(fpath, ss.str());
         }
 
-        bool AES::encrypt(const std::string& plaintext, std::string& ciphertext_base64, std::string& out_tag_base64) {
-            std::vector<uint8_t> input(plaintext.begin(), plaintext.end());
-            std::vector<uint8_t> encrypted;
-            std::vector<uint8_t> tag;
+        // ---------------- Low-level API ----------------
+        bool AES::encrypt(const std::vector<uint8_t>& plaintext, const std::vector<uint8_t>& salt, const std::vector<uint8_t>& iv, std::vector<uint8_t>& ciphertext, std::vector<uint8_t>* out_tag, std::vector<uint8_t>& session_key)
+        {
+            ciphertext.clear();
+            auto ivlen = 0;
+            if(_mode == AESMode::GCM)
+                ivlen = 12;
+            else if(_mode == AESMode::CFB || _mode == AESMode::CBC)
+                ivlen = 16;
 
-            if (!encrypt(input, encrypted, &tag))
+            if (salt.size() != SALT_LEN || iv.size() != ivlen)
                 return false;
 
-            std::string ciphertext_raw(encrypted.begin(), encrypted.end());
-            if (!Base64::encode(ciphertext_raw, ciphertext_base64))
+            // --- Derive per-message session key ---
+            session_key.resize(_master_key.size());
+            if (hkdf_sha256(
+                    salt,
+                    _master_key,
+                    {'A','E','S','-','S','E','S','S'},
+                    session_key,
+                    session_key.size()) <= 0)
                 return false;
-
-            if (_mode == AESMode::GCM) {
-                std::string tag_raw(tag.begin(), tag.end());
-                if (!Base64::encode(tag_raw, out_tag_base64))
-                    return false;
-            } else {
-                out_tag_base64.clear(); // Not needed for ECB/CBC
-            }
-
-            return true;
-        }
-
-        bool AES::decrypt(const std::string& ciphertext_base64, std::string& plaintext, std::string& in_tag_base64) {
-            std::string decoded_ciphertext;
-            if (!Base64::decode(ciphertext_base64, decoded_ciphertext))
-                return false;
-
-            std::vector<uint8_t> ciphertext(decoded_ciphertext.begin(), decoded_ciphertext.end());
-            std::vector<uint8_t> tag;
-
-            if (_mode == AESMode::GCM) {
-                std::string decoded_tag;
-                if (!Base64::decode(in_tag_base64, decoded_tag) || decoded_tag.size() != 16)
-                    return false;
-                tag.assign(decoded_tag.begin(), decoded_tag.end());
-            }
-
-            std::vector<uint8_t> decrypted;
-            if (!decrypt(ciphertext, decrypted, _mode == AESMode::GCM ? &tag : nullptr))
-                return false;
-
-            plaintext.assign(decrypted.begin(), decrypted.end());
-            return true;
-        }
-
-
-        bool AES::encrypt(const std::vector<uint8_t>& input, std::vector<uint8_t>& output, std::vector<uint8_t>* out_tag) {
-            output.clear();
-            if (_key.empty()) return false;
-            if (_mode != AESMode::ECB && _iv.empty()) return false;
 
             EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
             if (!ctx) return false;
 
             bool success = false;
-            int out_len1 = 0, out_len2 = 0;
-
             try {
                 const EVP_CIPHER* cipher = get_cipher();
+                const int block_size = EVP_CIPHER_block_size(cipher);
 
                 if (EVP_EncryptInit_ex(ctx, cipher, nullptr, nullptr, nullptr) != 1)
                     throw std::runtime_error("EncryptInit failed");
 
+                // GCM only
                 if (_mode == AESMode::GCM) {
-                    if (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, _iv.size(), nullptr) != 1)
+                    if (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN,
+                                            (int)iv.size(), nullptr) != 1)
                         throw std::runtime_error("Set IV length failed");
                 }
 
-                if (EVP_EncryptInit_ex(ctx, nullptr, nullptr, _key.data(), _iv.empty() ? nullptr : _iv.data()) != 1)
+                if (EVP_EncryptInit_ex(ctx, nullptr, nullptr,
+                                    session_key.data(), iv.data()) != 1)
                     throw std::runtime_error("EncryptInit key/iv failed");
 
-                output.resize(input.size() + EVP_CIPHER_block_size(cipher));
+                // Allocate enough room for padding (CBC/ECB)
+                if(_mode == AESMode::CBC || _mode == AESMode::ECB)
+                    ciphertext.resize(plaintext.size() + block_size);
+                else
+                    ciphertext.resize(plaintext.size());
 
-                if (EVP_EncryptUpdate(ctx, output.data(), &out_len1, input.data(), input.size()) != 1)
-                    throw std::runtime_error("EncryptUpdate failed");
+                int outlen1 = 0;
+                if (!plaintext.empty()) {
+                    if (EVP_EncryptUpdate(ctx,
+                                        ciphertext.data(),
+                                        &outlen1,
+                                        plaintext.data(),
+                                        plaintext.size()) != 1)
+                        throw std::runtime_error("EncryptUpdate failed");
+                }
 
-                if (EVP_EncryptFinal_ex(ctx, output.data() + out_len1, &out_len2) != 1)
+                int outlen2 = 0;
+                if (EVP_EncryptFinal_ex(ctx,
+                                        ciphertext.data() + outlen1,
+                                        &outlen2) != 1)
                     throw std::runtime_error("EncryptFinal failed");
 
-                output.resize(out_len1 + out_len2);
+                ciphertext.resize(outlen1 + outlen2);
 
+                // GCM tag only
                 if (_mode == AESMode::GCM && out_tag) {
                     out_tag->resize(16);
                     if (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, 16, out_tag->data()) != 1)
@@ -168,70 +186,191 @@ namespace iar {
                 }
 
                 success = true;
-            } catch (const std::exception& ex) {
-                fprintf(stderr, "Encryption error: %s\n", ex.what());
-                output.clear();
+            }
+            catch (...) {
+                ciphertext.clear();
+                session_key.clear();
+                if (out_tag) out_tag->clear();
             }
 
             EVP_CIPHER_CTX_free(ctx);
             return success;
         }
 
-        bool AES::decrypt(const std::vector<uint8_t>& input, std::vector<uint8_t>& output, std::vector<uint8_t>* in_tag) {
-            output.clear();
-            if (_key.empty()) return false;
-            if (_mode != AESMode::ECB && _iv.empty()) return false;
+        bool AES::decrypt(const std::vector<uint8_t>& ciphertext, const std::vector<uint8_t>& salt, const std::vector<uint8_t>& iv, const std::vector<uint8_t>* tag, std::vector<uint8_t>& plaintext, std::vector<uint8_t>& session_key)
+        {
+            plaintext.clear();
+            auto ivlen = 0;
+            if(_mode == AESMode::GCM)
+                ivlen = 12;
+            else if(_mode == AESMode::CFB || _mode == AESMode::CBC)
+                ivlen = 16;
+            
+            if (salt.size() != SALT_LEN || iv.size() != ivlen)
+                return false;
+
+            // --- Re-derive same session key ---
+            session_key.resize(_master_key.size());
+            if (hkdf_sha256(
+                    salt,
+                    _master_key,
+                    {'A','E','S','-','S','E','S','S'},
+                    session_key,
+                    session_key.size()) <= 0)
+                return false;
 
             EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
             if (!ctx) return false;
 
             bool success = false;
-            int out_len1 = 0, out_len2 = 0;
-
             try {
                 const EVP_CIPHER* cipher = get_cipher();
+                const int block_size = EVP_CIPHER_block_size(cipher);
 
                 if (EVP_DecryptInit_ex(ctx, cipher, nullptr, nullptr, nullptr) != 1)
                     throw std::runtime_error("DecryptInit failed");
 
                 if (_mode == AESMode::GCM) {
-                    if (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, _iv.size(), nullptr) != 1)
+                    if (EVP_CIPHER_CTX_ctrl(ctx,
+                                            EVP_CTRL_GCM_SET_IVLEN,
+                                            (int)iv.size(),
+                                            nullptr) != 1)
                         throw std::runtime_error("Set IV length failed");
                 }
 
-                if (EVP_DecryptInit_ex(ctx, nullptr, nullptr, _key.data(), _iv.empty() ? nullptr : _iv.data()) != 1)
+                if (EVP_DecryptInit_ex(ctx, nullptr, nullptr,
+                                    session_key.data(), iv.data()) != 1)
                     throw std::runtime_error("DecryptInit key/iv failed");
 
-                if (_mode == AESMode::GCM) {
-                    if (!in_tag || in_tag->size() != 16)
-                        throw std::runtime_error("Missing or invalid GCM tag");
-
-                    if (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, 16, const_cast<uint8_t*>(in_tag->data())) != 1)
+                // GCM tag must be set BEFORE final
+                if (_mode == AESMode::GCM && tag) {
+                    if (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, 16, const_cast<uint8_t*>(tag->data())) != 1)
                         throw std::runtime_error("Set GCM tag failed");
                 }
 
-                output.resize(input.size() + EVP_CIPHER_block_size(cipher));
+                plaintext.resize(ciphertext.size() + block_size);
 
-                if (EVP_DecryptUpdate(ctx, output.data(), &out_len1, input.data(), input.size()) != 1)
-                    throw std::runtime_error("DecryptUpdate failed");
+                int outlen1 = 0;
+                if (!ciphertext.empty()) {
+                    if (EVP_DecryptUpdate(ctx,
+                                        plaintext.data(),
+                                        &outlen1,
+                                        ciphertext.data(),
+                                        ciphertext.size()) != 1)
+                        throw std::runtime_error("DecryptUpdate failed");
+                }
 
-                if (EVP_DecryptFinal_ex(ctx, output.data() + out_len1, &out_len2) != 1)
+                int outlen2 = 0;
+                if (EVP_DecryptFinal_ex(ctx,
+                                        plaintext.data() + outlen1,
+                                        &outlen2) != 1)
                     throw std::runtime_error("DecryptFinal failed");
 
-                output.resize(out_len1 + out_len2);
+                plaintext.resize(outlen1 + outlen2);
                 success = true;
-            } catch (const std::exception& ex) {
-                fprintf(stderr, "Decryption error: %s\n", ex.what());
-                output.clear();
+            }
+            catch (...) {
+                plaintext.clear();
+                session_key.clear();
             }
 
             EVP_CIPHER_CTX_free(ctx);
             return success;
         }
 
+        // ---------------- High-level API ----------------
+        bool AES::encrypt(const std::vector<uint8_t>& plaintext, std::vector<uint8_t>& output)
+        {
+            auto ivlen = 0;
+            if(_mode == AESMode::GCM)
+                ivlen = 12;
+            else if(_mode == AESMode::CFB || _mode == AESMode::CBC)
+                ivlen = 16;
+            
+            std::vector<uint8_t> salt(SALT_LEN);
+            std::vector<uint8_t> iv(ivlen);
+            if (RAND_bytes(salt.data(), SALT_LEN) != 1) return false;
+            if (RAND_bytes(iv.data(), ivlen) != 1) return false;
 
-        bool AES::encrypt_file(const std::string& input_path, const std::string& output_path, const std::string& tag_path) {
-            if (_key.empty() || _iv.empty()) return false;
+            std::vector<uint8_t> session_key;
+            std::vector<uint8_t> ciphertext;
+            std::vector<uint8_t> tag;
+
+            if (!encrypt(plaintext, salt, iv, ciphertext, (_mode == AESMode::GCM ? &tag : nullptr), session_key))
+                return false;
+
+            output.reserve(SALT_LEN + ivlen + ciphertext.size() + tag.size());
+            output.insert(output.end(), salt.begin(), salt.end());
+            output.insert(output.end(), iv.begin(), iv.end());
+            output.insert(output.end(), ciphertext.begin(), ciphertext.end());
+            if (_mode == AESMode::GCM) output.insert(output.end(), tag.begin(), tag.end());
+
+            return true;
+        }
+
+        bool AES::decrypt(const std::vector<uint8_t>& input, std::vector<uint8_t>& plaintext)
+        {
+            plaintext.clear();
+            auto ivlen = 0;
+            if(_mode == AESMode::GCM)
+                ivlen = 12;
+            else if(_mode == AESMode::CFB || _mode == AESMode::CBC)
+                ivlen = 16;
+            
+            size_t min_len = SALT_LEN + ivlen;
+            if (_mode == AESMode::GCM) min_len += 16;
+            if (input.size() < min_len) return false;
+
+            const uint8_t* ptr = input.data();
+            std::vector<uint8_t> salt(ptr, ptr + SALT_LEN); ptr += SALT_LEN;
+            std::vector<uint8_t> iv(ptr, ptr + ivlen); ptr += ivlen;
+
+            size_t remaining = input.size() - SALT_LEN - ivlen;
+            std::vector<uint8_t> tag;
+            if (_mode == AESMode::GCM) {
+                if (remaining < 16) return false;
+                tag.assign(ptr + remaining - 16, ptr + remaining);
+                remaining -= 16;
+            }
+
+            std::vector<uint8_t> ciphertext(ptr, ptr + remaining);
+            std::vector<uint8_t> session_key;
+
+            return decrypt(ciphertext, salt, iv, (_mode == AESMode::GCM ? &tag : nullptr), plaintext, session_key);
+        }
+
+        bool AES::encrypt(const std::string& input, std::string& output)
+        {
+            std::vector<uint8_t> plaintext(input.begin(), input.end());
+            std::vector<uint8_t> encrypted;
+
+            if (!encrypt(plaintext, encrypted))
+                return false;
+
+            std::string ciphertext_raw(encrypted.begin(), encrypted.end());
+            return Base64::encode(ciphertext_raw, output);
+        }
+
+        bool AES::decrypt(const std::string& input, std::string& output)
+        {
+            std::string decoded_ciphertext;
+            if (!Base64::decode(input, decoded_ciphertext))
+                return false;
+
+            std::vector<uint8_t> ciphertext(decoded_ciphertext.begin(), decoded_ciphertext.end());
+            std::vector<uint8_t> decrypted;
+            if (!decrypt(ciphertext, decrypted))
+                return false;
+
+            output.assign(decrypted.begin(), decrypted.end());
+            return true;
+        }
+
+        /*
+        bool AES::encrypt_file(const std::string& input_path, const std::string& output_path, const std::string& tag_path)
+        {
+            std::vector<uint8_t> iv(16);
+            RAND_bytes(iv.data(), iv.size());
 
             std::ifstream infile(input_path, std::ios::binary);
             std::ofstream outfile(output_path, std::ios::binary);
@@ -249,10 +388,10 @@ namespace iar {
                     throw std::runtime_error("EncryptInit failed");
 
                 if (_mode == AESMode::GCM &&
-                    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, _iv.size(), nullptr) != 1)
+                    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, iv.size(), nullptr) != 1)
                     throw std::runtime_error("Set GCM IV length failed");
 
-                if (EVP_EncryptInit_ex(ctx, nullptr, nullptr, _key.data(), _iv.data()) != 1)
+                if (EVP_EncryptInit_ex(ctx, nullptr, nullptr, _key.data(), iv.data()) != 1)
                     throw std::runtime_error("EncryptInit (key/iv) failed");
 
                 std::vector<uint8_t> in_buf(AES_BUFFER_SIZE);
@@ -312,7 +451,7 @@ namespace iar {
         }
 
         bool AES::decrypt_file(const std::string& input_path, const std::string& output_path, const std::string& tag_path) {
-            if (_key.empty() || _iv.empty()) return false;
+            if (_key.empty()) return false;
 
             std::ifstream infile(input_path, std::ios::binary);
             std::ofstream outfile(output_path, std::ios::binary);
@@ -432,10 +571,10 @@ namespace iar {
             out.write(reinterpret_cast<const char*>(out_data.data()), out_data.size());
             return true;
         }
-
+        */
         
         const EVP_CIPHER* AES::get_cipher() const {
-            size_t key_len = _key.size();
+            size_t key_len = _master_key.size();
             if (_mode == AESMode::ECB) {
                 if (key_len == 16) return EVP_aes_128_ecb();
                 if (key_len == 24) return EVP_aes_192_ecb();

@@ -18,6 +18,11 @@ Certificate::~Certificate() {
     if (cert_) X509_free(cert_);
 }
 
+Certificate::Certificate(X509 * cert)
+{
+    
+}
+
 Certificate::Certificate(const Certificate& other) {
     cert_ = other.cert_ ? X509_dup(other.cert_) : nullptr;
 }

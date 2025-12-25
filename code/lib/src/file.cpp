@@ -4,10 +4,9 @@
 
 #include "file.h"
 
-namespace ex = std::experimental;
-namespace fs = std::experimental::filesystem;
-
 namespace iar { namespace utils {
+
+    namespace fs = std::filesystem;
 
     bool file_exists(const std::string& fpath) {
         return fs::exists( fs::path( fpath.c_str() ) ) && fs::is_regular_file( fs::path(fpath.c_str()) );

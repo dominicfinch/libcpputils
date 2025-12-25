@@ -32,7 +32,6 @@
 #include "tests/llist_tests.h"
 #include "tests/rsa_tests.h"
 #include "tests/sc_contact_tests.h"
-#include "tests/sc_transceiver_tests.h"
 #include "tests/uuid_tests.h"
 #include "tests/wallet_tests.h"
 

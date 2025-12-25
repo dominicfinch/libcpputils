@@ -17,6 +17,9 @@
 namespace iar {
     namespace utils {
 
+        void ltrim(std::string &s);
+        void rtrim(std::string &s);
+
         std::string toLower(std::string& s);
         std::string toUpper(std::string& s);
 

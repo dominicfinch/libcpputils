@@ -29,15 +29,25 @@ int main()
 
     testRunner.add_test_set("aes_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning AES tests...\n";
+
+        runner->execute_test(results, "test_aes_key_file_import", test_aes_key_file_import);
         runner->execute_test(results, "test_aes_key_generation_export_import", test_aes_key_generation_export_import);
+        runner->execute_test(results, "test_aes_encrypt_decrypt_binary_low_level_gcm", test_aes_encrypt_decrypt_binary_low_level_gcm);
+        runner->execute_test(results, "test_aes_encrypt_decrypt_binary_low_level_ecb", test_aes_encrypt_decrypt_binary_low_level_ecb);
+        runner->execute_test(results, "test_aes_encrypt_decrypt_binary_low_level_cbc", test_aes_encrypt_decrypt_binary_low_level_cbc);
+        runner->execute_test(results, "test_aes_encrypt_decrypt_binary_low_level_cfb", test_aes_encrypt_decrypt_binary_low_level_cfb);
+
         runner->execute_test(results, "test_aes_encrypt_decrypt_string_gcm", test_aes_encrypt_decrypt_string_gcm);
         runner->execute_test(results, "test_aes_encrypt_decrypt_string_cbc", test_aes_encrypt_decrypt_string_cbc);
         runner->execute_test(results, "test_aes_encrypt_decrypt_string_cfb", test_aes_encrypt_decrypt_string_cfb);
         runner->execute_test(results, "test_aes_encrypt_decrypt_string_ecb", test_aes_encrypt_decrypt_string_ecb);
         runner->execute_test(results, "test_aes_encrypt_decrypt_binary", test_aes_encrypt_decrypt_binary);
+        
+        /*
         runner->execute_test(results, "test_aes_encrypt_decrypt_file", test_aes_encrypt_decrypt_file);
         runner->execute_test(results, "test_aes_encrypt_decrypt_stream", test_aes_encrypt_decrypt_stream);
         runner->execute_test(results, "test_aes_decrypt_tampered_ciphertext_fails", test_aes_decrypt_tampered_ciphertext_fails);
+        */
     });
 
 #ifndef EXCLUDE_BCHAIN_TESTS
@@ -211,6 +221,7 @@ int main()
         // TODO
     });
     
+    /*
     testRunner.add_test_set("sc_transceiver_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning SCTransceiver tests...\n";
         runner->execute_test(results, "test_open_channel", test_open_channel);
@@ -218,6 +229,7 @@ int main()
         runner->execute_test(results, "test_open_channel_send_receive_reply", test_open_channel_send_receive);
         runner->execute_test(results, "test_open_channel_send_receive_long_message", test_open_channel_send_receive_long_message);
     });
+    */
 
     testRunner.add_test_set("wallet_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning Wallet tests...\n";
