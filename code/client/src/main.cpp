@@ -3,7 +3,7 @@
 */
 
 #include <iostream>
-#include "main_window.h"
+#include "ui/main_window.h"
 
 #define DEFAULT_WINDOW_SIZE_X       800
 #define DEFAULT_WINDOW_SIZE_Y       600

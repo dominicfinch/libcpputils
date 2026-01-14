@@ -3,8 +3,7 @@
  © Copyright 2025 Dominic Finch
 */
 
-#include "help_dialog.h"
-
+#include "ui/help_dialog.h"
 
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QVBoxLayout>

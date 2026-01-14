@@ -219,7 +219,7 @@ void iar::app::SecurityService::registerClient(const Json::Value& request, Json:
 
         // 2. Validate request details
         auto isRequestValid = false;
-        if(iar::utils::is_uuid_basic(client_id))
+        if(iar::utils::is_uuid(client_id))
         {
             int nonceMin = 0, nonceMax = std::numeric_limits<uint32_t>::max();
             if((nonce >= nonceMin) && (nonce <= nonceMax))

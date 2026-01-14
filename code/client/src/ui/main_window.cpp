@@ -2,7 +2,7 @@
  © Copyright 2025 Dominic Finch
 */
 
-#include "main_window.h"
+#include "ui/main_window.h"
 #include <QtWidgets/QMenuBar>
 #include <QtCore/QTranslator>
 #include <QtGui/QIcon>

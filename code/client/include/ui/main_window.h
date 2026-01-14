@@ -11,7 +11,7 @@
 #include <QtWidgets/QMenu>
 */
 
-#include "help_dialog.h"
+#include "ui/help_dialog.h"
 
 
 namespace iar { namespace ui {

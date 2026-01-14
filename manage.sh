@@ -42,10 +42,10 @@ if [ "$1" = "clean" ]; then
     echo "TODO"
 elif [ "$1" == "build-qt" ]; then
     echo " - Building QT components..."
-    build_qobject_meta_cpp $script_dir/code/client/include $script_dir/code/client/src
+    build_qobject_meta_cpp $script_dir/code/client/include/ui $script_dir/code/client/src/ui
 elif [ "$1" == "clean-qt" ]; then
     echo " - Cleaning QT generated directories..."
-    clean_qobject_meta_cpp $script_dir/code/client/src
+    clean_qobject_meta_cpp $script_dir/code/client/src/ui
 elif [ "$1" == "help" ]; then
     usage
 else
