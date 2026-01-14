@@ -65,7 +65,9 @@ namespace iar {
 
         std::vector<std::string> split(const std::string qstr, const char * delim = ",", bool filter_empties = true);
 
-        bool is_uuid_basic(const std::string &s);
+        bool is_uuid(const std::string &s);
+
+        std::string getPassword();
 
         template <class ... Args>
         std::string stringFormat(const std::string& format, Args ... args ) {

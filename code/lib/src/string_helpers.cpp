@@ -4,6 +4,14 @@
 
 #include "string_helpers.h"
 #include <regex>
+#include <iostream>
+
+#ifdef _WIN32
+#include <conio.h>
+#else
+#include <termios.h>
+#include <unistd.h>
+#endif
 
 namespace iar {
     namespace utils {
@@ -138,12 +146,55 @@ namespace iar {
             return splits;
         }
 
-        bool is_uuid_basic(const std::string &s)
+        bool is_uuid(const std::string &s)
         {
             static const std::regex re(
                 R"(^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$)"
             );
             return std::regex_match(s, re);
         }
+
+        std::string getPassword()
+        {
+            std::string password;
+            char ch;
+
+        #ifdef _WIN32
+            while ((ch = _getch()) != '\r') {
+                if (ch == '\b') {
+                    if (!password.empty()) {
+                        std::cout << "\b \b";
+                        password.pop_back();
+                    }
+                } else {
+                    password += ch;
+                    std::cout << '*';
+                }
+            }
+        #else
+            struct termios oldt, newt;
+            tcgetattr(STDIN_FILENO, &oldt);
+            newt = oldt;
+            newt.c_lflag &= ~ECHO;
+            tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+            while ((ch = getchar()) != '\n') {
+                if (ch == 127) {
+                    if (!password.empty()) {
+                        std::cout << "\b \b";
+                        password.pop_back();
+                    }
+                } else {
+                    password += ch;
+                    std::cout << '*';
+                }
+            }
+            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+        #endif
+
+            std::cout << '\n';
+            return password;
+        }
+
     }
 }
