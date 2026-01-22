@@ -13,9 +13,9 @@ Release/
 logs/
 
 *.meta.cpp
-code/client/include/constants.h
-code/server/include/constants.h
-
-code/server/include/server_constants.h
+code/app/generated
+code/app/include/constants.h
+code/app/include/constants.h
+code/app/include/server_constants.h
 
 build_win/libcpputils/cpputils_unittests/*.txt

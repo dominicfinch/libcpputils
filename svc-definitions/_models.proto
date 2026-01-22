@@ -1,0 +1,17 @@
+syntax = "proto3";
+package iar.rpc;
+
+import "google/protobuf/timestamp.proto";
+
+message Message {
+    google.protobuf.Timestamp timestamp = 1;
+    repeated Error errors = 2;
+}
+
+message Error {
+    int32 code = 1;         // Internal error code
+    string message = 2;     // Non-sensitive explanation
+    string service = 3;     // Service of call where error originated
+    string method = 4;      // Method of call where error originated
+    string details = 5;     // Error details (contains sensitive details e.g. stack trace)
+}

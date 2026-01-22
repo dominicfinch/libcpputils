@@ -29,4 +29,7 @@ execute_process(
 
 # Dependencies
 add_subdirectory(dep/libcpputils)
-add_subdirectory(code)
+
+# Main build
+add_subdirectory(code/app)
+#add_subdirectory(code/tests/unit)
