@@ -43,4 +43,4 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E
                 ${CMAKE_CURRENT_SOURCE_DIR}/settings.json ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-settings.json)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_CURRENT_SOURCE_DIR}/etc ${CMAKE_BINARY_DIR}/etc)
+                ${CMAKE_SOURCE_DIR}/etc ${CMAKE_BINARY_DIR}/etc)

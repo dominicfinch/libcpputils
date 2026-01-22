@@ -29,34 +29,5 @@
         "ssl.rootcert": "etc/server-ca.pem",     //  Path to CA certificate for server verification
         "ssl.cert": "",         //  Optional client certificate
         "ssl.key": ""           //  Optional client private key
-    },
-    "keys": [
-        {
-            "type": "ecc",
-            "public": "etc/ecc.public.pem",
-            "private": "etc/ecc.private.pem"
-        },
-        {
-            "type": "rsa",
-            "public": "etc/rsa.public.pem",
-            "private": "etc/rsa.private.pem"
-        },
-        {
-            "type": "ed25519",
-            "public": "etc/ed25519.public.pem",
-            "private": "etc/ed25519.private.pem"
-        },
-        {
-            "type": "aes",
-            "key": "etc/aes.key"
-        },
-        {
-            "type": "chacha",
-            "key": "etc/chacha.key"
-        },
-        {
-            "type": "des3",
-            "key": "etc/des3.key"
-        }
-    ]
+    }
 }

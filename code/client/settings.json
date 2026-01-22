@@ -1,6 +1,0 @@
-{
-    "ssl.enabled": true,
-    "ssl.cert": "etc/cert.pem",
-    "ssl.key": "etc/key.pem",
-    "port": 8888
-}

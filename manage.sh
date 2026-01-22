@@ -11,8 +11,8 @@ function usage() {
 
     declare -A commands=(
         ["clean"]="        Clean certs, generated code & build directories"
-        ["build-qt"]="      Build Qt elements"
-        ["clean-qt"]="      Clean Qt elements"
+        #["build-qt"]="      Build Qt elements"
+        #["clean-qt"]="      Clean Qt elements"
         ["help"]="        Display command usage")
 
     echo "manage.sh - Script to manage source code repository actions"
@@ -42,10 +42,10 @@ if [ "$1" = "clean" ]; then
     echo "TODO"
 elif [ "$1" == "build-qt" ]; then
     echo " - Building QT components..."
-    build_qobject_meta_cpp $script_dir/code/client/include/ui $script_dir/code/client/src/ui
+    #build_qobject_meta_cpp $script_dir/code/client/include/ui $script_dir/code/client/src/ui
 elif [ "$1" == "clean-qt" ]; then
     echo " - Cleaning QT generated directories..."
-    clean_qobject_meta_cpp $script_dir/code/client/src/ui
+    #clean_qobject_meta_cpp $script_dir/code/client/src/ui
 elif [ "$1" == "help" ]; then
     usage
 else
