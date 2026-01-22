@@ -254,9 +254,15 @@ EVP_PKEY* PrivateKey::get() const
 bool PrivateKey::matches_certificate(const Certificate& cert) const
 {
     if (!pkey_ || !cert.raw()) return false;
+    
     EVP_PKEY* cert_key = X509_get_pubkey(cert.raw());
     if (!cert_key) return false;
-    bool match = EVP_PKEY_cmp(pkey_, cert_key) == 1;
+
+    bool match = false;
+    if (EVP_PKEY_base_id(pkey_) == EVP_PKEY_base_id(cert_key)) {
+        match = EVP_PKEY_eq(pkey_, cert_key) == 1;
+    }
+
     EVP_PKEY_free(cert_key);
     return match;
 }

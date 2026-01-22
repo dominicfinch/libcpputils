@@ -177,6 +177,13 @@ int main()
         runner->execute_test(results, "test_ed25519_set_public_key_pem_invalid", test_ed25519_set_public_key_pem_invalid);
     });
 
+    testRunner.add_test_set("graph_search_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+        std::cout << "\nRunning GRAPH_SEARCH tests...\n";
+        runner->execute_test(results, "test_dijkstra_basic", test_dijkstra_basic);
+        runner->execute_test(results, "test_astar_basic", test_astar_basic);
+        runner->execute_test(results, "test_bellman_ford_negative_cycle", test_bellman_ford_negative_cycle);
+    });
+
     testRunner.add_test_set("hash_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning HASH tests...\n";
         runner->execute_test(results, "test_hash_md5", test_hash_md5);

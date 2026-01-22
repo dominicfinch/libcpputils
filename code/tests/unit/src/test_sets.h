@@ -18,6 +18,7 @@
 
 #include "tests/certificate_builder_tests.h"
 #include "tests/certificate_tests.h"
+#include "tests/graph_search_tests.h"
 #include "tests/p12_repository_tests.h"
 #include "tests/pkcs12_manager_tests.h"
 #include "tests/private_key_tests.h"
