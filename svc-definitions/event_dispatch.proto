@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package iar.rpc;
+
+import "google/protobuf/timestamp.proto";
+import "common.proto";
+
+////////////////////////////////////////////////////////////////////////////////
+// Events
+////////////////////////////////////////////////////////////////////////////////
+
+message StreamEvent {
+  enum Type {
+    UNKNOWN = 0;
+    STREAM_STARTED = 1;
+    STREAM_STOPPED = 2;
+    STREAM_ERROR = 3;
+    RECORDING_STARTED = 4;
+    RECORDING_STOPPED = 5;
+    STREAM_RECONFIGURED = 6;
+    CAMERA_RECONFIGURED = 7;
+  }
+
+  Type type = 1;
+  StreamId stream_id = 2;
+  CameraId camera_id = 3;
+  string message = 4;
+  map<string, string> metadata = 5;
+}
+
+message EventEnvelope {
+  EventId event_id = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  StreamEvent event = 3;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Service
+////////////////////////////////////////////////////////////////////////////////
+
+service EventDispatchService {
+
+  rpc PublishEvent(EventEnvelope)
+      returns (PublishEventResponse);
+}
+
+message PublishEventResponse {
+  bool accepted = 1;
+}

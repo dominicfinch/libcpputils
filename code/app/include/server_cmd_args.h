@@ -22,8 +22,7 @@ namespace app {
         ~SecurityServiceCmdArgParser();
 
         int parse(int argc, char* argv[]);
-
-        Json::Value config() { return _parsedConfig; }
+        const Json::Value config() { return _parsedConfig; }
 
     protected:
         bool load_config(const std::string& path);

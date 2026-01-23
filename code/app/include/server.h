@@ -4,19 +4,39 @@
 
 #pragma once
 
-#include <jsonrpccpp/server/connectors/httpserver.h>
-#include <jsonrpccpp/server.h>
-
+#include <grpc++/security/server_credentials.h>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <pqxx/pqxx>
-
+#include <json/json.h>
 
 #include "ecc.h"
+#include "interfaces/node.h"
+#include "rpc/server/camera.h"
+#include "rpc/server/event_dispatch.h"
+#include "rpc/server/streaming_service.h"
 
 namespace iar { namespace app {
+
+    template <typename T>
+    struct ServiceInfoObject        // Doing it this way makes it easier to change underlying struct T without breaking compatibility
+    {
+        T * p = nullptr;
+        ServiceInfoObject(): p(new T) {}
+        ~ServiceInfoObject() { delete p; }
+
+        T* operator->()
+        {
+            return p;
+        }
+
+        const T* operator->() const
+        {
+            return p;
+        }
+    };
 
     struct ServerInfo {
         int port_number;
@@ -49,32 +69,72 @@ namespace iar { namespace app {
     
 
 
-    class SecurityService : public jsonrpc::AbstractServer<SecurityService> {
+    class SecurityService: public security_service<Json::Value>
+    {
     public:
-        SecurityService(jsonrpc::AbstractServerConnector &connector);
+        SecurityService();
         ~SecurityService();
 
-        bool Initialise(const Json::Value& config);
+        bool Initialize(Json::Value& configuration) override;
+        bool Run() override;
+        void Shutdown() override;
+
+        Json::Value& Configuration() override { return _configuration; }
+        std::unique_ptr<grpc::Server>& Server() { return _serverInstance; }
+        std::vector<std::shared_ptr<spdlog::logger>>& Loggers() { return loggers; }
 
         void LogMessage(const Json::Value& obj, spdlog::level::level_enum lvl = spdlog::level::level_enum::info);
         void LogMessage(const std::string& msg, spdlog::level::level_enum lvl = spdlog::level::level_enum::info);
+        void LogMessage(const char * msg, spdlog::level::level_enum lvl = spdlog::level::level_enum::info);
+
+        template <class ... Args>
+        void LogMessage(const std::string& format, Args ... args, int level=spdlog::level::info) {
+            LogMessage(format.c_str(), args ... , level);
+        }
+
+        template <class ... Args>
+        void LogMessage(const char * format, Args ... args, int level=spdlog::level::info) {
+            for(auto& logPtr : Loggers()) {
+                if(level == spdlog::level::trace) {
+                    logPtr->trace(format, args ...);
+                } else if(level == spdlog::level::debug) {
+                    logPtr->debug(format, args ...);
+                } else if(level == spdlog::level::info) {
+                    logPtr->info(format, args ...);
+                } else if(level == spdlog::level::warn) {
+                    logPtr->warn(format, args ...);
+                } else if(level == spdlog::level::err) {
+                    logPtr->error(format, args ...);
+                } else if(level == spdlog::level::critical) {
+                    logPtr->critical(format, args ...);
+                }
+            }
+        }
 
     protected:
-        
-        void registerClient(const Json::Value& request, Json::Value& response);
-        void registerDevice(const Json::Value& request, Json::Value& response);
 
 
     private:
-        bool initialize_logging(const Json::Value& config, std::vector<LogInfo>& lInfo);
-        bool initialize_database(const Json::Value& config, DatabaseInfo& dInfo);
+        bool initialize_logging(const Json::Value& config);
+        bool initialize_database(const Json::Value& config, ServiceInfoObject<DatabaseInfo>& dInfo);
+        bool initialize_rpc(const Json::Value& config, ServiceInfoObject<ServerInfo>& serverInfo);
+        bool initialize_tls(const Json::Value& config, ServiceInfoObject<ServerInfo>& serverInfo);
 
-        std::vector<LogInfo> loggersInfo;
-        DatabaseInfo dbInfo;
+        // Configuration & setup vars //
+        Json::Value _configuration;
+        ServiceInfoObject<ServerInfo> serverInfo;
+        ServiceInfoObject<DatabaseInfo> dbInfo;
+        bool _initialized = false;
         
         std::vector<std::shared_ptr<spdlog::logger>> loggers;
-        //iar::utils::ECC eccKey;
-        
+        iar::utils::ECC eccKey;
+
+        // gRPC server stuff //
+        std::thread * _grpcMasterThread = nullptr;
+        std::unique_ptr<grpc::Server> _serverInstance = nullptr;
+        std::shared_ptr<grpc::ServerCredentials> _credentials;
+        grpc::SslServerCredentialsOptions _credentials_options;
+        std::shared_ptr<CameraService> _cameraService = nullptr;
     };
 
 

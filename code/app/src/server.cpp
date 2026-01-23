@@ -1,12 +1,13 @@
 /*
  © Copyright 2025 Dominic Finch
 */
+#include <grpc++/server_builder.h>
 
 #include "server.h"
-
 #include "database.h"
-#include "base64.h"
-#include "hash.h"
+//#include "base64.h"
+//#include "hash.h"
+#include "file.h"
 #include "string_helpers.h"
 
 #include <limits>
@@ -15,44 +16,14 @@
 //#include <functional>
 
 
-iar::app::SecurityService::SecurityService(jsonrpc::AbstractServerConnector &connector): AbstractServer<SecurityService>(connector)
+iar::app::SecurityService::SecurityService()
 {
-    // Register JSON-RPC method: registerClient
-    this->bindAndAddMethod(
-        jsonrpc::Procedure(
-            "registerClient",
-            jsonrpc::PARAMS_BY_NAME,
-            jsonrpc::JSON_OBJECT,          // return type
-            "client_id",     jsonrpc::JSON_STRING,
-            "key_type", jsonrpc::JSON_STRING,
-            "public_key",  jsonrpc::JSON_STRING,
-            "nonce", jsonrpc::JSON_INTEGER,
-            "dt", jsonrpc::JSON_STRING,             // ISO 8601 format for UTC is represented as "YYYY-MM-DDTHH:MM:SSZ" or "YYYY-MM-DDTHH:MM:SS+[INT]:[INT]"
-            "sign_hash", jsonrpc::JSON_STRING,
-            nullptr),
-        &SecurityService::registerClient
-    );
-
-    // Register JSON-RPC method: registerDevice
-    /*
-    this->bindAndAddMethod(
-        jsonrpc::Procedure(
-            "registerDevice",
-            jsonrpc::PARAMS_BY_NAME,
-            jsonrpc::JSON_OBJECT,          // return type
-            "user_id",     jsonrpc::JSON_STRING,
-            "device_id",   jsonrpc::JSON_STRING,
-            "public_key",  jsonrpc::JSON_STRING,
-            nullptr),
-        &SecurityService::registerDevice
-    );
-    */
-
+    
 }
 
 iar::app::SecurityService::~SecurityService()
 {
-    loggersInfo.clear();
+    Shutdown();
 }
 
 void iar::app::SecurityService::LogMessage(const Json::Value& obj, spdlog::level::level_enum lvl)
@@ -62,7 +33,7 @@ void iar::app::SecurityService::LogMessage(const Json::Value& obj, spdlog::level
     writerBuilder["indentation"] = "  "; // 2 spaces for readability
     std::unique_ptr<Json::StreamWriter> writer(writerBuilder.newStreamWriter());
     writer->write(obj, &ss);
-    LogMessage(ss.str());
+    LogMessage(ss.str(), lvl);
 }
 
 void iar::app::SecurityService::LogMessage(const std::string& msg, spdlog::level::level_enum lvl)
@@ -105,189 +76,237 @@ void iar::app::SecurityService::LogMessage(const std::string& msg, spdlog::level
     }
 }
 
-bool iar::app::SecurityService::Initialise(const Json::Value& config)
+void iar::app::SecurityService::LogMessage(const char * msg, spdlog::level::level_enum lvl)
 {
-    auto dbConfig = config["database"];
-
-    auto success = initialize_logging(config, loggersInfo) &&
-        initialize_database(dbConfig, dbInfo);
-    return success;
+    LogMessage(std::string(msg), lvl);
 }
 
-
-bool iar::app::SecurityService::initialize_logging(const Json::Value& config, std::vector<iar::app::LogInfo>& loggersInfo)
+bool iar::app::SecurityService::Initialize(Json::Value& configuration)
 {
-    loggersInfo.clear();
+    auto dbConfig = configuration["database"];
+    _initialized = initialize_logging(configuration)            &&
+                    initialize_database(dbConfig, dbInfo)       &&
+                    initialize_tls(configuration, serverInfo)   &&
+                    initialize_rpc(configuration, serverInfo);
+    return _initialized;
+}
+
+bool iar::app::SecurityService::initialize_logging(const Json::Value& config)
+{
     for(auto lc : config["logging"])
     {
-        LogInfo lInfo;
+        ServiceInfoObject<LogInfo> lInfo;
 
-        lInfo.level = lc["level"].asString();
-        lInfo.pattern = lc["pattern"].asString();
-        lInfo.output = lc["output"].asString();
-        lInfo.output_path = lc["output-path"].asString();
-        lInfo.max_size = lc["max-size"].asInt();
-        lInfo.max_files = lc["max-files"].asInt();
+        lInfo->level = lc["level"].asString();
+        lInfo->pattern = lc["pattern"].asString();
+        lInfo->output = lc["output"].asString();
+        lInfo->output_path = lc["output-path"].asString();
+        lInfo->max_size = lc["max-size"].asInt();
+        lInfo->max_files = lc["max-files"].asInt();
 
         //logPtr = std::make_shared<spdlog::logger>(spdlog::logger());
         std::shared_ptr<spdlog::logger> logPtr;
-        if(lInfo.output.compare("console") == 0 )
+        if(lInfo->output.compare("console") == 0 )
         {
             logPtr = spdlog::stdout_color_mt("console-log");
-        } else if(lInfo.output.compare("file") == 0)
+        } else if(lInfo->output.compare("file") == 0)
         {
-            logPtr = spdlog::basic_logger_mt("file-log", lInfo.output_path);
-        } else if(lInfo.output.compare("rotating-file") == 0) {
-            logPtr = spdlog::rotating_logger_mt("rot-file-log", lInfo.output_path, lInfo.max_size, lInfo.max_files);
+            logPtr = spdlog::basic_logger_mt("file-log", lInfo->output_path);
+        } else if(lInfo->output.compare("rotating-file") == 0) {
+            logPtr = spdlog::rotating_logger_mt("rot-file-log", lInfo->output_path, lInfo->max_size, lInfo->max_files);
         }
 
         if(logPtr.use_count() > 0) {
-            logPtr->set_pattern(lInfo.pattern);
+            logPtr->set_pattern(lInfo->pattern);
             spdlog::level::level_enum lvl;
-            if(lInfo.level == "trace") {
+            if(lInfo->level == "trace") {
                 lvl = spdlog::level::trace;
-            } else if(lInfo.level == "debug") {
+            } else if(lInfo->level == "debug") {
                 lvl = spdlog::level::debug;
-            } else if(lInfo.level == "info") {
+            } else if(lInfo->level == "info") {
                 lvl = spdlog::level::info;
-            } else if(lInfo.level == "warn") {
+            } else if(lInfo->level == "warn") {
                 lvl = spdlog::level::warn;
-            } else if(lInfo.level == "error") {
+            } else if(lInfo->level == "error") {
                 lvl = spdlog::level::err;
-            } else if(lInfo.level == "critical") {
+            } else if(lInfo->level == "critical") {
                 lvl = spdlog::level::critical;
             }
             logPtr->set_level(lvl);
 
-            loggersInfo.push_back(lInfo);
             loggers.push_back(logPtr);
             logPtr->info("Created new logger instance '{}'", logPtr->name());
         } else {
-            std::cout << " - Error: Unrecognized output specified: '" << lInfo.output << "'\n";
+            std::cout << " - Error: Unrecognized output specified: '" << lInfo->output << "'\n";
         }
     }
     return true;
 }
 
-bool iar::app::SecurityService::initialize_database(const Json::Value& config, iar::app::DatabaseInfo& dInfo)
+bool iar::app::SecurityService::initialize_database(const Json::Value& config, ServiceInfoObject<iar::app::DatabaseInfo>& dInfo)
 {
-    dInfo.host = config["host"].asString();
-    dInfo.user = config["user"].asString();
-    dInfo.pass = config["pass"].asString();
-    dInfo.port = config["port"].asInt();
-    dInfo.db_name = config["db"].asString();
-    dInfo.ssl_mode = config["ssl.mode"].asString();
-    dInfo.ssl_rootcert = config["ssl.rootcert"].asString();
-    dInfo.ssl_cert = config["ssl.cert"].asString();
-    dInfo.ssl_key = config["ssl.key"].asString();
+    dInfo->host = config["host"].asString();
+    dInfo->user = config["user"].asString();
+    dInfo->pass = config["pass"].asString();
+    dInfo->port = config["port"].asInt();
+    dInfo->db_name = config["db"].asString();
+    dInfo->ssl_mode = config["ssl.mode"].asString();
+    dInfo->ssl_rootcert = config["ssl.rootcert"].asString();
+    dInfo->ssl_cert = config["ssl.cert"].asString();
+    dInfo->ssl_key = config["ssl.key"].asString();
 
     std::stringstream ss;
-    ss << "host=" << dInfo.host << " ";
-    ss << "port=" << dInfo.port << " ";
-    ss << "user=" << dInfo.user << " ";
-    ss << "password=" << dInfo.pass << " ";
-    ss << "dbname=" << dInfo.db_name << " ";
-    ss << "sslmode=" << dInfo.ssl_mode << " ";
+    ss << "host=" << dInfo->host << " ";
+    ss << "port=" << dInfo->port << " ";
+    ss << "user=" << dInfo->user << " ";
+    ss << "password=" << dInfo->pass << " ";
+    ss << "dbname=" << dInfo->db_name << " ";
+    ss << "sslmode=" << dInfo->ssl_mode << " ";
 
-    if( dInfo.ssl_mode.compare("verify-ca") == 0 ) {
-        ss << "sslrootcert=" << dInfo.ssl_rootcert << " ";
-    } else if( dInfo.ssl_mode.compare("verify-full") == 0 ) {
-        ss << "sslrootcert=" << dInfo.ssl_rootcert << " ";
-        ss << "sslcert=" << dInfo.ssl_cert << " ";
-        ss << "sslkey=" << dInfo.ssl_key << " ";
+    if( dInfo->ssl_mode.compare("verify-ca") == 0 ) {
+        ss << "sslrootcert=" << dInfo->ssl_rootcert << " ";
+    } else if( dInfo->ssl_mode.compare("verify-full") == 0 ) {
+        ss << "sslrootcert=" << dInfo->ssl_rootcert << " ";
+        ss << "sslcert=" << dInfo->ssl_cert << " ";
+        ss << "sslkey=" << dInfo->ssl_key << " ";
     }
+    
+    // TODO: Improve this
     DatabaseManager::instance().initialize(ss.str());
     return true;
 }
 
-
-void iar::app::SecurityService::registerClient(const Json::Value& request, Json::Value& response)
+bool iar::app::SecurityService::initialize_tls(const Json::Value& config, ServiceInfoObject<ServerInfo>& serverInfo)
 {
-    try
-    {
-        // 0. Log client request
-        LogMessage(utils::stringFormat("Requested endpoint: %s", __METHOD_NAME_CSTR__));
-        LogMessage(request, spdlog::level::level_enum::debug);
+    bool init_tls = false;
 
-        // 1. Extract various request details
-        auto client_id = request["client_id"].asString();
-        auto key_type = request["key_type"].asString();
-        auto public_key = request["public_key"].asString();
-        auto nonce = request["nonce"].asUInt();
-        auto dt = request["dt"].asString();
-        auto sign_hash = request["sign_hash"].asString();
+    serverInfo->ssl_enabled = config["ssl.enabled"].asBool();
+    serverInfo->ssl_cert = config["ssl.cert"].asString();
+    serverInfo->ssl_key = config["ssl.key"].asString();
+    serverInfo->port_number = config["port"].asInt();
+    serverInfo->threads = config["threads"].asInt();
 
-        // 2. Validate request details
-        auto isRequestValid = false;
-        if(iar::utils::is_uuid(client_id))
-        {
-            int nonceMin = 0, nonceMax = std::numeric_limits<uint32_t>::max();
-            if((nonce >= nonceMin) && (nonce <= nonceMax))
-            {
+    if(serverInfo->ssl_enabled) {
+        std::string publicKey, privateKey;
+        bool readSSLCert = utils::read_file_contents(serverInfo->ssl_cert, publicKey);
+        bool readSSLPKey = utils::read_file_contents(serverInfo->ssl_key, privateKey);
 
-                // Validate key_type
+        if(readSSLCert && readSSLPKey) {
+            // TODO: Generalize some of this logic
+            _credentials_options = grpc::SslServerCredentialsOptions(GRPC_SSL_REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_BUT_DONT_VERIFY);
+            grpc::SslServerCredentialsOptions::PemKeyCertPair keyCertPair = { privateKey, publicKey };
 
-                // Validate dt
+            _credentials_options.force_client_auth = false;
+            _credentials_options.pem_key_cert_pairs.push_back(keyCertPair);
+            _credentials = grpc::SslServerCredentials(_credentials_options);
 
-                // Validate sign_hash
-
-
-
-
-                auto decodedPubKey = utils::Base64::decode(public_key);
-
-
-
-                // valid
-
-
-                isRequestValid = true;
-
-            } else {
-                // invalid
-                std::string errMsg = utils::stringFormat("Invalid request nonce detected: %d", nonce);
-                LogMessage(errMsg, spdlog::level::err);
-            }
-        }
-
-        // 3. Update database
-        if(isRequestValid)
-        {
-            //DatabaseManager()
+            LogMessage("Successfully loaded TLS certificate and key from file");
+            init_tls = true;
         } else {
-            std::runtime_error ex("Request failed validation. Please try again");
-            throw ex;
+            LogMessage(utils::stringFormat("Error loading TLS certificate and private key from file.\n\tCertificate Path: %s\n\tPrivate Key Path:%s", serverInfo->ssl_cert, serverInfo->ssl_key));
         }
-    } catch (const std::exception &e) {
-        response["status"]  = "error";
-        response["message"] = e.what();
+    } else {
+        _credentials = grpc::InsecureServerCredentials();
+        LogMessage("Beware, SSL is disabled. Will be running on insecure channel");
+        init_tls = true;
     }
+    return init_tls;
 }
 
-
-
-
-void iar::app::SecurityService::registerDevice(const Json::Value& request, Json::Value& response)
+bool iar::app::SecurityService::initialize_rpc(const Json::Value& config, ServiceInfoObject<ServerInfo>& serverInfo)
 {
-    try {
-        // Extract parameters
-        std::string user_id   = request["user_id"].asString();
-        std::string device_id = request["device_id"].asString();
-        std::string pubkey    = request["public_key"].asString();
+    _grpcMasterThread = new std::thread([&]() -> bool {
+        if(_initialized)
+        {
+            if(_cameraService == nullptr)
+                _cameraService = std::shared_ptr<CameraService>(new CameraService);
+            else
+                LogMessage("Camera service already initialized", spdlog::level::warn);
+            /*
+            if(_broadcastService == nullptr)
+                _broadcastService = new rpc::BroadcastService();
+            else
+                LogMessage("Broadcast service already initialized", spdlog::level::warn);
+            */
 
-        if (user_id.empty() || device_id.empty() || pubkey.empty()) {
-            throw std::runtime_error("Missing required parameter");
+            if(_serverInstance == nullptr) {
+                std::stringstream ss;
+                ss << "0.0.0.0" << ":" << serverInfo->port_number;
+
+                grpc::ServerBuilder builder;
+                if(_initialized) {
+                    auto serverAddress = ss.str();
+
+                    LogMessage(utils::stringFormat("GRPC Server listening at: %s", serverAddress));
+                    builder.AddListeningPort(serverAddress, _credentials);
+
+                    builder.RegisterService(_cameraService.get());
+                    //builder.RegisterService(_broadcastService);
+
+                    grpc::ResourceQuota rq;
+                    rq.SetMaxThreads(serverInfo->threads);
+                    builder.SetResourceQuota(rq);
+
+                    _serverInstance = builder.BuildAndStart();
+                    _serverInstance->Wait();
+                    return true;
+                }
+            }
+        };
+        return false;
+    });
+    return true;
+}
+
+bool iar::app::SecurityService::Run()
+{
+    if(_initialized) {
+        if(_grpcMasterThread != nullptr)
+        {
+            //_grpcMasterThread->detach();      // Non-Blocking (use this if we want multiple services running alongside grpc server)
+            _grpcMasterThread->join();          // Blocking. This will halt execution until _serverInstance->Shutdown() is called (and that happens when the signalHandler is called)
+            return true;
+        } else {
+            LogMessage("No master thread found. Unable to continue", spdlog::level::err);
         }
-
-        // Store in DB
-        DatabaseManager::instance().addDevice(user_id, device_id, pubkey);
-
-        // Build response
-        response["status"]  = "success";
-        response["message"] = "Device registered successfully";
+    } else {
+        LogMessage("Attempting to run the node before it has properly initialized", spdlog::level::err);
     }
-    catch (const std::exception &e) {
-        response["status"]  = "error";
-        response["message"] = e.what();
+    return false;
+}
+
+void iar::app::SecurityService::Shutdown()
+{
+    LogMessage("Shutting down GRPC Server");
+    if(_serverInstance != nullptr) {
+        _serverInstance->Shutdown();
+        _serverInstance = nullptr;
     }
+
+    if(_grpcMasterThread != nullptr) {
+        delete _grpcMasterThread;
+        _grpcMasterThread = nullptr;
+    }
+
+    LogMessage("Deleting RPC Services");
+    if(_cameraService != nullptr) {
+        _cameraService.reset();
+    }
+
+    /*
+    if(_broadcastService != nullptr) {
+        delete _broadcastService;
+        _broadcastService = nullptr;
+    }
+    */
+    
+    LogMessage("Closing database connection");
+    /*
+    if(_databaseInstance != nullptr) {
+        delete _databaseInstance;
+        _databaseInstance = nullptr;
+    }
+    */
+    
+    loggers.clear();
 }

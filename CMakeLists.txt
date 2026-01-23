@@ -32,4 +32,4 @@ add_subdirectory(dep/libcpputils)
 
 # Main build
 add_subdirectory(code/app)
-#add_subdirectory(code/tests/unit)
+add_subdirectory(code/tests/unit)

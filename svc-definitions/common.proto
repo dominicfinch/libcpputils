@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package iar.rpc;
+import "google/protobuf/timestamp.proto";
+
+message StreamId {
+  string id = 1;
+}
+
+message CameraId {
+  string id = 1;
+}
+
+message EventId {
+  string id = 1;
+  google.protobuf.Timestamp ts = 2;
+}
+
+message KeyValue {
+  string key = 1;
+  string value = 2;
+}
