@@ -4,7 +4,6 @@
 #include <grpc++/server_builder.h>
 
 #include "server.h"
-#include "database.h"
 //#include "base64.h"
 //#include "hash.h"
 #include "file.h"
@@ -13,7 +12,6 @@
 #include <limits>
 #include <iostream>
 #include <sstream>
-//#include <functional>
 
 
 iar::app::SecurityService::SecurityService()
@@ -145,6 +143,7 @@ bool iar::app::SecurityService::initialize_logging(const Json::Value& config)
 
 bool iar::app::SecurityService::initialize_database(const Json::Value& config, ServiceInfoObject<iar::app::DatabaseInfo>& dInfo)
 {
+    dInfo->provider = config["provider"].asString();
     dInfo->host = config["host"].asString();
     dInfo->user = config["user"].asString();
     dInfo->pass = config["pass"].asString();
@@ -171,9 +170,23 @@ bool iar::app::SecurityService::initialize_database(const Json::Value& config, S
         ss << "sslkey=" << dInfo->ssl_key << " ";
     }
     
-    // TODO: Improve this
-    DatabaseManager::instance().initialize(ss.str());
-    return true;
+    // TODO: Improve this. Use dInfo->provider instead.
+    const sql::DatabaseManager::Config dbConf
+    {
+        sql::DatabaseManager::Backend::Postgres,
+        ss.str()
+    };
+
+    dbManager = new sql::DatabaseManager;
+    if(dbManager->initialize_connection_pool(dbConf))
+    {
+        LogMessage("Successfully set up database connection pool");
+        dbManager->create_schema();
+        return true;
+    } else {
+        LogMessage("Failed to set up database connection pool", spdlog::level::err);
+    }
+    return false;
 }
 
 bool iar::app::SecurityService::initialize_tls(const Json::Value& config, ServiceInfoObject<ServerInfo>& serverInfo)
@@ -222,26 +235,32 @@ bool iar::app::SecurityService::initialize_rpc(const Json::Value& config, Servic
                 _cameraService = std::shared_ptr<CameraService>(new CameraService);
             else
                 LogMessage("Camera service already initialized", spdlog::level::warn);
-            /*
-            if(_broadcastService == nullptr)
-                _broadcastService = new rpc::BroadcastService();
+            
+            if(_streamingService == nullptr)
+                _streamingService = std::shared_ptr<StreamingService>(new StreamingService);
             else
-                LogMessage("Broadcast service already initialized", spdlog::level::warn);
-            */
+                LogMessage("Streaming service already initialized", spdlog::level::warn);
+            
+            if(_eventDispatchService == nullptr)
+                _eventDispatchService = std::shared_ptr<EventDispatchService>(new EventDispatchService);
+            else
+                LogMessage("Event dispatch service already initialized", spdlog::level::warn);
 
-            if(_serverInstance == nullptr) {
+            if(_serverInstance == nullptr)
+            {
                 std::stringstream ss;
                 ss << "0.0.0.0" << ":" << serverInfo->port_number;
 
                 grpc::ServerBuilder builder;
-                if(_initialized) {
+                if(_initialized)
+                {
                     auto serverAddress = ss.str();
-
                     LogMessage(utils::stringFormat("GRPC Server listening at: %s", serverAddress));
                     builder.AddListeningPort(serverAddress, _credentials);
 
                     builder.RegisterService(_cameraService.get());
-                    //builder.RegisterService(_broadcastService);
+                    builder.RegisterService(_streamingService.get());
+                    builder.RegisterService(_eventDispatchService.get());
 
                     grpc::ResourceQuota rq;
                     rq.SetMaxThreads(serverInfo->threads);
@@ -293,20 +312,19 @@ void iar::app::SecurityService::Shutdown()
         _cameraService.reset();
     }
 
-    /*
-    if(_broadcastService != nullptr) {
-        delete _broadcastService;
-        _broadcastService = nullptr;
+    if(_streamingService != nullptr) {
+        _streamingService.reset();
     }
-    */
+
+    if(_eventDispatchService != nullptr) {
+        _eventDispatchService.reset();
+    }
     
     LogMessage("Closing database connection");
-    /*
-    if(_databaseInstance != nullptr) {
-        delete _databaseInstance;
-        _databaseInstance = nullptr;
+    if(dbManager != nullptr) {
+        delete dbManager;
+        dbManager = nullptr;
     }
-    */
     
     loggers.clear();
 }

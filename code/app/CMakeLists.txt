@@ -34,12 +34,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_EXT_DIR}
     ${GENERATED_SRC_DIR}
     ${PROJECT_DEP_DIR}/libcpputils/code/lib/include
-    /usr/include/jsoncpp)
+    /usr/include/jsoncpp
+    /usr/include/postgresql/)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE cpputils
-    -lspdlog -lprotobuf -lgpr pqxx -labsl_synchronization
-    -lgrpc++ -ljsoncpp -lstdc++fs
-    -lssl -lcrypto -lpthread)
+    -lspdlog -labsl_synchronization -ljsoncpp
+    -lgrpc++ -lprotobuf -lgpr -lstdc++fs 
+    -lsoci_core -lsoci_postgresql
+    -ldl -lpq -lssl -lcrypto -lpthread)
 
 
 ########################

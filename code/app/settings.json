@@ -20,13 +20,14 @@
         }
     ],
     "database": {
+        "provider": "postgres",
         "host": "localhost",
-        "user": "postgres",
-        "pass": "@Whispernet123",
+        "user": "security_service",
+        "pass": "@SecurityService123",
         "port": 5432,
-        "db": "whispernet",
+        "db": "security_service",
         "ssl.mode": "disable",  //  disable / allow / prefer / require / verify-ca / verify-full
-        "ssl.rootcert": "etc/server-ca.pem",     //  Path to CA certificate for server verification
+        "ssl.rootcert": "",     //  Path to CA certificate for server verification
         "ssl.cert": "",         //  Optional client certificate
         "ssl.key": ""           //  Optional client private key
     }

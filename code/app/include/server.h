@@ -9,11 +9,12 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/rotating_file_sink.h>
-#include <pqxx/pqxx>
 #include <json/json.h>
 
 #include "ecc.h"
+#include "db/database.h"
 #include "interfaces/node.h"
+
 #include "rpc/server/camera.h"
 #include "rpc/server/event_dispatch.h"
 #include "rpc/server/streaming_service.h"
@@ -47,6 +48,7 @@ namespace iar { namespace app {
     };
 
     struct DatabaseInfo {
+        std::string provider;
         std::string host;
         std::string user;
         std::string pass;
@@ -126,15 +128,21 @@ namespace iar { namespace app {
         ServiceInfoObject<DatabaseInfo> dbInfo;
         bool _initialized = false;
         
+        sql::DatabaseManager * dbManager = nullptr;
         std::vector<std::shared_ptr<spdlog::logger>> loggers;
-        iar::utils::ECC eccKey;
+        //iar::utils::ECC eccKey;
 
         // gRPC server stuff //
         std::thread * _grpcMasterThread = nullptr;
         std::unique_ptr<grpc::Server> _serverInstance = nullptr;
         std::shared_ptr<grpc::ServerCredentials> _credentials;
         grpc::SslServerCredentialsOptions _credentials_options;
+
         std::shared_ptr<CameraService> _cameraService = nullptr;
+        std::shared_ptr<StreamingService> _streamingService = nullptr;
+        std::shared_ptr<EventDispatchService> _eventDispatchService = nullptr;
+
+
     };
 
 
