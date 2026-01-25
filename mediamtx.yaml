@@ -1,0 +1,7 @@
+
+webrtc: yes
+paths:
+  cam0:
+    source: rtsp://localhost:8554/cam0
+  cam1:
+    source: rtsp://localhost:8554/cam1

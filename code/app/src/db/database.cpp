@@ -8,6 +8,8 @@
 //#include <soci/mysql/soci-mysql.h>
 //#include <soci/sqlite3/soci-sqlite3.h>
 
+#include "uuid.h"
+
 bool iar::sql::DatabaseManager::initialize_connection_pool(const Config& config)
 {
     config_ = config;
@@ -46,7 +48,7 @@ soci::session& iar::sql::DatabaseManager::session()
     //{
         
     //}
-    return pool_->at(0);
+    return pool_->at(0);    // TODO: Need to improve this. Ideally would have a 'checkout-checkin' model (so can properly mutex lock a given session for a set of queries).
 }
 
 soci::connection_pool& iar::sql::DatabaseManager::pool() {
@@ -65,6 +67,18 @@ void iar::sql::DatabaseManager::create_schema()
         success_count += _streamRepository.create_table(session()) ? 1 : 0;
         success_count += _recordingRepository.create_table(session()) ? 1 : 0;
         success_count += _eventRepository.create_table(session()) ? 1 : 0;
+
+        Camera camera;
+        camera.id = utils::generate_uuid();
+        camera.enabled = true;
+        camera.location = "testing";
+        camera.manufacturer = "HIKVision";
+        camera.model = "dummy-model";
+        camera.name = "dummy-camera";
+        camera.rtsp_url = "rtps://...";
+        camera.capabilities_json = "{}";
+
+        getCameraTable().insert(session(), camera);
 
         if(success_count != expected_table_count)
         {

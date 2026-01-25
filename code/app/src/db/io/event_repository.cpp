@@ -3,8 +3,10 @@
 
 bool iar::sql::EventRepository::create_table(soci::session& session)
 {
-    session << R"(
-        CREATE TABLE events (
+    std::stringstream ss;
+    ss << "CREATE TABLE " << tablename();
+    ss << R"(
+        (
             id              UUID PRIMARY KEY,
             stream_id       UUID,
             camera_id       UUID,
@@ -16,12 +18,20 @@ bool iar::sql::EventRepository::create_table(soci::session& session)
         CREATE INDEX idx_events_stream_id ON events(stream_id);
         CREATE INDEX idx_events_camera_id ON events(camera_id);
     )";
-    return true;
+
+    try {
+        session << ss.str();
+        return true;
+    } catch(soci::soci_error const & e)
+    {
+        //std::cout << "Failed to create table!\n";
+    }
+    return false;
 }
 
 void iar::sql::EventRepository::drop_table(soci::session& session)
 {
-
+    session << "DROP TABLE " << tablename();
 }
 
 std::vector<iar::sql::Event> iar::sql::EventRepository::select_all()

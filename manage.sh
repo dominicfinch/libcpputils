@@ -89,7 +89,14 @@ elif [ "$1" == "clean-grpc" ]; then
         rm -rf $cpp_grpc_generated_dir
     fi;
 elif [ "$1" == "start-rtsp-server" ]; then
-    sudo docker run --rm -it -p 8554:8554 bluenviron/mediamtx
+
+    sudo docker run --rm -it --network=host \
+        -p 8554:8554 \
+        -p 8888:8888 \
+        -p 8889:8889 \
+        -v "$PWD/mediamtx.yaml:/mediamtx.yaml:ro"    \
+        bluenviron/mediamtx
+
 elif [ "$1" == "display-cameras" ]; then
     pids=()
     for fd in "${video_fds[@]}"; do

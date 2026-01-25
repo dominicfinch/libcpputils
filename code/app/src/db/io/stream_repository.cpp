@@ -3,8 +3,10 @@
 
 bool iar::sql::StreamRepository::create_table(soci::session& session)
 {
-    session << R"(
-        CREATE TABLE streams (
+    std::stringstream ss;
+    ss << "CREATE TABLE " << tablename();
+    ss << R"(
+        (
             id              UUID PRIMARY KEY,
             camera_id       UUID NOT NULL REFERENCES cameras(id),
             protocol        TEXT NOT NULL, -- rtsp / rtsps
@@ -15,12 +17,20 @@ bool iar::sql::StreamRepository::create_table(soci::session& session)
 
         CREATE INDEX idx_streams_camera_id ON streams(camera_id);
     )";
-    return true;
+
+    try {
+        session << ss.str();
+        return true;
+    } catch(soci::soci_error const & e)
+    {
+        //std::cout << "Failed to create table!\n";
+    }
+    return false;
 }
 
 void iar::sql::StreamRepository::drop_table(soci::session& session)
 {
-
+    session << "DROP TABLE " << tablename();
 }
 
 std::vector<iar::sql::Stream> iar::sql::StreamRepository::select_all()

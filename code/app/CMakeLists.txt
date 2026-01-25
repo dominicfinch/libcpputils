@@ -38,10 +38,19 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     /usr/include/postgresql/)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE cpputils
-    -lspdlog -labsl_synchronization -ljsoncpp
-    -lgrpc++ -lprotobuf -lgpr -lstdc++fs 
-    -lsoci_core -lsoci_postgresql
-    -ldl -lpq -lssl -lcrypto -lpthread)
+    -lspdlog -labsl_synchronization -ljsoncpp   # general utils
+    -lgrpc++ -lprotobuf -lgpr -lstdc++fs        # grpc
+    -lsoci_core -lsoci_postgresql               # soci & postgres
+    -ldl -lpq -lssl -lcrypto                    # openssl
+    -lavformat                                  # ffmpeg
+    -lavcodec
+    -lavutil
+    -lavdevice
+    -lavfilter
+    -lswscale
+    -lswresample
+    -lpthread
+    -lm)
 
 
 ########################

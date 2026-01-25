@@ -19,6 +19,18 @@
             "output": "console"
         }
     ],
+    "storage": [
+        {
+            "provider:": "gcloud",
+            "bucket": "",
+            "credentials": ""
+        },
+        {
+            "provider:": "aws",
+            "bucket": "",
+            "credentials": ""
+        }
+    ],
     "database": {
         "provider": "postgres",
         "host": "localhost",

@@ -4,8 +4,10 @@
 #include <chrono>
 #include <optional>
 
+#include <soci/soci.h>
 #include <soci/values.h>
 #include <soci/type-conversion.h>
+#include "_traits.h"
 
 namespace iar { namespace sql {
     
@@ -21,31 +23,65 @@ namespace iar { namespace sql {
         bool enabled;
     };
 
+    template<>
+    struct EntityTraits<Camera> {
+        static constexpr const char* table_name = "cameras";
+
+        static constexpr const char* insert_sql =
+            "INSERT INTO cameras (id, name, rtsp_url, capabilities, model, manufacturer, location, enabled) "
+            "VALUES (:id, :name, :rtsp_url, :capabilities, :model, :manufacturer, :location, :enabled)";
+
+        static constexpr const char* update_sql = "UPDATE cameras SET \
+                name=:name, rtsp_url=:rtsp_url,       \
+                capabilities=:capabilities,           \
+                model=:model, manufacturer=:manufacturer,   \
+                location=:location, enabled=:enabled        \
+            WHERE id=:id";
+
+        static constexpr const char* select_all_sql =
+            "SELECT id, name, rtsp_url, model, manufacturer, location, capabilities, enabled FROM cameras";
+
+        static constexpr const char* delete_sql =
+            "DELETE FROM cameras WHERE id=:id";
+    };
 
 
 } }
 
+
 namespace soci {
 
-template<>
-struct type_conversion<iar::sql::Camera> {
-    typedef values base_type;
+    template<>
+    struct type_conversion<iar::sql::Camera> {
+        typedef values base_type;
 
-    static void from_base(const values& v, indicator, iar::sql::Camera& u)
-    {
-        u.id = v.get<std::string>("id");
-        // TODO
-        //u.created_at = v.get<std::chrono::time_point>("created_at");
-    }
+        static void from_base(
+            const values& v,
+            indicator /*ind*/,
+            iar::sql::Camera& cam) {
 
-    static void to_base(const iar::sql::Camera& u, values& v, indicator& ind)
-    {
-        v.set("id", u.id);
-        v.set("name", u.name);
-        // TODO
-        //v.set("created_at", std::chrono::system_clock().now());
-        ind = i_ok;
-    }
-};
+            cam.id       = v.get<std::string>("id");
+            cam.name     = v.get<std::string>("name");
+            cam.rtsp_url = v.get<std::string>("rtsp_url");
+            cam.capabilities_json     = v.get<std::string>("capabilities");
+            cam.model     = v.get<std::string>("model");
+            cam.manufacturer     = v.get<std::string>("manufacturer");
+            cam.location     = v.get<std::string>("location");
+            cam.enabled     = v.get<int>("enabled");
+        }
 
-}
+        static void to_base(const iar::sql::Camera& cam, values& v, indicator& ind)
+        {
+            v.set("id", cam.id);
+            v.set("name", cam.name);
+            v.set("rtsp_url", cam.rtsp_url);
+            v.set("capabilities", cam.capabilities_json);
+            v.set("model", cam.model);
+            v.set("manufacturer", cam.manufacturer);
+            v.set("location", cam.location);
+            v.set("enabled", (int)cam.enabled);
+            ind = i_ok;
+        }
+    };
+
+} // namespace soci

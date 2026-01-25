@@ -14,7 +14,7 @@ namespace iar { namespace sql {
     class RecordingRepository: public IEntity<Recording>
     {
         public:
-            RecordingRepository() = default;
+            RecordingRepository(): IEntity<Recording>("recordings") {}
             ~RecordingRepository() = default;
 
             bool create_table(soci::session& session) override;

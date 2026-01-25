@@ -1,10 +1,14 @@
 
 #include "db/io/camera_repository.h"
+#include <soci/error.h>
+#include <iostream>
 
 bool iar::sql::CameraRepository::create_table(soci::session& session)
 {
-    session << R"(
-        CREATE TABLE cameras (
+    std::stringstream ss;
+    ss << "CREATE TABLE " << tablename();
+    ss << R"(
+        (
             id              UUID PRIMARY KEY,
             name            TEXT NOT NULL,
             manufacturer    TEXT,
@@ -16,12 +20,20 @@ bool iar::sql::CameraRepository::create_table(soci::session& session)
             enabled         BOOL
         );
     )";
-    return true;
+    
+    try {
+        session << ss.str();
+        return true;
+    } catch(soci::soci_error const & e)
+    {
+        std::cout << "Failed to create table!\n";
+    }
+    return false;
 }
 
 void iar::sql::CameraRepository::drop_table(soci::session& session)
 {
-    session << "DROP TABLE cameras;";
+    session << "DROP TABLE " << tablename();
 }
 
 std::vector<iar::sql::Camera> iar::sql::CameraRepository::select_all()
