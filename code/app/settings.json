@@ -23,7 +23,12 @@
         {
             "provider:": "gcloud",
             "bucket": "",
-            "credentials": ""
+            "credentials-path": ""
+        },
+        {
+            "provider:": "local",
+            "path": "./video.mp4",
+            "format": "mp4"
         }
     ],
     "database": {

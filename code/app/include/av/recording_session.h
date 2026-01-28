@@ -13,7 +13,7 @@ class cloud_storage_sink;
 
 class RecordingSession {
 public:
-    explicit RecordingSession(std::unique_ptr<cloud_storage_sink> sink) : _sink(std::move(sink)) {}
+    explicit RecordingSession(std::unique_ptr<iar::app::cloud_storage_sink> sink) : _sink(std::move(sink)) {}
 
     bool start(const std::string& object_name) {
         return _sink->open(object_name);
@@ -34,7 +34,7 @@ public:
     }
 
 private:
-    std::unique_ptr<cloud_storage_sink> _sink;
+    std::unique_ptr<iar::app::cloud_storage_sink> _sink;
     std::mutex _mutex;
 };
 
