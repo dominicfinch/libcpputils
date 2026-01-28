@@ -12,7 +12,23 @@ iar::app::SecurityService * securityService = nullptr;
 
 void signalHandler(int signum)
 {
-    std::cout << " - Interrupt signal (" << signum << ") received.\n";
+    std::stringstream ss;
+    auto llvl = spdlog::level::info;
+
+    switch (signum)
+    {
+        case SIGABRT:
+        case SIGSEGV:
+        case SIGTERM:
+            ss << "Fatal error occurred. Application terminating.";
+            llvl = spdlog::level::critical;
+            break;
+        case SIGINT:
+            ss << "Interrupt signal (" << signum << ") received.";
+            break;
+    }
+
+    securityService->LogMessage(ss.str(), llvl);
     if(securityService != nullptr && securityService->Server() != nullptr)
     {
         securityService->Server()->Shutdown();
@@ -23,6 +39,7 @@ int main(int argc, char * argv[])
 {
     signal(SIGINT, signalHandler);
     signal(SIGABRT, signalHandler);
+    signal(SIGSEGV, signalHandler);
     signal(SIGTERM, signalHandler);
 
     iar::app::SecurityServiceCmdArgParser cmdArgParser;

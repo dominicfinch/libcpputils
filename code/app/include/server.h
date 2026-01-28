@@ -13,6 +13,8 @@
 
 #include "ecc.h"
 #include "db/database.h"
+#include "av/stream_manager.h"
+#include "av/packet_broadcaster.h"
 #include "interfaces/node.h"
 
 #include "rpc/server/camera.h"
@@ -69,6 +71,11 @@ namespace iar { namespace app {
         int max_files;
     };
     
+    struct StorageInfo {
+        std::string provider;
+        std::string bucket;
+        std::string credentials;
+    };
 
 
     class SecurityService: public security_service<Json::Value>
@@ -126,8 +133,10 @@ namespace iar { namespace app {
         Json::Value _configuration;
         ServiceInfoObject<ServerInfo> serverInfo;
         ServiceInfoObject<DatabaseInfo> dbInfo;
+        ServiceInfoObject<std::vector<StorageInfo>> storageInfo;
         bool _initialized = false;
         
+        std::shared_ptr<av::StreamManager> _streamManager = nullptr;
         sql::DatabaseManager * dbManager = nullptr;
         std::vector<std::shared_ptr<spdlog::logger>> loggers;
         //iar::utils::ECC eccKey;

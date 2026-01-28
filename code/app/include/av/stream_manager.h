@@ -1,29 +1,57 @@
 #pragma once
 
-#include <memory>
 #include <unordered_map>
+#include <mutex>
+#include <memory>
 
-#include "packet_broadcaster.h"
+#include "stream_broadcaster.h"
 #include "rtsp_injest_session.h"
 
-namespace iar { namespace av { 
+namespace iar { namespace av {
 
+class StreamManager {
+public:
+    bool create_stream(const std::string& stream_id,
+                       const std::string& rtsp_url)
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+
+        auto broadcaster = std::make_shared<StreamBroadcaster>(stream_id);
+        auto ingest = std::make_shared<RtspIngestSession>(rtsp_url, broadcaster);
+
+        ingest->start();
+
+        _streams.emplace(stream_id,
+            StreamContext{ingest, broadcaster});
+
+        return true;
+    }
+
+    void set_recording(const std::string& stream_id, bool enable) {
+        auto s = get(stream_id);
+        if (s) s->broadcaster->enable_recording(enable);
+    }
+
+    std::shared_ptr<StreamBroadcaster>
+    get_broadcaster(const std::string& stream_id) {
+        auto s = get(stream_id);
+        return s ? s->broadcaster : nullptr;
+    }
+
+private:
     struct StreamContext {
-        std::unique_ptr<RtspIngestSession> ingest;
-        std::shared_ptr<PacketBroadcaster> broadcaster;
-        //std::shared_ptr<Recorder> recorder;
+        std::shared_ptr<RtspIngestSession> ingest;
+        std::shared_ptr<StreamBroadcaster> broadcaster;
     };
 
-    class StreamManager {
-    public:
-        bool start_stream(const std::string& stream_id, const std::string& rtsp_url);
+    StreamContext* get(const std::string& id) {
+        std::lock_guard<std::mutex> lock(_mutex);
+        auto it = _streams.find(id);
+        return it == _streams.end() ? nullptr : &it->second;
+    }
 
-        void stop_stream(const std::string& stream_id);
-        void start_recording(const std::string& stream_id);
-        void stop_recording(const std::string& stream_id);
-
-    private:
-        std::unordered_map<std::string, StreamContext> streams_;
-    };
+    std::mutex _mutex;
+    std::unordered_map<std::string, StreamContext> _streams;
+};
 
 } }

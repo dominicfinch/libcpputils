@@ -12,6 +12,7 @@
 #include <limits>
 #include <iostream>
 #include <sstream>
+#include <regex>
 
 
 iar::app::SecurityService::SecurityService()
@@ -102,6 +103,21 @@ bool iar::app::SecurityService::initialize_logging(const Json::Value& config)
         lInfo->max_size = lc["max-size"].asInt();
         lInfo->max_files = lc["max-files"].asInt();
 
+        // Get datetime and replace placeholders
+        auto now = std::chrono::system_clock::now();
+        time_t tt = std::chrono::system_clock::to_time_t(now);
+        tm utc_tm = *gmtime(&tt);
+
+        lInfo->output_path = std::regex_replace(lInfo->output_path, std::regex("%Y"), std::to_string(utc_tm.tm_year + 1900));
+
+        std::stringstream ss;
+        ss << std::setfill('0') << std::setw(2) << std::to_string(utc_tm.tm_mon + 1);
+        lInfo->output_path = std::regex_replace(lInfo->output_path, std::regex("%m"), ss.str());
+
+        ss.str(""); ss.clear();
+        ss << std::setfill('0') << std::setw(2) << utc_tm.tm_mday;
+        lInfo->output_path = std::regex_replace(lInfo->output_path, std::regex("%d"), ss.str());
+
         //logPtr = std::make_shared<spdlog::logger>(spdlog::logger());
         std::shared_ptr<spdlog::logger> logPtr;
         if(lInfo->output.compare("console") == 0 )
@@ -110,7 +126,8 @@ bool iar::app::SecurityService::initialize_logging(const Json::Value& config)
         } else if(lInfo->output.compare("file") == 0)
         {
             logPtr = spdlog::basic_logger_mt("file-log", lInfo->output_path);
-        } else if(lInfo->output.compare("rotating-file") == 0) {
+        } else if(lInfo->output.compare("rotating-file") == 0)
+        {
             logPtr = spdlog::rotating_logger_mt("rot-file-log", lInfo->output_path, lInfo->max_size, lInfo->max_files);
         }
 
@@ -318,6 +335,11 @@ void iar::app::SecurityService::Shutdown()
 
     if(_eventDispatchService != nullptr) {
         _eventDispatchService.reset();
+    }
+
+    // Streaming infrastructure
+    if(_streamManager != nullptr) {
+        _streamManager.reset();
     }
     
     LogMessage("Closing database connection");

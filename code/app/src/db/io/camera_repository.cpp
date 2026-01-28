@@ -6,7 +6,7 @@
 bool iar::sql::CameraRepository::create_table(soci::session& session)
 {
     std::stringstream ss;
-    ss << "CREATE TABLE " << tablename();
+    ss << "CREATE TABLE IF NOT EXISTS " << tablename();
     ss << R"(
         (
             id              UUID PRIMARY KEY,

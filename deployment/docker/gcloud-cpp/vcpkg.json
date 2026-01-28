@@ -1,0 +1,10 @@
+{
+  "name": "gcloud-cpp-deps",
+  "version": "0.1.0",
+  "dependencies": [
+    {
+      "name": "google-cloud-cpp",
+      "features": ["storage"]
+    }
+  ]
+}
