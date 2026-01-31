@@ -5,9 +5,13 @@
 #include <grpcpp/grpcpp.h>
 #include "streaming.grpc.pb.h"
 
-namespace iar { namespace app {
+namespace iar {
 
-    class iar::av::StreamManager;
+    namespace av {
+        class StreamManager;
+    }
+    
+    namespace app {
 
     class StreamingService final : public rpc::StreamingService::Service
     {

@@ -10,69 +10,99 @@ extern "C" {
 #include <libavcodec/avcodec.h>
 }
 
+#include "streaming.grpc.pb.h"
+#include "av/recording_session.h"
+
 namespace iar { namespace av {
 
-class StreamBroadcaster;
+    class StreamBroadcaster;
 
-class RtspIngestSession {
-public:
-    RtspIngestSession(const std::string& rtsp_url,
-                      std::shared_ptr<StreamBroadcaster> broadcaster)
-        : _rtsp_url(rtsp_url),
-          _broadcaster(broadcaster) {}
+    struct EncodedPacket {
+        std::vector<uint8_t> data;
+        uint64_t timestamp_ms;
+        bool keyframe;
+    };
 
-    ~RtspIngestSession() {
-        stop();
-    }
 
-    bool start() {
-        _running = true;
-        _thread = std::thread(&RtspIngestSession::run, this);
-        return true;
-    }
+    class RtspIngestSession
+    {
+    public:
+        RtspIngestSession(std::string id, std::string url) : id_(std::move(id)), url_(std::move(url)) {}
 
-    void stop() {
-        _running = false;
-        if (_thread.joinable())
-            _thread.join();
-    }
+        void Start() {
+            running_ = true;
+            thread_ = std::thread(&RtspIngestSession::Loop, this);
+        }
 
-private:
-    void run() {
-        AVFormatContext* fmt = nullptr;
+        void Stop() {
+            running_ = false;
+            if (thread_.joinable()) thread_.join();
+        }
 
-        avformat_open_input(&fmt, _rtsp_url.c_str(), nullptr, nullptr);
-        avformat_find_stream_info(fmt, nullptr);
+        void AddSubscriber(std::shared_ptr<grpc::ServerWriter<iar::rpc::StreamChunk>> writer)
+        {
+            std::lock_guard<std::mutex> lock(mu_);
+            subscribers_.push_back(writer);
+        }
 
-        int video_stream = -1;
-        for (unsigned i = 0; i < fmt->nb_streams; ++i) {
-            if (fmt->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
-                video_stream = i;
-                break;
+        void EnableRecording(const std::string& path) {
+            //recording_ = std::make_unique<RecordingSession>(path);
+        }
+
+        void DisableRecording() {
+            recording_.reset();
+        }
+
+    private:
+        void Loop() {
+            // --- FFmpeg setup (simplified) ---
+            AVFormatContext* fmt = nullptr;
+            avformat_open_input(&fmt, url_.c_str(), nullptr, nullptr);
+            avformat_find_stream_info(fmt, nullptr);
+
+            AVPacket pkt;
+            while (running_ && av_read_frame(fmt, &pkt) >= 0) {
+                EncodedPacket p;
+                p.data.assign(pkt.data, pkt.data + pkt.size);
+                p.timestamp_ms = pkt.pts;
+                p.keyframe = pkt.flags & AV_PKT_FLAG_KEY;
+
+                Broadcast(p);
+                av_packet_unref(&pkt);
+            }
+
+            avformat_close_input(&fmt);
+        }
+
+        void Broadcast(const EncodedPacket& p) {
+            // Send to subscribers
+            {
+                std::lock_guard<std::mutex> lock(mu_);
+                for (auto& w : subscribers_) {
+                    iar::rpc::StreamChunk chunk;
+                    chunk.set_data(p.data.data(), p.data.size());
+                    chunk.set_timestamp_ms(p.timestamp_ms);
+                    chunk.set_keyframe(p.keyframe);
+                    w->Write(chunk);
+                }
+            }
+
+            // Send to recorder
+            if (recording_) {
+                //recording_->Write(p);
             }
         }
 
-        AVPacket pkt;
-        while (_running && av_read_frame(fmt, &pkt) >= 0) {
-            if (pkt.stream_index == video_stream) {
-                bool keyframe = pkt.flags & AV_PKT_FLAG_KEY;
-                uint64_t ts_ms =
-                    pkt.pts * av_q2d(fmt->streams[video_stream]->time_base) * 1000;
+    private:
+        std::string id_;
+        std::string url_;
+        std::atomic<bool> running_{false};
+        std::thread thread_;
 
-                _broadcaster->broadcast_h264_frame(
-                    pkt.data, pkt.size, keyframe, ts_ms);
-            }
-            av_packet_unref(&pkt);
-        }
+        std::mutex mu_;
+        std::vector<std::shared_ptr<grpc::ServerWriter<iar::rpc::StreamChunk>>> subscribers_;
 
-        avformat_close_input(&fmt);
-    }
-
-    std::string _rtsp_url;
-    std::shared_ptr<StreamBroadcaster> _broadcaster;
-
-    std::thread _thread;
-    std::atomic<bool> _running{false};
-};
+        std::unique_ptr<RecordingSession> recording_;
+    };
 
 } }

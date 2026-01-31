@@ -5,6 +5,7 @@
 #include <thread>
 #include <chrono>
 
+#include "av/stream_manager.h"
 #include "uuid.h"
 
 namespace iar { namespace app {

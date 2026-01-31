@@ -112,15 +112,11 @@ message StreamChunk {
 
 service StreamingService {
 
-  rpc CreateStream(CreateStreamRequest)
-      returns (CreateStreamResponse);
+  rpc CreateStream(CreateStreamRequest) returns (CreateStreamResponse);
 
-  rpc ListStreams(ListStreamsRequest)
-      returns (ListStreamsResponse);
+  rpc ListStreams(ListStreamsRequest) returns (ListStreamsResponse);
 
-  rpc SetRecording(SetRecordingRequest)
-      returns (SetRecordingResponse);
+  rpc SetRecording(SetRecordingRequest) returns (SetRecordingResponse);
 
-  rpc Subscribe(SubscribeRequest)
-      returns (stream StreamChunk);
+  rpc Subscribe(SubscribeRequest) returns (stream StreamChunk);
 }

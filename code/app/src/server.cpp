@@ -253,9 +253,15 @@ bool iar::app::SecurityService::initialize_rpc(const Json::Value& config, Servic
             else
                 LogMessage("Camera service already initialized", spdlog::level::warn);
             
-            if(_streamingService == nullptr)
+            if(_streamManager == nullptr)
             {
                 _streamManager = std::shared_ptr<iar::av::StreamManager>(new iar::av::StreamManager);
+            } else {
+                LogMessage("Stream manager already initialized", spdlog::level::warn);
+            }
+            
+            if(_streamingService == nullptr)
+            {
                 _streamingService = std::shared_ptr<StreamingService>(new StreamingService(_streamManager));
 
             } else

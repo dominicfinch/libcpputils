@@ -6,8 +6,8 @@
 #include <atomic>
 #include <chrono>
 
-#include "generated/streaming.pb.h"
-#include "generated/streaming.grpc.pb.h"
+#include "streaming.pb.h"
+#include "streaming.grpc.pb.h"
 
 namespace iar { namespace av {
 
