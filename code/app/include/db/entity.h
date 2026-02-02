@@ -11,7 +11,7 @@ namespace iar { namespace sql {
         public:
             using Traits = EntityTraits<TableObject>;
 
-            IEntity(const std::string& tbname): _tablename(tbname) {}
+            IEntity() {}
             virtual ~IEntity() {}
 
             virtual void insert(soci::session& session, const TableObject& obj)
@@ -44,10 +44,7 @@ namespace iar { namespace sql {
             virtual bool create_table(soci::session& session) { return false; }
             virtual void drop_table(soci::session& session) {}
 
-            const std::string& tablename() { return _tablename; }
-
         private:
-            const std::string _tablename;
     };
 
 

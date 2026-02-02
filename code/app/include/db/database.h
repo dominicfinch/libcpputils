@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "interfaces/db.h"
 #include <string>
 #include <mutex>
 #include <soci/connection-pool.h>
@@ -18,7 +19,7 @@
 
 namespace iar { namespace sql {
 
-    class DatabaseManager
+    class DatabaseManager: public idatabase_manager
     {
     public:
         enum class Backend {
@@ -34,16 +35,17 @@ namespace iar { namespace sql {
         };
 
         DatabaseManager() = default;
-        ~DatabaseManager() = default;
+        ~DatabaseManager()
+        {
+            
+        }
 
         soci::session& session();
-
+        const Config& config() { return config_; }
 
         soci::connection_pool& pool();
-
         bool initialize_connection_pool(const Config& config);
-
-        void create_schema();
+        void create_schema(bool drop_first=false);
 
         CameraRepository& getCameraTable() { return _cameraRepository; }
         EventRepository& getEventTable() { return _eventRepository; }

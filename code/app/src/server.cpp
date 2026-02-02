@@ -2,10 +2,11 @@
  © Copyright 2025 Dominic Finch
 */
 #include <grpc++/server_builder.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/rotating_file_sink.h>
 
 #include "server.h"
-//#include "base64.h"
-//#include "hash.h"
 #include "file.h"
 #include "string_helpers.h"
 
@@ -25,68 +26,13 @@ iar::app::SecurityService::~SecurityService()
     Shutdown();
 }
 
-void iar::app::SecurityService::LogMessage(const Json::Value& obj, spdlog::level::level_enum lvl)
-{
-    std::stringstream ss;
-    Json::StreamWriterBuilder writerBuilder;
-    writerBuilder["indentation"] = "  "; // 2 spaces for readability
-    std::unique_ptr<Json::StreamWriter> writer(writerBuilder.newStreamWriter());
-    writer->write(obj, &ss);
-    LogMessage(ss.str(), lvl);
-}
-
-void iar::app::SecurityService::LogMessage(const std::string& msg, spdlog::level::level_enum lvl)
-{
-    for(auto logger : loggers)
-    {
-        switch (lvl)
-        {
-            case spdlog::level::level_enum::critical:
-                logger->critical(msg);
-                logger->enable_backtrace(10);
-                logger->dump_backtrace();
-                break;
-            
-            case spdlog::level::level_enum::err:
-                logger->error(msg);
-                logger->enable_backtrace(10);
-                logger->dump_backtrace();
-                break;
-            
-            case spdlog::level::level_enum::warn:
-                logger->warn(msg);
-                break;
-            
-            case spdlog::level::level_enum::info:
-                logger->info(msg);
-                break;
-            
-            case spdlog::level::level_enum::debug:
-                logger->debug(msg);
-                break;
-            
-            case spdlog::level::level_enum::trace:
-                logger->trace(msg);
-                break;
-            
-            default:
-                break;
-        }
-    }
-}
-
-void iar::app::SecurityService::LogMessage(const char * msg, spdlog::level::level_enum lvl)
-{
-    LogMessage(std::string(msg), lvl);
-}
-
 bool iar::app::SecurityService::Initialize(Json::Value& configuration)
 {
     auto dbConfig = configuration["database"];
     _initialized = initialize_logging(configuration)            &&
-                    initialize_database(dbConfig, dbInfo)       &&
-                    initialize_tls(configuration, serverInfo)   &&
-                    initialize_rpc(configuration, serverInfo);
+                    initialize_database(dbConfig, database_info())       &&
+                    initialize_tls(configuration, server_info())   &&
+                    initialize_rpc(configuration, server_info());
     return _initialized;
 }
 
@@ -149,7 +95,7 @@ bool iar::app::SecurityService::initialize_logging(const Json::Value& config)
             }
             logPtr->set_level(lvl);
 
-            loggers.push_back(logPtr);
+            Loggers().push_back(logPtr);
             logPtr->info("Created new logger instance '{}'", logPtr->name());
         } else {
             std::cout << " - Error: Unrecognized output specified: '" << lInfo->output << "'\n";
@@ -166,10 +112,10 @@ bool iar::app::SecurityService::initialize_database(const Json::Value& config, S
     dInfo->pass = config["pass"].asString();
     dInfo->port = config["port"].asInt();
     dInfo->db_name = config["db"].asString();
-    dInfo->ssl_mode = config["ssl.mode"].asString();
-    dInfo->ssl_rootcert = config["ssl.rootcert"].asString();
-    dInfo->ssl_cert = config["ssl.cert"].asString();
-    dInfo->ssl_key = config["ssl.key"].asString();
+    dInfo->ssl_mode = config["tls.mode"].asString();
+    dInfo->ssl_rootcert = config["tls.rootcert"].asString();
+    dInfo->ssl_cert = config["tls.cert"].asString();
+    dInfo->ssl_key = config["tls.key"].asString();
 
     std::stringstream ss;
     ss << "host=" << dInfo->host << " ";
@@ -194,11 +140,11 @@ bool iar::app::SecurityService::initialize_database(const Json::Value& config, S
         ss.str()
     };
 
-    dbManager = new sql::DatabaseManager;
-    if(dbManager->initialize_connection_pool(dbConf))
+    _dbManager = std::shared_ptr<sql::DatabaseManager>(new sql::DatabaseManager);
+    if(_dbManager->initialize_connection_pool(dbConf))
     {
         LogMessage("Successfully set up database connection pool");
-        dbManager->create_schema();
+        _dbManager->create_schema(false);
         return true;
     } else {
         LogMessage("Failed to set up database connection pool", spdlog::level::err);
@@ -210,9 +156,9 @@ bool iar::app::SecurityService::initialize_tls(const Json::Value& config, Servic
 {
     bool init_tls = false;
 
-    serverInfo->ssl_enabled = config["ssl.enabled"].asBool();
-    serverInfo->ssl_cert = config["ssl.cert"].asString();
-    serverInfo->ssl_key = config["ssl.key"].asString();
+    serverInfo->ssl_enabled = config["tls.enabled"].asBool();
+    serverInfo->ssl_cert = config["tls.cert"].asString();
+    serverInfo->ssl_key = config["tls.key"].asString();
     serverInfo->port_number = config["port"].asInt();
     serverInfo->threads = config["threads"].asInt();
 
@@ -248,27 +194,28 @@ bool iar::app::SecurityService::initialize_rpc(const Json::Value& config, Servic
     _grpcMasterThread = new std::thread([&]() -> bool {
         if(_initialized)
         {
-            if(_cameraService == nullptr)
-                _cameraService = std::shared_ptr<CameraService>(new CameraService);
-            else
-                LogMessage("Camera service already initialized", spdlog::level::warn);
-            
             if(_streamManager == nullptr)
             {
                 _streamManager = std::shared_ptr<iar::av::StreamManager>(new iar::av::StreamManager);
             } else {
                 LogMessage("Stream manager already initialized", spdlog::level::warn);
             }
+
+            /// GRPC services ///
+            if(_cameraService == nullptr)
+                _cameraService = std::shared_ptr<CameraService>(new CameraService(this));
+            else
+                LogMessage("Camera service already initialized", spdlog::level::warn);
             
             if(_streamingService == nullptr)
             {
-                _streamingService = std::shared_ptr<StreamingService>(new StreamingService(_streamManager));
+                _streamingService = std::shared_ptr<StreamingService>(new StreamingService(this));
 
             } else
                 LogMessage("Streaming service already initialized", spdlog::level::warn);
             
             if(_eventDispatchService == nullptr)
-                _eventDispatchService = std::shared_ptr<EventDispatchService>(new EventDispatchService);
+                _eventDispatchService = std::shared_ptr<EventDispatchService>(new EventDispatchService(this));
             else
                 LogMessage("Event dispatch service already initialized", spdlog::level::warn);
 
@@ -346,16 +293,13 @@ void iar::app::SecurityService::Shutdown()
         _eventDispatchService.reset();
     }
 
-    // Streaming infrastructure
+    LogMessage("Shutting down stream manager");
     if(_streamManager != nullptr) {
         _streamManager.reset();
     }
     
     LogMessage("Closing database connection");
-    if(dbManager != nullptr) {
-        delete dbManager;
-        dbManager = nullptr;
+    if(_dbManager != nullptr) {
+        _dbManager.reset();
     }
-    
-    loggers.clear();
 }

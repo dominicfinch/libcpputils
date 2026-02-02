@@ -4,7 +4,7 @@
 bool iar::sql::EventRepository::create_table(soci::session& session)
 {
     std::stringstream ss;
-    ss << "CREATE TABLE " << tablename();
+    ss << "CREATE TABLE " << Traits::table_name;
     ss << R"(
         (
             id              UUID PRIMARY KEY,
@@ -15,8 +15,8 @@ bool iar::sql::EventRepository::create_table(soci::session& session)
             created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
         );
 
-        CREATE INDEX idx_events_stream_id ON events(stream_id);
-        CREATE INDEX idx_events_camera_id ON events(camera_id);
+        CREATE INDEX idx_events_stream_id ON ss_events(stream_id);
+        CREATE INDEX idx_events_camera_id ON ss_events(camera_id);
     )";
 
     try {
@@ -31,7 +31,7 @@ bool iar::sql::EventRepository::create_table(soci::session& session)
 
 void iar::sql::EventRepository::drop_table(soci::session& session)
 {
-    session << "DROP TABLE " << tablename();
+    session << "DROP TABLE " << Traits::table_name;
 }
 
 std::vector<iar::sql::Event> iar::sql::EventRepository::select_all()

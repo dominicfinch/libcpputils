@@ -14,7 +14,7 @@ namespace iar { namespace sql {
     class StreamRepository: public IEntity<Stream>
     {
         public:
-            StreamRepository(): IEntity<Stream>("streams") {}
+            StreamRepository(): IEntity<Stream>() {}
             ~StreamRepository() = default;
 
             bool create_table(soci::session& session) override;

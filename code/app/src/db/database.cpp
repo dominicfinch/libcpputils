@@ -56,11 +56,20 @@ soci::connection_pool& iar::sql::DatabaseManager::pool() {
 }
 
 
-void iar::sql::DatabaseManager::create_schema()
+void iar::sql::DatabaseManager::create_schema(bool drop_first)
 {
     if(connected_)
     {
         auto expected_table_count = 4, success_count = 0;
+
+        if(drop_first)
+        {
+            // Note: Be careful with order. Some tables depend on others (e.g. for indexes).
+            _eventRepository.drop_table(session());
+            _recordingRepository.drop_table(session());
+            _streamRepository.drop_table(session());
+            _cameraRepository.drop_table(session());
+        }
 
         // Note: Be careful with order. Some tables depend on others (e.g. for indexes).
         success_count += _cameraRepository.create_table(session()) ? 1 : 0;

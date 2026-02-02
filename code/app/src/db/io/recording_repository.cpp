@@ -4,11 +4,11 @@
 bool iar::sql::RecordingRepository::create_table(soci::session& session)
 {
     std::stringstream ss;
-    ss << "CREATE TABLE " << tablename();
+    ss << "CREATE TABLE " << Traits::table_name;
     ss << R"(
         (
             id              UUID PRIMARY KEY,
-            stream_id       UUID NOT NULL REFERENCES streams(id),
+            stream_id       UUID NOT NULL REFERENCES ss_streams(id),
             storage_id      UUID NOT NULL,
             start_time      TIMESTAMPTZ NOT NULL,
             end_time        TIMESTAMPTZ,
@@ -16,7 +16,7 @@ bool iar::sql::RecordingRepository::create_table(soci::session& session)
             created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
         );
 
-        CREATE INDEX idx_recordings_stream_id ON recordings(stream_id);
+        CREATE INDEX idx_recordings_stream_id ON ss_recordings(stream_id);
     )";
 
     try {
@@ -31,7 +31,7 @@ bool iar::sql::RecordingRepository::create_table(soci::session& session)
 
 void iar::sql::RecordingRepository::drop_table(soci::session& session)
 {
-    session << "DROP TABLE " << tablename();
+    session << "DROP TABLE " << Traits::table_name;
 }
 
 std::vector<iar::sql::Recording> iar::sql::RecordingRepository::select_all()

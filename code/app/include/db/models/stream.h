@@ -22,16 +22,16 @@ namespace iar { namespace sql {
 
     template<>
     struct EntityTraits<Stream> {
-        static constexpr const char* table_name = "streams";
+        static constexpr const char* table_name = "ss_streams";
 
         static constexpr const char* insert_sql =
-            "INSERT INTO streams "
+            "INSERT INTO ss_streams "
             "(id, camera_id, protocol, source_url, status) "
             "VALUES "
             "(:id, :camera_id, :protocol, :source_url, :status)";
 
         static constexpr const char* update_sql =
-            "UPDATE streams SET "
+            "UPDATE ss_streams SET "
             "camera_id=:camera_id, "
             "protocol=:protocol, "
             "source_url=:source_url, "
@@ -39,15 +39,15 @@ namespace iar { namespace sql {
             "WHERE id=:id";
 
         static constexpr const char* delete_sql =
-            "DELETE FROM streams WHERE id=:id";
+            "DELETE FROM ss_streams WHERE id=:id";
 
         static constexpr const char* select_all_sql =
             "SELECT id, camera_id, protocol, source_url, status "
-            "FROM streams";
+            "FROM ss_streams";
 
         static constexpr const char* select_by_id_sql =
             "SELECT id, camera_id, protocol, source_url, status "
-            "FROM streams WHERE id=:id";
+            "FROM ss_streams WHERE id=:id";
     };
 
 } }

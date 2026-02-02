@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <memory>
+#include "interfaces/rpc.h"
 #include <grpcpp/grpcpp.h>
 #include "streaming.grpc.pb.h"
 
@@ -13,10 +13,10 @@ namespace iar {
     
     namespace app {
 
-    class StreamingService final : public rpc::StreamingService::Service
+    class StreamingService final : public rpc::StreamingService::Service, public rpc::irpc_service
     {
     public:
-        StreamingService(std::shared_ptr<iar::av::StreamManager>& sm): _streamManager(sm) {}
+        StreamingService(app::security_service_context * ssc): rpc::irpc_service(ssc) {}
 
         grpc::Status CreateStream(grpc::ServerContext* context, const rpc::CreateStreamRequest* request, rpc::CreateStreamResponse* response) override;
 
@@ -27,7 +27,7 @@ namespace iar {
         grpc::Status Subscribe(grpc::ServerContext* context, const rpc::SubscribeRequest* request, grpc::ServerWriter<rpc::StreamChunk>* writer) override;
 
     private:
-        std::shared_ptr<iar::av::StreamManager> _streamManager = nullptr;
+    
     };
 
 } } // namespace iar::rpc

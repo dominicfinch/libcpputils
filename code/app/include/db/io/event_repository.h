@@ -14,7 +14,7 @@ namespace iar { namespace sql {
     class EventRepository: public IEntity<Event>
     {
         public:
-            EventRepository(): IEntity<Event>("events") {}
+            EventRepository(): IEntity<Event>() {}
             ~EventRepository() = default;
 
             bool create_table(soci::session& session) override;

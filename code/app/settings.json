@@ -1,7 +1,7 @@
 {
-    "ssl.enabled": true,
-    "ssl.cert": "etc/cert.pem",
-    "ssl.key": "etc/key.pem",
+    "tls.enabled": true,            // GRPC server tls settings
+    "tls.cert": "etc/cert.pem",
+    "tls.key": "etc/key.pem",
     "port": 8888,
     "threads": 50,
     "logging": [
@@ -19,6 +19,21 @@
             "output": "console"
         }
     ],
+    "demuxing": {
+        // TODO: Settings for demultiplexing streams
+    },
+    "transcoding": {
+        // TODO: Settings for transcoding streams
+    },
+    "compression": {
+        // TODO: Settings for compressing streams
+    },
+    "broadcast": {
+        // TODO: Re-stream feeds to subscribers
+    },
+    "notification": {
+        // TODO: Kafka event push/sub model
+    },
     "storage": [
         {
             "provider:": "gcloud",
@@ -38,9 +53,9 @@
         "pass": "@SecurityService123",
         "port": 5432,
         "db": "security_service",
-        "ssl.mode": "disable",  //  disable / allow / prefer / require / verify-ca / verify-full
-        "ssl.rootcert": "",     //  Path to CA certificate for server verification
-        "ssl.cert": "",         //  Optional client certificate
-        "ssl.key": ""           //  Optional client private key
+        "tls.mode": "disable",  //  disable / allow / prefer / require / verify-ca / verify-full
+        "tls.rootcert": "",     //  Path to CA certificate for server verification
+        "tls.cert": "",         //  Optional client certificate
+        "tls.key": ""           //  Optional client private key
     }
 }

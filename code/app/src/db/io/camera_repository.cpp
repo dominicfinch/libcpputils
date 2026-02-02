@@ -6,7 +6,7 @@
 bool iar::sql::CameraRepository::create_table(soci::session& session)
 {
     std::stringstream ss;
-    ss << "CREATE TABLE IF NOT EXISTS " << tablename();
+    ss << "CREATE TABLE IF NOT EXISTS " << Traits::table_name;
     ss << R"(
         (
             id              UUID PRIMARY KEY,
@@ -33,7 +33,7 @@ bool iar::sql::CameraRepository::create_table(soci::session& session)
 
 void iar::sql::CameraRepository::drop_table(soci::session& session)
 {
-    session << "DROP TABLE " << tablename();
+    session << "DROP TABLE " << Traits::table_name;
 }
 
 std::vector<iar::sql::Camera> iar::sql::CameraRepository::select_all()

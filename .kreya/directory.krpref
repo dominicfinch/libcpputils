@@ -1,0 +1,15 @@
+{
+  "settings": [
+    {
+      "options": {
+        "grpc": {
+          "endpoint": "0.0.0.0:8888",
+          "disableServerCertificateValidation": false
+        },
+        "rest": {
+          "disableServerCertificateValidation": true
+        }
+      }
+    }
+  ]
+}

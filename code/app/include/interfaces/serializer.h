@@ -11,6 +11,6 @@ namespace iar { namespace app {
         virtual bool deserialize(U& u, V& v) = 0;
         virtual bool serialize(V& v, U& u) = 0;
 
-        std::string toString(U& u);
+        virtual std::string toString(U& u) { return ""; }
     };
 } }

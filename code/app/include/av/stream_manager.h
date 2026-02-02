@@ -1,5 +1,6 @@
 #pragma once
 
+#include "interfaces/av.h"
 #include <unordered_map>
 #include <mutex>
 #include <memory>
@@ -9,7 +10,7 @@
 
 namespace iar { namespace av {
 
-    class StreamManager
+    class StreamManager: public istream_manager
     {
     public:
         bool create_stream(const std::string& stream_id, const std::string& rtsp_url)

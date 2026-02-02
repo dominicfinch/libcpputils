@@ -14,7 +14,7 @@ namespace iar { namespace sql {
     class CameraRepository: public IEntity<Camera>
     {
         public:
-            CameraRepository(): IEntity<Camera>("cameras") {}
+            CameraRepository(): IEntity<Camera>() {}
             ~CameraRepository() = default;
 
             bool create_table(soci::session& session) override;

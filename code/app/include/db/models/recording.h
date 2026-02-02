@@ -25,16 +25,16 @@ namespace iar { namespace sql {
     
     template<>
     struct EntityTraits<Recording> {
-        static constexpr const char* table_name = "recordings";
+        static constexpr const char* table_name = "ss_recordings";
 
         static constexpr const char* insert_sql =
-            "INSERT INTO recordings "
+            "INSERT INTO ss_recordings "
             "(id, stream_id, storage_id, start_time, end_time, status, created_at) "
             "VALUES "
             "(:id, :stream_id, :storage_id, :start_time, :end_time, :status, :created_at)";
 
         static constexpr const char* update_sql =
-            "UPDATE recordings SET "
+            "UPDATE ss_recordings SET "
             "stream_id=:stream_id, "
             "storage_id=:storage_id, "
             "start_time=:start_time, "
@@ -43,15 +43,15 @@ namespace iar { namespace sql {
             "WHERE id=:id";
 
         static constexpr const char* delete_sql =
-            "DELETE FROM recordings WHERE id=:id";
+            "DELETE FROM ss_recordings WHERE id=:id";
 
         static constexpr const char* select_all_sql =
             "SELECT id, stream_id, storage_id, start_time, end_time, status, created_at "
-            "FROM recordings";
+            "FROM ss_recordings";
 
         static constexpr const char* select_by_id_sql =
             "SELECT id, stream_id, storage_id, start_time, end_time, status, created_at "
-            "FROM recordings WHERE id=:id";
+            "FROM ss_recordings WHERE id=:id";
     };
 
 } }

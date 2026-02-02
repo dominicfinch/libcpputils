@@ -1,0 +1,23 @@
+{
+  "id": "f108e78d-2330-4b22-a019-582390c28752",
+  "importStreams": [
+    {
+      "id": "94e20756-4fb8-431d-bcf2-5839b7268fcf",
+      "name": "ss-proto-import",
+      "importerName": "ProtoFile",
+      "createMissingOperations": true,
+      "options": {
+        "files": [
+          "../svc-definitions"
+        ],
+        "importPaths": [
+          "../svc-definitions"
+        ],
+        "excludedFiles": []
+      }
+    }
+  ],
+  "authConfigs": [],
+  "certificates": [],
+  "proxies": []
+}
