@@ -7,6 +7,7 @@
 #include "tests/bchain_tests.h"
 #endif
 
+#include "tests/bitset_tests.h"
 #include "tests/btree_tests.h"
 #include "tests/b58_tests.h"
 #include "tests/b64_tests.h"

@@ -15,6 +15,8 @@ namespace iar {
             int tests_failed = 0;
     };
 
+    void print_test_results(const std::map<std::string, iar::test_set_results>& results);
+
     class TestRunner
     {
         public:

@@ -1,27 +1,7 @@
 
 #include <iostream>
 #include "test_sets.h"
-#include <openssl/provider.h>
-
-void print_test_results(const std::map<std::string, iar::test_set_results>& results);
-
-
-void print_test_results(const std::map<std::string, iar::test_set_results>& results)
-{
-    std::cout << "\nOverall Results:\n";
-    int total_passed = 0, total_failed = 0, total_tests = 0;
-    for(auto ts : results)
-    {
-        total_passed += ts.second.tests_passed;
-        total_failed += ts.second.tests_failed;
-        total_tests += ts.second.test_set_count;
-        std::cout << " - " << ts.first << ": " << ts.second.tests_passed << "/" << ts.second.test_set_count << std::endl;
-    }
-
-    std::cout << "\nTotal Executed: " << total_tests << std::endl;
-    std::cout << "Total Passed: " << total_passed << std::endl;
-    std::cout << "Total Failed: " << total_failed << std::endl;
-}
+//#include <openssl/provider.h>
 
 int main()
 {
@@ -57,6 +37,26 @@ int main()
         runner->execute_test(results, "test_blockchain_save_load_jsoncpp", test_blockchain_save_load_jsoncpp);
     });
 #endif
+
+    testRunner.add_test_set("bitset_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+        std::cout << "\nRunning BITSET tests...\n";
+        runner->execute_test(results, "test_default_constructor_resets_all_bits", test_default_constructor_resets_all_bits);
+        runner->execute_test(results, "test_word_constructor_fills_all_words", test_word_constructor_fills_all_words);
+        runner->execute_test(results, "test_single_bit_set_and_test", test_single_bit_set_and_test);
+        runner->execute_test(results, "test_single_bit_reset", test_single_bit_reset);
+        runner->execute_test(results, "test_single_bit_flip", test_single_bit_flip);
+        runner->execute_test(results, "test_count_empty_and_full", test_count_empty_and_full);
+        runner->execute_test(results, "test_count_sparse_pattern", test_count_sparse_pattern);
+        runner->execute_test(results, "test_multiword_boundary_bits", test_multiword_boundary_bits);
+        runner->execute_test(results, "test_bitwise_or_and_xor", test_bitwise_or_and_xor);
+        runner->execute_test(results, "test_bitwise_not_masks_unused_bits", test_bitwise_not_masks_unused_bits);
+        runner->execute_test(results, "test_row_mask_generation", test_row_mask_generation);
+        runner->execute_test(results, "test_col_mask_generation", test_col_mask_generation);
+        runner->execute_test(results, "test_main_diagonal_mask", test_main_diagonal_mask);
+        runner->execute_test(results, "test_anti_diagonal_mask", test_anti_diagonal_mask);
+        runner->execute_test(results, "test_square_index_mapping", test_square_index_mapping);
+        runner->execute_test(results, "test_render_bitset_with_square_board", test_render_bitset_with_square_board);
+    });
 
     testRunner.add_test_set("btree_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
         std::cout << "\nRunning BTREE tests...\n";

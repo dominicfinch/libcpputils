@@ -4,6 +4,23 @@
 
 namespace iar {
 
+    void print_test_results(const std::map<std::string, iar::test_set_results>& results)
+    {
+        std::cout << "\nOverall Results:\n";
+        int total_passed = 0, total_failed = 0, total_tests = 0;
+        for(auto ts : results)
+        {
+            total_passed += ts.second.tests_passed;
+            total_failed += ts.second.tests_failed;
+            total_tests += ts.second.test_set_count;
+            std::cout << " - " << ts.first << ": " << ts.second.tests_passed << "/" << ts.second.test_set_count << std::endl;
+        }
+
+        std::cout << "\nTotal Executed: " << total_tests << std::endl;
+        std::cout << "Total Passed: " << total_passed << std::endl;
+        std::cout << "Total Failed: " << total_failed << std::endl;
+    }
+
     void TestRunner::add_test_set(const std::string& name, std::function<void(TestRunner * runner, iar::test_set_results& results)> testSet)
     {
         test_fixtures.insert( std::pair<std::string, std::function<void(TestRunner * runner, iar::test_set_results& results)>>(name, testSet) );
