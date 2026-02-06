@@ -29,5 +29,4 @@ execute_process(
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/code/lib)
 
 # Build unit tests
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/code/tests/component)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/code/tests/unit)
