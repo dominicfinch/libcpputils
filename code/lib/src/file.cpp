@@ -3,10 +3,69 @@
 */
 
 #include "file.h"
+#include <string>
+#include <cstdlib>
 
 namespace iar { namespace utils {
 
     namespace fs = std::filesystem;
+
+    fs::path get_home_directory() {
+    #if defined(_WIN32)
+        const char* home = std::getenv("USERPROFILE");
+        if (home) return fs::path(home);
+
+        const char* drive = std::getenv("HOMEDRIVE");
+        const char* path  = std::getenv("HOMEPATH");
+        if (drive && path)
+            return fs::path(std::string(drive) + std::string(path));
+
+        return fs::path(); // empty = failure
+    #else
+        const char* home = std::getenv("HOME");
+        if (home) return fs::path(home);
+
+        return fs::path();
+    #endif
+    }
+
+    fs::path resolve_path(const std::string& input) {
+        if (input.empty())
+            return {};
+
+        fs::path path(input);
+
+        // Handle "~" and "~/..."
+        if (input[0] == '~') {
+            fs::path home = get_home_directory();
+            if (home.empty())
+                throw std::runtime_error("Unable to resolve home directory");
+
+            if (input.size() == 1) {
+                return home;
+            }
+
+            if (input[1] == '/' || input[1] == '\\') {
+                return home / input.substr(2);
+            }
+
+            // Optional: handle ~username (not implemented)
+            throw std::runtime_error("~username not supported");
+        }
+
+        return path;
+    }
+
+    fs::path full_resolve_path(const std::string& input)
+    {
+        fs::path p = resolve_path(input);
+
+        if (p.is_relative()) {
+            p = fs::current_path() / p;
+        }
+
+        return fs::weakly_canonical(p);
+    }
 
     bool file_exists(const std::string& fpath) {
         return fs::exists( fs::path( fpath.c_str() ) ) && fs::is_regular_file( fs::path(fpath.c_str()) );

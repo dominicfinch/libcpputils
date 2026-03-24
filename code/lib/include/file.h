@@ -14,6 +14,12 @@
 
 namespace iar { namespace utils {
 
+    std::filesystem::path get_home_directory();
+
+    std::filesystem::path resolve_path(const std::string& input);
+
+    std::filesystem::path full_resolve_path(const std::string& input);
+
     bool file_exists(const std::string& fpath);
 
     bool directory_exists(const std::string& fpath);
