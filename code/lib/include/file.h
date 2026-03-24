@@ -20,6 +20,8 @@ namespace iar { namespace utils {
 
     bool create_directories(const std::string& fpath);
 
+    bool delete_directories(const std::string& fpath);
+
     bool read_file_contents(const std::string& fpath, std::string& contents, std::ios_base::openmode mode = std::ios_base::in );
 
     bool write_file_contents(const std::string& fpath, const std::string& contents, std::ios_base::openmode mode = std::ios_base::out | std::ios_base::trunc );

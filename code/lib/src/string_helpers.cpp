@@ -29,6 +29,11 @@ namespace iar {
             }).base(), s.end());
         }
 
+        void trim(std::string &s) {
+            ltrim(s);
+            rtrim(s);
+        }
+
         std::string toLower(std::string& s) {
             std::transform(s.begin(), s.end(), s.begin(),
                 [](unsigned char c){ return std::tolower(c); }
@@ -154,45 +159,46 @@ namespace iar {
             return std::regex_match(s, re);
         }
 
-        std::string getPassword()
+        std::string secure_password_input()
         {
             std::string password;
             char ch;
 
-        #ifdef _WIN32
-            while ((ch = _getch()) != '\r') {
-                if (ch == '\b') {
-                    if (!password.empty()) {
-                        std::cout << "\b \b";
-                        password.pop_back();
+            #ifdef _WIN32
+                while ((ch = _getch()) != '\r') {
+                    if (ch == '\b') {
+                        if (!password.empty()) {
+                            std::cout << "\b \b";
+                            password.pop_back();
+                        }
+                    } else {
+                        password += ch;
+                        std::cout << '*';
                     }
-                } else {
-                    password += ch;
-                    std::cout << '*';
                 }
-            }
-        #else
-            struct termios oldt, newt;
-            tcgetattr(STDIN_FILENO, &oldt);
-            newt = oldt;
-            newt.c_lflag &= ~ECHO;
-            tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+                std::cout << '\n';
+            #else
+                struct termios oldt, newt;
+                tcgetattr(STDIN_FILENO, &oldt);
+                newt = oldt;
+                newt.c_lflag &= ~ECHO;
+                tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
-            while ((ch = getchar()) != '\n') {
-                if (ch == 127) {
-                    if (!password.empty()) {
-                        std::cout << "\b \b";
-                        password.pop_back();
+                while ((ch = getchar()) != '\n') {
+                    if (ch == 127) {
+                        if (!password.empty()) {
+                            std::cout << "\b \b";
+                            password.pop_back();
+                        }
+                    } else {
+                        password += ch;
+                        std::cout << '*';
                     }
-                } else {
-                    password += ch;
-                    std::cout << '*';
                 }
-            }
-            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-        #endif
+                tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+                write(STDOUT_FILENO, "\n", 1);
+            #endif
 
-            std::cout << '\n';
             return password;
         }
 

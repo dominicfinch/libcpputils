@@ -20,6 +20,10 @@ namespace iar { namespace utils {
         return fs::create_directories(fpath.c_str());
     }
 
+    bool delete_directories(const std::string& fpath) {
+        return fs::remove_all(fpath.c_str());
+    }
+
     bool read_file_contents(const std::string& fpath, std::string& contents, std::ios_base::openmode mode) {
         //std::fstream fs;
         std::ifstream istream;

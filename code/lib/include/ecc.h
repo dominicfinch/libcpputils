@@ -8,10 +8,19 @@
 #include <mutex>
 #include <cstring>
 #include <vector>
+#include <functional>
 #include <openssl/evp.h>
 
 namespace iar {
     namespace utils {
+
+        using PasswordCallback = std::function<std::string()>;
+
+        struct PasswordCallbackWrapper {
+            PasswordCallback cb;
+        };
+
+        int openssl_password_cb(char* buf, int size, int, void* userdata);
 
         class ECC {
         public:
@@ -25,6 +34,8 @@ namespace iar {
 
             bool load_own_public_key_from_pem(const std::string& pem);
             bool load_own_private_key_from_pem(const std::string& fpath);
+            bool load_own_private_key_from_pem_string(const std::string& pem, PasswordCallback cb);
+            bool load_own_private_key_from_pem_file(const std::string& fpath, PasswordCallback cb);
 
             // Import / Export //
             bool export_public_key(const std::string& fpath);

@@ -19,6 +19,7 @@ namespace iar {
 
         void ltrim(std::string &s);
         void rtrim(std::string &s);
+        void trim(std::string &s);
 
         std::string toLower(std::string& s);
         std::string toUpper(std::string& s);
@@ -67,7 +68,7 @@ namespace iar {
 
         bool is_uuid(const std::string &s);
 
-        std::string getPassword();
+        std::string secure_password_input();
 
         template <class ... Args>
         std::string stringFormat(const std::string& format, Args ... args ) {
