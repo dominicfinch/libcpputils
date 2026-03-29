@@ -16,7 +16,7 @@
 
 #define DEFAULT_AES_KEYSIZE         L_AES_KEY_SIZE
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         enum class AESMode {

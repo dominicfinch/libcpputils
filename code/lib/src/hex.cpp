@@ -5,7 +5,7 @@
 #include "hex.h"
 #include <sstream>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     std::string Hex::encode(std::vector<uint8_t>& input) {
         static const char* hex_digits = "0123456789abcdef";

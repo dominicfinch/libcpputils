@@ -11,7 +11,7 @@
 #include <cstdint>
 #include <stdexcept>
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         class DiffieHellman {

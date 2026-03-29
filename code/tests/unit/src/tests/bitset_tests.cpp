@@ -7,7 +7,7 @@
 
 bool test_default_constructor_resets_all_bits()
 {
-    iar::utils::Bitset<128> b;
+    cpp::utils::Bitset<128> b;
     for (size_t i = 0; i < b.NumBits; ++i)
         if (b.test(i)) return false;
     return true;
@@ -17,7 +17,7 @@ bool test_default_constructor_resets_all_bits()
 
 bool test_word_constructor_fills_all_words()
 {
-    iar::utils::Bitset<130> b(~0ULL);
+    cpp::utils::Bitset<130> b(~0ULL);
     for (size_t i = 0; i < b.NumBits; ++i)
         if (!b.test(i)) return false;
     return true;
@@ -27,7 +27,7 @@ bool test_word_constructor_fills_all_words()
 
 bool test_single_bit_set_and_test()
 {
-    iar::utils::Bitset<64> b;
+    cpp::utils::Bitset<64> b;
     b.set(13);
     return b.test(13) && b.count() == 1;
 }
@@ -36,7 +36,7 @@ bool test_single_bit_set_and_test()
 
 bool test_single_bit_reset()
 {
-    iar::utils::Bitset<64> b;
+    cpp::utils::Bitset<64> b;
     b.set(7);
     b.reset(7);
     return !b.test(7) && b.count() == 0;
@@ -46,7 +46,7 @@ bool test_single_bit_reset()
 
 bool test_single_bit_flip()
 {
-    iar::utils::Bitset<64> b;
+    cpp::utils::Bitset<64> b;
     b.flip(5);
     if (!b.test(5)) return false;
     b.flip(5);
@@ -57,7 +57,7 @@ bool test_single_bit_flip()
 
 bool test_count_empty_and_full()
 {
-    iar::utils::Bitset<100> a;
+    cpp::utils::Bitset<100> a;
     if (a.count() != 0) return false;
 
     for (size_t i = 0; i < a.NumBits; ++i)
@@ -70,7 +70,7 @@ bool test_count_empty_and_full()
 
 bool test_count_sparse_pattern()
 {
-    iar::utils::Bitset<128> b;
+    cpp::utils::Bitset<128> b;
     for (size_t i = 0; i < 128; i += 3)
         b.set(i);
 
@@ -81,7 +81,7 @@ bool test_count_sparse_pattern()
 
 bool test_multiword_boundary_bits()
 {
-    iar::utils::Bitset<130> b;
+    cpp::utils::Bitset<130> b;
     b.set(63);
     b.set(64);
     b.set(129);
@@ -93,20 +93,20 @@ bool test_multiword_boundary_bits()
 
 bool test_bitwise_or_and_xor()
 {
-    iar::utils::Bitset<64> a, b;
+    cpp::utils::Bitset<64> a, b;
 
     a.set(1);
     a.set(3);
     b.set(3);
     b.set(4);
 
-    iar::utils::Bitset<64> c = a | b;
+    cpp::utils::Bitset<64> c = a | b;
     if (!(c.test(1) && c.test(3) && c.test(4))) return false;
 
-    iar::utils::Bitset<64> d = a & b;
+    cpp::utils::Bitset<64> d = a & b;
     if (!(d.count() == 1 && d.test(3))) return false;
 
-    iar::utils::Bitset<64> e = a ^ b;
+    cpp::utils::Bitset<64> e = a ^ b;
     return e.count() == 2 && e.test(1) && e.test(4);
 }
 
@@ -114,7 +114,7 @@ bool test_bitwise_or_and_xor()
 
 bool test_bitwise_not_masks_unused_bits()
 {
-    iar::utils::Bitset<70> b;
+    cpp::utils::Bitset<70> b;
     for (size_t i = 0; i < 70; ++i)
         b.set(i);
 
@@ -130,7 +130,7 @@ bool test_bitwise_not_masks_unused_bits()
 bool test_row_mask_generation()
 {
     constexpr size_t W = 4, H = 3;
-    auto mask = iar::utils::Bitset<W*H>::template row_mask<W, H>(1);
+    auto mask = cpp::utils::Bitset<W*H>::template row_mask<W, H>(1);
 
     size_t count = 0;
     for (size_t col = 0; col < W; ++col)
@@ -144,7 +144,7 @@ bool test_row_mask_generation()
 bool test_col_mask_generation()
 {
     constexpr size_t W = 4, H = 3;
-    auto mask = iar::utils::Bitset<W*H>::template col_mask<W, H>(2);
+    auto mask = cpp::utils::Bitset<W*H>::template col_mask<W, H>(2);
 
     size_t count = 0;
     for (size_t row = 0; row < H; ++row)
@@ -158,7 +158,7 @@ bool test_col_mask_generation()
 bool test_main_diagonal_mask()
 {
     constexpr size_t W = 4, H = 4;
-    auto mask = iar::utils::Bitset<W*H>::template main_diag_mask<W, H>(0, 0);
+    auto mask = cpp::utils::Bitset<W*H>::template main_diag_mask<W, H>(0, 0);
 
     return mask.count() == 4 &&
            mask.test(0) &&
@@ -172,7 +172,7 @@ bool test_main_diagonal_mask()
 bool test_anti_diagonal_mask()
 {
     constexpr size_t W = 4, H = 4;
-    auto mask = iar::utils::Bitset<W*H>::template anti_diag_mask<W, H>(0, 3);
+    auto mask = cpp::utils::Bitset<W*H>::template anti_diag_mask<W, H>(0, 3);
 
     return mask.count() == 4 &&
            mask.test(3) &&
@@ -185,7 +185,7 @@ bool test_anti_diagonal_mask()
 
 bool test_square_index_mapping()
 {
-    return iar::utils::Bitset<1>::square_index(2, 3, 8) == 19;
+    return cpp::utils::Bitset<1>::square_index(2, 3, 8) == 19;
 }
 
 // ------------------------------------------------------------
@@ -193,11 +193,11 @@ bool test_square_index_mapping()
 bool test_render_bitset_with_square_board()
 {
     constexpr size_t W = 3, H = 2;
-    iar::utils::Bitset<W*H> b;
+    cpp::utils::Bitset<W*H> b;
     b.set(0);
     b.set(4);
 
-    iar::utils::SquareBoard board(W, H);
+    cpp::utils::SquareBoard board(W, H);
 
     std::ostringstream os;
     std::vector<bool> bits(W*H);

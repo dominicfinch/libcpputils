@@ -9,7 +9,7 @@
 #include "btree.h"
 
 bool test_insert_and_contains() {
-    iar::utils::BinaryTree<int> tree;
+    cpp::utils::BinaryTree<int> tree;
     return tree.insert(10) && tree.insert(5) && tree.insert(15)
            && tree.contains(10)
            && tree.contains(5)
@@ -18,14 +18,14 @@ bool test_insert_and_contains() {
 }
 
 bool test_insert_duplicates() {
-    iar::utils::BinaryTree<int> tree;
+    cpp::utils::BinaryTree<int> tree;
     return tree.insert(10)
            && !tree.insert(10)  // duplicate
            && tree.size() == 1;
 }
 
 bool test_in_order_traversal_sorted() {
-    iar::utils::BinaryTree<int> tree;
+    cpp::utils::BinaryTree<int> tree;
     std::vector<int> values = {50, 30, 70, 20, 40, 60, 80};
     for (int v : values) tree.insert(v);
 
@@ -38,7 +38,7 @@ bool test_in_order_traversal_sorted() {
 }
 
 bool test_remove_leaf_node() {
-    iar::utils::BinaryTree<int> tree;
+    cpp::utils::BinaryTree<int> tree;
     tree.insert(10);
     tree.insert(5);
     tree.insert(15);
@@ -46,7 +46,7 @@ bool test_remove_leaf_node() {
 }
 
 bool test_remove_node_with_one_child() {
-    iar::utils::BinaryTree<int> tree;
+    cpp::utils::BinaryTree<int> tree;
     tree.insert(10);
     tree.insert(5);
     tree.insert(2);  // 5 has one left child
@@ -55,7 +55,7 @@ bool test_remove_node_with_one_child() {
 }
 
 bool test_remove_node_with_two_children() {
-    iar::utils::BinaryTree<int> tree;
+    cpp::utils::BinaryTree<int> tree;
     tree.insert(10);
     tree.insert(5);
     tree.insert(15);
@@ -70,7 +70,7 @@ bool test_remove_node_with_two_children() {
 }
 
 bool test_remove_root_node() {
-    iar::utils::BinaryTree<int> tree;
+    cpp::utils::BinaryTree<int> tree;
     tree.insert(10);
     tree.insert(5);
     tree.insert(15);
@@ -81,7 +81,7 @@ bool test_remove_root_node() {
 }
 
 bool test_clear_tree() {
-    iar::utils::BinaryTree<int> tree;
+    cpp::utils::BinaryTree<int> tree;
     tree.insert(1);
     tree.insert(2);
     tree.clear();
@@ -89,18 +89,18 @@ bool test_clear_tree() {
 }
 
 bool test_empty_tree() {
-    iar::utils::BinaryTree<int> tree;
+    cpp::utils::BinaryTree<int> tree;
     return tree.empty() && tree.size() == 0;
 }
 
 bool test_remove_nonexistent_node() {
-    iar::utils::BinaryTree<int> tree;
+    cpp::utils::BinaryTree<int> tree;
     tree.insert(1);
     return !tree.remove(42) && tree.size() == 1;
 }
 
 bool test_string_payloads() {
-    iar::utils::BinaryTree<std::string> tree;
+    cpp::utils::BinaryTree<std::string> tree;
     tree.insert("cat");
     tree.insert("dog");
     tree.insert("apple");
@@ -112,7 +112,7 @@ bool test_string_payloads() {
 }
 
 bool test_search_found_and_not_found() {
-    iar::utils::BinaryTree<int> tree;
+    cpp::utils::BinaryTree<int> tree;
     tree.insert(10);
     tree.insert(20);
     tree.insert(5);
@@ -126,7 +126,7 @@ bool test_search_found_and_not_found() {
 bool test_custom_comparator() {
     auto reverse_cmp = [](int a, int b) { return a > b; };
 
-    iar::utils::BinaryTree<int, decltype(reverse_cmp)> tree(reverse_cmp);
+    cpp::utils::BinaryTree<int, decltype(reverse_cmp)> tree(reverse_cmp);
     tree.insert(5);
     tree.insert(10);
     tree.insert(3);
@@ -135,7 +135,7 @@ bool test_custom_comparator() {
 }
 
 bool test_mutable_search() {
-    iar::utils::BinaryTree<std::string> tree;
+    cpp::utils::BinaryTree<std::string> tree;
     tree.insert("hello");
     tree.insert("world");
 

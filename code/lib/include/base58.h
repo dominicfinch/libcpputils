@@ -10,7 +10,7 @@
 
 #include "macros.h"
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     class Base58 {
         public:

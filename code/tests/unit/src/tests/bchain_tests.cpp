@@ -4,7 +4,7 @@
 #include <string>
 
 bool test_blockchain_serialize_roundtrip() {
-    iar::utils::Blockchain<std::string> chain;
+    cpp::utils::Blockchain<std::string> chain;
     chain.add_block("Genesis");
     auto genesis = chain.find_block([](const auto& b) { return b.data == "Genesis"; });
     if (!genesis.has_value()) return false;
@@ -24,7 +24,7 @@ bool test_blockchain_serialize_roundtrip() {
         if (!chain.save_to_file("test_chain.json")) return false;
     }
 
-    iar::utils::Blockchain<std::string> restored;
+    cpp::utils::Blockchain<std::string> restored;
     if (!restored.load_from_file("test_chain.json")) return false;
 
     auto b1 = restored.find_block([](const auto& b) { return b.data == "Genesis"; });
@@ -34,7 +34,7 @@ bool test_blockchain_serialize_roundtrip() {
 }
 
 bool test_blockchain_save_load_jsoncpp() {
-    iar::utils::Blockchain<std::string> chain;
+    cpp::utils::Blockchain<std::string> chain;
     chain.add_block("Genesis");
 
     auto genesis = chain.find_block([](const auto& b) { return b.data == "Genesis"; });
@@ -45,7 +45,7 @@ bool test_blockchain_save_load_jsoncpp() {
 
     if (!chain.save_to_file(filename)) return false;
 
-    iar::utils::Blockchain<std::string> loaded;
+    cpp::utils::Blockchain<std::string> loaded;
     if (!loaded.load_from_file(filename)) return false;
 
     auto g = loaded.find_block([](const auto& b) { return b.data == "Genesis"; });

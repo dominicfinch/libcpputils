@@ -8,7 +8,7 @@
 
 #include "certificate.h"
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 class TrustStore {
 public:
@@ -55,4 +55,4 @@ private:
     std::vector<Certificate> certs_;
 };
 
-} } // namespace iar::crypto
+} } // namespace cpp::crypto

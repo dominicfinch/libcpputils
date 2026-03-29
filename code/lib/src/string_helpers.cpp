@@ -13,7 +13,7 @@
 #include <unistd.h>
 #endif
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         void ltrim(std::string &s) {

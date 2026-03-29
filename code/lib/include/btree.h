@@ -8,7 +8,7 @@
 #include <functional>
 #include <memory>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     template <typename T, typename Compare = std::less<T>>
     class BinaryTree {

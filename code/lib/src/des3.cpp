@@ -6,7 +6,7 @@
 #include <openssl/rand.h>
 #include <stdexcept>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     DES3::DES3(DES3Mode mode) : mode_(mode) {}
 

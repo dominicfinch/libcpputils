@@ -4,7 +4,7 @@
 #include <openssl/pem.h>
 #include <openssl/err.h>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 TrustStore::TrustStore()
     : store_(X509_STORE_new())
@@ -165,4 +165,4 @@ bool TrustStore::rebuild_store()
     return true;
 }
 
-} } // namespace iar::crypto
+} } // namespace cpp::crypto

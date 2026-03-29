@@ -6,7 +6,7 @@
 
 #include <string>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     std::string generate_uuid();
 

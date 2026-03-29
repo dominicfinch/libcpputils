@@ -14,12 +14,12 @@ bool test_aes_key_file_import()
     auto pwd = std::filesystem::current_path().u8string();
     auto key_filepath = pwd + "/data/aes.key";
     
-    iar::utils::AES aes;
+    cpp::utils::AES aes;
     return aes.import_key(key_filepath);
 }
 
 bool test_aes_key_generation_export_import() {
-    iar::utils::AES aes1, aes2;
+    cpp::utils::AES aes1, aes2;
 
     if (!aes1.generate_key())
         return false;
@@ -44,7 +44,7 @@ bool test_aes_key_generation_export_import() {
 }
 
 bool test_aes_encrypt_decrypt_string_gcm() {
-    iar::utils::AES aes;
+    cpp::utils::AES aes;
     if (!aes.generate_key()) return false;
 
     std::string plaintext = "This is a test string.";
@@ -61,9 +61,9 @@ bool test_aes_encrypt_decrypt_string_gcm() {
 }
 
 bool test_aes_encrypt_decrypt_string_cbc() {
-    iar::utils::AES aes;
+    cpp::utils::AES aes;
 
-    aes.set_mode(iar::utils::AESMode::CBC);
+    aes.set_mode(cpp::utils::AESMode::CBC);
     if (!aes.generate_key()) return false;
 
     std::string plaintext = "This is a test string.";
@@ -80,9 +80,9 @@ bool test_aes_encrypt_decrypt_string_cbc() {
 }
 
 bool test_aes_encrypt_decrypt_string_ecb() {
-    iar::utils::AES aes;
+    cpp::utils::AES aes;
 
-    aes.set_mode(iar::utils::AESMode::ECB);
+    aes.set_mode(cpp::utils::AESMode::ECB);
     if (!aes.generate_key()) return false;
 
     std::string plaintext = "This is a test string.";
@@ -99,9 +99,9 @@ bool test_aes_encrypt_decrypt_string_ecb() {
 }
 
 bool test_aes_encrypt_decrypt_string_cfb() {
-    iar::utils::AES aes;
+    cpp::utils::AES aes;
 
-    aes.set_mode(iar::utils::AESMode::CFB);
+    aes.set_mode(cpp::utils::AESMode::CFB);
     if (!aes.generate_key()) return false;
 
     std::string plaintext = "This is a test string.";
@@ -119,7 +119,7 @@ bool test_aes_encrypt_decrypt_string_cfb() {
 
 bool test_aes_encrypt_decrypt_binary_low_level_gcm()
 {
-    iar::utils::AES aes;
+    cpp::utils::AES aes;
 
     // Generate master key first
     if (!aes.generate_key()) {  // 256-bit AES key
@@ -166,8 +166,8 @@ bool test_aes_encrypt_decrypt_binary_low_level_gcm()
 
 bool test_aes_encrypt_decrypt_binary_low_level_ecb()
 {
-    iar::utils::AES aes;
-    aes.set_mode(iar::utils::AESMode::ECB);
+    cpp::utils::AES aes;
+    aes.set_mode(cpp::utils::AESMode::ECB);
     aes.generate_key();
 
     std::vector<uint8_t> salt(16), iv;
@@ -185,8 +185,8 @@ bool test_aes_encrypt_decrypt_binary_low_level_ecb()
 
 bool test_aes_encrypt_decrypt_binary_low_level_cbc()
 {
-    iar::utils::AES aes;
-    aes.set_mode(iar::utils::AESMode::CBC);
+    cpp::utils::AES aes;
+    aes.set_mode(cpp::utils::AESMode::CBC);
     aes.generate_key();
 
     std::vector<uint8_t> salt(16), iv(16);
@@ -204,8 +204,8 @@ bool test_aes_encrypt_decrypt_binary_low_level_cbc()
 
 bool test_aes_encrypt_decrypt_binary_low_level_cfb()
 {
-    iar::utils::AES aes;
-    aes.set_mode(iar::utils::AESMode::CFB);
+    cpp::utils::AES aes;
+    aes.set_mode(cpp::utils::AESMode::CFB);
     aes.generate_key();
 
     std::vector<uint8_t> salt(16), iv(16);
@@ -222,7 +222,7 @@ bool test_aes_encrypt_decrypt_binary_low_level_cfb()
 }
 
 bool test_aes_encrypt_decrypt_binary() {
-    iar::utils::AES aes;
+    cpp::utils::AES aes;
     if (!aes.generate_key())
         return false;
 
@@ -239,7 +239,7 @@ bool test_aes_encrypt_decrypt_binary() {
 }
 
 bool test_aes_encrypt_decrypt_file() {
-    iar::utils::AES aes;
+    cpp::utils::AES aes;
     if (!aes.generate_key())
         return false;
 
@@ -264,10 +264,10 @@ bool test_aes_encrypt_decrypt_file() {
 }
 /*
 bool test_aes_encrypt_decrypt_stream() {
-    iar::utils::AES aes;
+    cpp::utils::AES aes;
     if (!aes.generate_key()) return false;
 
-    std::string input_text = "This is stream-based iar::utils::AES encryption test.";
+    std::string input_text = "This is stream-based cpp::utils::AES encryption test.";
     std::istringstream in_stream(input_text);
     std::ostringstream encrypted_stream, decrypted_stream, tag_stream;
 
@@ -281,7 +281,7 @@ bool test_aes_encrypt_decrypt_stream() {
 }
 
 bool test_aes_decrypt_tampered_ciphertext_fails() {
-    iar::utils::AES aes;
+    cpp::utils::AES aes;
     if (!aes.generate_key()) return false;
 
     std::string plaintext = "Secret message!";

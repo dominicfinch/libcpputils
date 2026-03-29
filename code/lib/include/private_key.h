@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 class Certificate; // forward declaration
 
@@ -56,4 +56,4 @@ private:
     static int password_cb(char* buf, int size, int rwflag, void* userdata);
 };
 
-} } // namespace iar::crypto
+} } // namespace cpp::crypto

@@ -10,7 +10,7 @@
 
 #include <ctime>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 Certificate::Certificate() : cert_(nullptr) {}
 

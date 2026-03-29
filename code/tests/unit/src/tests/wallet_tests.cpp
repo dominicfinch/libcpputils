@@ -9,12 +9,12 @@
 #include <cassert>
 
 bool test_key_generation() {
-    iar::utils::CryptoWallet wallet;
+    cpp::utils::CryptoWallet wallet;
     return wallet.generate_wallet_key("prime256v1");
 }
 
 bool test_key_extraction() {
-    iar::utils::CryptoWallet wallet;
+    cpp::utils::CryptoWallet wallet;
     if (!wallet.generate_wallet_key()) return false;
 
     std::string pub_hex, priv_hex;
@@ -23,7 +23,7 @@ bool test_key_extraction() {
 }
 
 bool test_key_public_key_export() {
-    iar::utils::CryptoWallet wallet;
+    cpp::utils::CryptoWallet wallet;
     std::string curve = "prime256v1";
     std::string encodedPrivateKey = "30770201010420905fb65e46d16f5ad641976fc44e2a72addfa29027bfdd246094f8a0b9f208c3a00a06082a8648ce3d030107a1440342000449d2109f80e6541c41898096b805f1c947e84d0896ff17fafc9a6038e21781758c47da417dc37d64343c0f82b2295e858200f95c080ca0135cb84b7c34824a8e";
     std::string expectedPublicKey = "0449d2109f80e6541c41898096b805f1c947e84d0896ff17fafc9a6038e21781758c47da417dc37d64343c0f82b2295e858200f95c080ca0135cb84b7c34824a8e";
@@ -35,7 +35,7 @@ bool test_key_public_key_export() {
 }
 
 bool test_key_private_key_import() {
-    iar::utils::CryptoWallet wallet;
+    cpp::utils::CryptoWallet wallet;
     std::string curve = "prime256v1";
     if(!wallet.generate_wallet_key(curve)) return false;
 
@@ -45,7 +45,7 @@ bool test_key_private_key_import() {
 }
 
 bool test_wallet_address() {
-    iar::utils::CryptoWallet wallet;
+    cpp::utils::CryptoWallet wallet;
     std::string curve = "prime256v1";
     // Fixing private key so expected wallet address becomes deterministic
     std::string encodedPrivateKey = "30770201010420905fb65e46d16f5ad641976fc44e2a72addfa29027bfdd246094f8a0b9f208c3a00a06082a8648ce3d030107a1440342000449d2109f80e6541c41898096b805f1c947e84d0896ff17fafc9a6038e21781758c47da417dc37d64343c0f82b2295e858200f95c080ca0135cb84b7c34824a8e";
@@ -59,7 +59,7 @@ bool test_wallet_address() {
 }
 
 bool test_sign_and_verify_string() {
-    iar::utils::CryptoWallet wallet;
+    cpp::utils::CryptoWallet wallet;
     if (!wallet.generate_wallet_key()) return false;
 
     std::string message = "Hello World!";
@@ -69,7 +69,7 @@ bool test_sign_and_verify_string() {
 }
 
 bool test_sign_and_verify_binary() {
-    iar::utils::CryptoWallet wallet;
+    cpp::utils::CryptoWallet wallet;
     if (!wallet.generate_wallet_key()) return false;
 
     std::vector<uint8_t> message = {'H', 'e', 'l', 'l', 'o'};
@@ -79,7 +79,7 @@ bool test_sign_and_verify_binary() {
 }
 
 bool test_encrypt_decrypt_string_prime256v1() {
-    iar::utils::CryptoWallet sender, receiver;
+    cpp::utils::CryptoWallet sender, receiver;
     if (!sender.generate_wallet_key("prime256v1") || !receiver.generate_wallet_key("prime256v1")) return false;
 
     std::vector<uint8_t> receiver_pub;
@@ -98,7 +98,7 @@ bool test_encrypt_decrypt_string_prime256v1() {
 }
 
 bool test_encrypt_decrypt_string_secp384r1() {
-    iar::utils::CryptoWallet sender, receiver;
+    cpp::utils::CryptoWallet sender, receiver;
     if (!sender.generate_wallet_key("secp384r1") || !receiver.generate_wallet_key("secp384r1")) return false;
 
     std::vector<uint8_t> receiver_pub;
@@ -117,7 +117,7 @@ bool test_encrypt_decrypt_string_secp384r1() {
 }
 
 bool test_encrypt_decrypt_string_secp521r1() {
-    iar::utils::CryptoWallet sender, receiver;
+    cpp::utils::CryptoWallet sender, receiver;
     if (!sender.generate_wallet_key("secp521r1") || !receiver.generate_wallet_key("secp521r1")) return false;
 
     std::vector<uint8_t> receiver_pub;
@@ -136,7 +136,7 @@ bool test_encrypt_decrypt_string_secp521r1() {
 }
 
 bool test_encrypt_decrypt_binary() {
-    iar::utils::CryptoWallet sender, receiver;
+    cpp::utils::CryptoWallet sender, receiver;
     if (!sender.generate_wallet_key() || !receiver.generate_wallet_key()) return false;
 
     std::vector<uint8_t> receiver_pub;

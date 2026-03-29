@@ -8,7 +8,7 @@
 #include <openssl/pem.h>
 #include <openssl/x509.h>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     DiffieHellman::DiffieHellman() {}
 

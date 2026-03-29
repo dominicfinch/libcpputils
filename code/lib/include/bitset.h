@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     // User-defined constants
     constexpr int uint64_bytesize = sizeof(uint64_t);

@@ -11,7 +11,7 @@
 #include <functional>
 #include <openssl/evp.h>
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         using PasswordCallback = std::function<std::string()>;

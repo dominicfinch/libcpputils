@@ -4,7 +4,7 @@
 #include <map>
 #include <functional>
 
-namespace iar {
+namespace cpp {
 
     struct test_set_results
     {
@@ -15,14 +15,14 @@ namespace iar {
             int tests_failed = 0;
     };
 
-    void print_test_results(const std::map<std::string, iar::test_set_results>& results);
+    void print_test_results(const std::map<std::string, cpp::test_set_results>& results);
 
     class TestRunner
     {
         public:
-            void add_test_set(const std::string& name, std::function<void(TestRunner * runner, iar::test_set_results& results)> testSet);
+            void add_test_set(const std::string& name, std::function<void(TestRunner * runner, cpp::test_set_results& results)> testSet);
 
-            void execute_test(iar::test_set_results& results, const std::string& name, bool (*test)(void));
+            void execute_test(cpp::test_set_results& results, const std::string& name, bool (*test)(void));
 
             void run_tests();
 
@@ -32,7 +32,7 @@ namespace iar {
 
             void report_test(const std::string& name, bool result);
             
-            std::map<std::string, std::function<void(TestRunner * runner, iar::test_set_results& results)>> test_fixtures;
+            std::map<std::string, std::function<void(TestRunner * runner, cpp::test_set_results& results)>> test_fixtures;
             std::map<std::string, test_set_results> test_results;
     };
 }

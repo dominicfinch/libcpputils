@@ -15,7 +15,7 @@
 #include "string_helpers.h"
 #include "crypto_common.h"
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         AES::AES() {

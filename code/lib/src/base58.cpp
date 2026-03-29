@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <unordered_map>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     std::string Base58::encode(const std::vector<uint8_t>& input) {
         if (input.empty()) return "";

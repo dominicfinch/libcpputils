@@ -15,7 +15,7 @@
 #include <memory>
 #include <openssl/x509.h>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     class ECC;
     class RSA;

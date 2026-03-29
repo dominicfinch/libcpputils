@@ -7,17 +7,17 @@
 #include <cstdio>
 
 bool test_chacha_generate_and_has_key() {
-    iar::utils::ChaCha c;
+    cpp::utils::ChaCha c;
     if (!c.generate_key()) return false;
     return c.has_key();
 }
 
 bool test_chacha_save_load_pem() {
-    iar::utils::ChaCha c;
+    cpp::utils::ChaCha c;
     if (!c.generate_key()) return false;
     const char* fname = "tmp_chacha_key.pem";
     if (!c.save_key_pem_file(fname)) return false;
-    iar::utils::ChaCha d;
+    cpp::utils::ChaCha d;
     if (!d.load_key_pem_file(fname)) return false;
     // cleanup
     std::remove(fname);
@@ -28,11 +28,11 @@ bool test_chacha_save_load_pem() {
 }
 
 bool test_chacha_encrypt_decrypt_vector() {
-    iar::utils::ChaCha alice, bob;
+    cpp::utils::ChaCha alice, bob;
     if (!alice.generate_key()) return false;
     if (!bob.generate_key()) return false;
 
-    // For symmetric iar::utils::ChaCha, both sides must share the same key.
+    // For symmetric cpp::utils::ChaCha, both sides must share the same key.
     // In typical usage you'd share keys out-of-band; for test, copy bob's key to alice.
     std::vector<uint8_t> key;
     if (!bob.get_raw_key(key)) return false;
@@ -48,7 +48,7 @@ bool test_chacha_encrypt_decrypt_vector() {
 }
 
 bool test_chacha_encrypt_decrypt_string() {
-    iar::utils::ChaCha alice, bob;
+    cpp::utils::ChaCha alice, bob;
     if (!alice.generate_key()) return false;
     if (!bob.generate_key()) return false;
 
@@ -66,7 +66,7 @@ bool test_chacha_encrypt_decrypt_string() {
 }
 
 bool test_chacha_tamper_detection() {
-    iar::utils::ChaCha a;
+    cpp::utils::ChaCha a;
     if (!a.generate_key()) return false;
     std::vector<uint8_t> key;
     if (!a.get_raw_key(key)) return false;
@@ -79,7 +79,7 @@ bool test_chacha_tamper_detection() {
     // Flip a byte in ciphertext body (after nonce)
     if (ct.size() > 13) ct[13] ^= 0xFF;
 
-    iar::utils::ChaCha b;
+    cpp::utils::ChaCha b;
     if (!b.set_raw_key(key)) return false;
     std::vector<uint8_t> out;
     bool ok = b.decrypt(ct, aad, out);

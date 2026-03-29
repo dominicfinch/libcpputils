@@ -20,7 +20,7 @@
 
 #define DEFAULT_RSA_KEYSIZE     M_RSA_KEY_SIZE
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         class RSA {

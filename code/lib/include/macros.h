@@ -14,7 +14,7 @@
 #define __PRETTY_FUNCTION__     __FUNCTION__
 #endif
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         inline std::string methodName(const std::string& prettyFunction)

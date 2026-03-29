@@ -12,7 +12,7 @@
 #include <filesystem>
 #include <json/json.h>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     std::filesystem::path get_home_directory();
 

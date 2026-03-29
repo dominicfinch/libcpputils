@@ -7,10 +7,10 @@ bool test_base58_encode_decode() {
         0x00, 0x00, 0x01, 0x02, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF
     };
 
-    std::string encoded = iar::utils::Base58::encode(original_data);
+    std::string encoded = cpp::utils::Base58::encode(original_data);
     std::vector<uint8_t> decoded;
     try {
-        decoded = iar::utils::Base58::decode(encoded);
+        decoded = cpp::utils::Base58::decode(encoded);
     } catch (const std::exception& e) {
         return false;
     }

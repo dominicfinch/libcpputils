@@ -11,7 +11,7 @@
 #include <uuid/uuid.h>
 #endif
 
-std::string iar::utils::generate_uuid()
+std::string cpp::utils::generate_uuid()
 {
     #ifdef _WIN32
     // Windows version

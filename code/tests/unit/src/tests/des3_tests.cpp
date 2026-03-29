@@ -19,7 +19,7 @@ std::vector<uint8_t> random_bytes(size_t length) {
 // =========================
 
 bool test_des3_cbc_encrypt_decrypt() {
-    iar::utils::DES3 des3(iar::utils::DES3Mode::CBC);
+    cpp::utils::DES3 des3(cpp::utils::DES3Mode::CBC);
 
     auto key = random_bytes(24);
     auto iv  = random_bytes(8);
@@ -35,14 +35,14 @@ bool test_des3_cbc_encrypt_decrypt() {
 }
 
 bool test_des3_cbc_invalid_key_size() {
-    iar::utils::DES3 des3(iar::utils::DES3Mode::CBC);
+    cpp::utils::DES3 des3(cpp::utils::DES3Mode::CBC);
     std::vector<uint8_t> bad_key(16);  // Too short
     std::vector<uint8_t> iv(8);
     return !des3.set_key(bad_key, iv);
 }
 
 bool test_des3_cbc_invalid_iv_size() {
-    iar::utils::DES3 des3(iar::utils::DES3Mode::CBC);
+    cpp::utils::DES3 des3(cpp::utils::DES3Mode::CBC);
     std::vector<uint8_t> key(24);
     std::vector<uint8_t> bad_iv(5);
     return !des3.set_key(key, bad_iv);
@@ -53,7 +53,7 @@ bool test_des3_cbc_invalid_iv_size() {
 // =========================
 
 bool test_des3_ecb_encrypt_decrypt() {
-    iar::utils::DES3 des3(iar::utils::DES3Mode::ECB);
+    cpp::utils::DES3 des3(cpp::utils::DES3Mode::ECB);
     auto key = random_bytes(24);
     if (!des3.set_key(key)) return false;
 
@@ -67,7 +67,7 @@ bool test_des3_ecb_encrypt_decrypt() {
 }
 
 bool test_des3_ecb_reject_iv() {
-    iar::utils::DES3 des3(iar::utils::DES3Mode::ECB);
+    cpp::utils::DES3 des3(cpp::utils::DES3Mode::ECB);
     auto key = random_bytes(24);
     auto iv = random_bytes(8);
     // Should ignore IV or reject depending on implementation – here, we test rejection.
@@ -79,21 +79,21 @@ bool test_des3_ecb_reject_iv() {
 // =========================
 
 bool test_des3_encrypt_without_key() {
-    iar::utils::DES3 des3;
+    cpp::utils::DES3 des3;
     std::vector<uint8_t> ciphertext;
     std::vector<uint8_t> plaintext = {'a','b','c'};
     return !des3.encrypt(plaintext, ciphertext);
 }
 
 bool test_des3_decrypt_without_key() {
-    iar::utils::DES3 des3;
+    cpp::utils::DES3 des3;
     std::vector<uint8_t> plaintext;
     std::vector<uint8_t> ciphertext = {'x','y','z'};
     return !des3.decrypt(ciphertext, plaintext);
 }
 
 bool test_des3_clear_resets_state() {
-    iar::utils::DES3 des3;
+    cpp::utils::DES3 des3;
     auto key = random_bytes(24);
     auto iv = random_bytes(8);
     if (!des3.set_key(key, iv)) return false;

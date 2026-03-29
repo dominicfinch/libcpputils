@@ -9,7 +9,7 @@
 #include <memory>
 #include <openssl/evp.h>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 static bool hkdf_sha256(const std::vector<uint8_t>&salt,
                         const std::vector<uint8_t>&ikm,
@@ -78,4 +78,4 @@ private:
 };
 
     }
-} // namespace iar::utils
+} // namespace cpp::utils

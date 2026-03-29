@@ -3,10 +3,6 @@
 # Global variables
 script_dir=$(dirname "$0")
 
-
-# openssl req -x509 -newkey rsa:4096 -keyout key.pem -out certs/cert.pem \
-#    -sha512 -days 3650 -nodes -subj "/C=XX/ST=Cambs/L=Cambridge/O=IAR/OU=SecureThingz/CN=IAR"
-
 function usage() {
 
     declare -A commands=(

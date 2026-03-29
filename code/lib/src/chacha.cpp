@@ -19,7 +19,7 @@
 
 using std::size_t;
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 static std::string openssl_error_string() {
     unsigned long e = ERR_get_error();

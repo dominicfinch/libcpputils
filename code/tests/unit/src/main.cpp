@@ -5,9 +5,9 @@
 
 int main()
 {
-    iar::TestRunner testRunner;
+    cpp::TestRunner testRunner;
 
-    testRunner.add_test_set("aes_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("aes_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning AES tests...\n";
 
         runner->execute_test(results, "test_aes_key_file_import", test_aes_key_file_import);
@@ -31,14 +31,14 @@ int main()
     });
 
 #ifndef EXCLUDE_BCHAIN_TESTS
-    testRunner.add_test_set("bchain_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("bchain_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning BCHAIN tests...\n";
         runner->execute_test(results, "test_blockchain_serialize_roundtrip", test_blockchain_serialize_roundtrip);
         runner->execute_test(results, "test_blockchain_save_load_jsoncpp", test_blockchain_save_load_jsoncpp);
     });
 #endif
 
-    testRunner.add_test_set("bitset_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("bitset_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning BITSET tests...\n";
         runner->execute_test(results, "test_default_constructor_resets_all_bits", test_default_constructor_resets_all_bits);
         runner->execute_test(results, "test_word_constructor_fills_all_words", test_word_constructor_fills_all_words);
@@ -58,7 +58,7 @@ int main()
         runner->execute_test(results, "test_render_bitset_with_square_board", test_render_bitset_with_square_board);
     });
 
-    testRunner.add_test_set("btree_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("btree_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning BTREE tests...\n";
         runner->execute_test(results, "test_insert_and_contains", test_insert_and_contains);
         runner->execute_test(results, "test_insert_duplicates", test_insert_duplicates);
@@ -76,17 +76,17 @@ int main()
         runner->execute_test(results, "test_search_found_and_not_found", test_search_found_and_not_found);
     });
 
-    testRunner.add_test_set("b58_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("b58_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning Base58 tests...\n";
         runner->execute_test(results, "test_base58_encode_decode", test_base58_encode_decode);
     });
 
-    testRunner.add_test_set("b64_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("b64_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning Base64 tests...\n";
         runner->execute_test(results, "test_base64_encode_decode", test_base64_encode_decode);
     });
 
-    testRunner.add_test_set("certificate_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("certificate_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning Certificate tests...\n";
         runner->execute_test(results, "test_certificatebuilder_set_subject", test_certificatebuilder_set_subject);
         runner->execute_test(results, "test_certificatebuilder_set_validity_days", test_certificatebuilder_set_validity_days);
@@ -112,7 +112,7 @@ int main()
         */
     });
 
-    testRunner.add_test_set("chacha_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("chacha_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning CHACHA tests...\n";
         runner->execute_test(results, "test_chacha_generate_and_has_key", test_chacha_generate_and_has_key);
         runner->execute_test(results, "test_chacha_save_load_pem", test_chacha_save_load_pem);
@@ -121,7 +121,7 @@ int main()
         runner->execute_test(results, "test_chacha_tamper_detection", test_chacha_tamper_detection);
     });
 
-    testRunner.add_test_set("des3_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("des3_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning DES3 tests...\n";
         runner->execute_test(results, "test_des3_cbc_encrypt_decrypt", test_des3_cbc_encrypt_decrypt);
         runner->execute_test(results, "test_des3_cbc_invalid_key_size", test_des3_cbc_invalid_key_size);
@@ -134,7 +134,7 @@ int main()
     });
 
 #ifndef EXCLUDE_DH_TESTS
-    testRunner.add_test_set("dh_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("dh_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning DH tests...\n";
         runner->execute_test(results, "test_generate_parameters", test_generate_parameters);
         runner->execute_test(results, "test_generate_keypair", test_generate_keypair);
@@ -150,7 +150,7 @@ int main()
     });
 #endif
     
-    testRunner.add_test_set("ecc_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("ecc_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning ECC tests...\n";
         runner->execute_test(results, "test_key_generation_and_export_import", test_key_generation_and_export_import);
         runner->execute_test(results, "test_shared_secret_derivation", test_shared_secret_derivation);
@@ -161,7 +161,7 @@ int main()
         runner->execute_test(results, "test_ecc_load_own_private_key_from_pem", test_ecc_load_own_private_key_from_pem);
     });
 
-    testRunner.add_test_set("ed25519_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("ed25519_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning ED25519 tests...\n";
         runner->execute_test(results, "test_ed25519_generate_keypair", test_ed25519_generate_keypair);
         runner->execute_test(results, "test_ed25519_export_import_private_key", test_ed25519_export_import_private_key);
@@ -177,14 +177,14 @@ int main()
         runner->execute_test(results, "test_ed25519_set_public_key_pem_invalid", test_ed25519_set_public_key_pem_invalid);
     });
 
-    testRunner.add_test_set("graph_search_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("graph_search_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning GRAPH_SEARCH tests...\n";
         runner->execute_test(results, "test_dijkstra_basic", test_dijkstra_basic);
         runner->execute_test(results, "test_astar_basic", test_astar_basic);
         runner->execute_test(results, "test_bellman_ford_negative_cycle", test_bellman_ford_negative_cycle);
     });
 
-    testRunner.add_test_set("hash_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("hash_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning HASH tests...\n";
         runner->execute_test(results, "test_hash_md5", test_hash_md5);
         runner->execute_test(results, "test_hash_sha256", test_hash_sha256);
@@ -192,12 +192,12 @@ int main()
         runner->execute_test(results, "test_hash_sha512", test_hash_sha512);
     });
 
-    testRunner.add_test_set("hex_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("hex_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning HEX tests...\n";
         runner->execute_test(results, "test_hex_encode_decode", test_hex_encode_decode);
     });
 
-    testRunner.add_test_set("llist_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("llist_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning LLIST tests...\n";
         runner->execute_test(results, "test_append_and_size", test_append_and_size);
         runner->execute_test(results, "test_prepend_and_order", test_prepend_and_order);
@@ -208,7 +208,7 @@ int main()
         runner->execute_test(results, "test_append_after_clear", test_append_after_clear);
     });
 
-    testRunner.add_test_set("rsa_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("rsa_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning RSA tests...\n";
         runner->execute_test(results, "test_rsa_key_copy", test_rsa_key_copy);
         runner->execute_test(results, "test_rsa_generate_keypair", test_rsa_generate_keypair);
@@ -223,13 +223,13 @@ int main()
         runner->execute_test(results, "test_rsa_verify_invalid_algorithm", test_rsa_verify_invalid_algorithm);
     });
 
-    testRunner.add_test_set("sc_contact_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("sc_contact_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning SCContact tests...\n";
         // TODO
     });
     
     /*
-    testRunner.add_test_set("sc_transceiver_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("sc_transceiver_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning SCTransceiver tests...\n";
         runner->execute_test(results, "test_open_channel", test_open_channel);
         runner->execute_test(results, "test_close_channel", test_close_channel);
@@ -238,7 +238,7 @@ int main()
     });
     */
 
-    testRunner.add_test_set("wallet_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("wallet_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning Wallet tests...\n";
         runner->execute_test(results, "test_key_generation", test_key_generation);
         runner->execute_test(results, "test_key_extraction", test_key_extraction);
@@ -253,7 +253,7 @@ int main()
         runner->execute_test(results, "test_encrypt_decrypt_binary", test_encrypt_decrypt_binary);
     });
 
-    testRunner.add_test_set("uuid_tests", [](iar::TestRunner * runner, iar::test_set_results& results) {
+    testRunner.add_test_set("uuid_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning UUID tests...\n";
         runner->execute_test(results, "test_uuid_generate", test_uuid_generate);
     });

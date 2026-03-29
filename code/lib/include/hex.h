@@ -8,7 +8,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     class Hex {
     public:

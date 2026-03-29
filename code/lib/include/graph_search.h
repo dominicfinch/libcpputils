@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <algorithm>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 /* =========================
    Graph / Edge Definitions
@@ -168,11 +168,11 @@ private:
     EdgeList edges_;
 };
 
-} } // namespace iar::utils
+} } // namespace cpp::utils
 
 
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 /* ---------------------------
    Dijkstra
@@ -338,4 +338,4 @@ bool BellmanFord<Node, Cost, Hash, Equal>::hasNegativeCycle(const Node& start)
     return false;
 }
 
-} } // namespace iar::utils
+} } // namespace cpp::utils

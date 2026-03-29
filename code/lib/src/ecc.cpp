@@ -12,7 +12,7 @@
 #include "base64.h"
 #include "file.h"
 
-namespace iar {
+namespace cpp {
 namespace utils {
 
 int openssl_password_cb(char* buf, int size, int, void* userdata)

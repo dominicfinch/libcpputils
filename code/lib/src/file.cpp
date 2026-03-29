@@ -6,7 +6,7 @@
 #include <string>
 #include <cstdlib>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     namespace fs = std::filesystem;
 

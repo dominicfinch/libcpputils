@@ -6,7 +6,7 @@
 
 #include "ed25519.h"
 
-using namespace iar::utils;
+using namespace cpp::utils;
 
 
 bool test_ed25519_generate_keypair() {

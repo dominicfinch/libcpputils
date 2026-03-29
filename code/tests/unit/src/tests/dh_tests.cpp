@@ -3,17 +3,17 @@
 #include "dh.h"
 
 bool test_generate_parameters() {
-    iar::utils::DiffieHellman dh;
+    cpp::utils::DiffieHellman dh;
     return dh.generate_parameters(2048);
 }
 
 bool test_generate_keypair() {
-    iar::utils::DiffieHellman dh;
+    cpp::utils::DiffieHellman dh;
     return dh.generate_parameters(2048) && dh.generate_keypair();
 }
 
 bool test_get_set_parameters() {
-    iar::utils::DiffieHellman dh1, dh2;
+    cpp::utils::DiffieHellman dh1, dh2;
     if (!dh1.generate_parameters(2048)) return false;
 
     std::vector<uint8_t> params;
@@ -25,7 +25,7 @@ bool test_get_set_parameters() {
 }
 
 bool test_public_key_string_export() {
-    iar::utils::DiffieHellman dh;
+    cpp::utils::DiffieHellman dh;
     if (!dh.generate_parameters(2048)) return false;
     if (!dh.generate_keypair()) return false;
 
@@ -34,7 +34,7 @@ bool test_public_key_string_export() {
 }
 
 bool test_public_key_binary_export() {
-    iar::utils::DiffieHellman dh;
+    cpp::utils::DiffieHellman dh;
     if (!dh.generate_parameters(2048)) return false;
     if (!dh.generate_keypair()) return false;
 
@@ -43,7 +43,7 @@ bool test_public_key_binary_export() {
 }
 
 bool test_set_peer_public_key_and_compute_shared_secret() {
-    iar::utils::DiffieHellman dh1, dh2;
+    cpp::utils::DiffieHellman dh1, dh2;
     if (!dh1.generate_parameters(2048)) return false;
 
     std::vector<uint8_t> params;
@@ -66,7 +66,7 @@ bool test_set_peer_public_key_and_compute_shared_secret() {
 }
 
 bool test_clear_keypair_resets_state() {
-    iar::utils::DiffieHellman dh;
+    cpp::utils::DiffieHellman dh;
     if (!dh.generate_parameters(2048)) return false;
     if (!dh.generate_keypair()) return false;
 
@@ -79,19 +79,19 @@ bool test_clear_keypair_resets_state() {
 
 
 bool test_public_key_without_keypair() {
-    iar::utils::DiffieHellman dh;
+    cpp::utils::DiffieHellman dh;
     std::string pem;
     return !dh.public_key(pem); // Should fail without keypair
 }
 
 bool test_set_invalid_peer_key() {
-    iar::utils::DiffieHellman dh;
+    cpp::utils::DiffieHellman dh;
     std::vector<uint8_t> garbage_key = { 0x01, 0x02, 0x03 };
     return !dh.set_peer_public_key(garbage_key); // Should fail
 }
 
 bool test_compute_secret_without_peer_key() {
-    iar::utils::DiffieHellman dh;
+    cpp::utils::DiffieHellman dh;
     if (!dh.generate_parameters(2048)) return false;
     if (!dh.generate_keypair()) return false;
 
@@ -100,7 +100,7 @@ bool test_compute_secret_without_peer_key() {
 }
 
 bool test_compute_secret_without_keypair() {
-    iar::utils::DiffieHellman dh;
+    cpp::utils::DiffieHellman dh;
     std::vector<uint8_t> secret;
     return !dh.compute_shared_secret(secret); // Should fail as no keypair generated
 }

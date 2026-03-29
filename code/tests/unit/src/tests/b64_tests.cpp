@@ -6,9 +6,9 @@ bool test_base64_encode_decode() {
     std::string target_output = "VGhpcyBpcyBhIHRlc3Qgc3RyaW5nIQ==";
     std::string output, decoded;
 
-    if(!iar::utils::Base64::encode(input, output)) return false;
+    if(!cpp::utils::Base64::encode(input, output)) return false;
     if(output != target_output) return false;
-    if(!iar::utils::Base64::decode(output, decoded)) return false;
+    if(!cpp::utils::Base64::decode(output, decoded)) return false;
 
     return decoded == input;
 }

@@ -25,7 +25,7 @@ extern "C" {
 #endif // WIN32
 
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 static bool hkdf_sha256(const std::vector<uint8_t>& salt,
                         const std::vector<uint8_t>& ikm,

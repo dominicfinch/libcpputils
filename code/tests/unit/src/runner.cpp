@@ -2,9 +2,9 @@
 #include "runner.h"
 #include <iostream>
 
-namespace iar {
+namespace cpp {
 
-    void print_test_results(const std::map<std::string, iar::test_set_results>& results)
+    void print_test_results(const std::map<std::string, cpp::test_set_results>& results)
     {
         std::cout << "\nOverall Results:\n";
         int total_passed = 0, total_failed = 0, total_tests = 0;
@@ -21,9 +21,9 @@ namespace iar {
         std::cout << "Total Failed: " << total_failed << std::endl;
     }
 
-    void TestRunner::add_test_set(const std::string& name, std::function<void(TestRunner * runner, iar::test_set_results& results)> testSet)
+    void TestRunner::add_test_set(const std::string& name, std::function<void(TestRunner * runner, cpp::test_set_results& results)> testSet)
     {
-        test_fixtures.insert( std::pair<std::string, std::function<void(TestRunner * runner, iar::test_set_results& results)>>(name, testSet) );
+        test_fixtures.insert( std::pair<std::string, std::function<void(TestRunner * runner, cpp::test_set_results& results)>>(name, testSet) );
     }
 
     void TestRunner::run_tests()
@@ -31,16 +31,16 @@ namespace iar {
         test_results.clear();
         for(auto ts : test_fixtures)
         {
-            iar::test_set_results results;
+            cpp::test_set_results results;
 
             ts.second(this, results);
             std::cout << "\nTest Summary: " << results.tests_passed << " passed, " << results.tests_failed << " failed.\n";
 
-            test_results.insert( std::pair<std::string, iar::test_set_results>(ts.first, results) );
+            test_results.insert( std::pair<std::string, cpp::test_set_results>(ts.first, results) );
         }
     }
 
-    void TestRunner::execute_test(iar::test_set_results& results, const std::string& name, bool (*test)(void))
+    void TestRunner::execute_test(cpp::test_set_results& results, const std::string& name, bool (*test)(void))
     {
         auto success = false;
         try {

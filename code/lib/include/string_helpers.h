@@ -14,7 +14,7 @@
 #include <cstdio>
 #include <cstdarg>
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         void ltrim(std::string &s);

@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     class CryptoWallet {
         public:

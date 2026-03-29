@@ -20,7 +20,7 @@
 #include "hash.h"
 #include "hex.h"
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         template <typename T>
@@ -103,7 +103,7 @@ namespace iar {
 
 
 template <typename T>
-bool iar::utils::Blockchain<T>::save_to_file(const std::string& path) const {
+bool cpp::utils::Blockchain<T>::save_to_file(const std::string& path) const {
     Json::Value root = serialize();
 
     std::ofstream ofs(path);
@@ -116,7 +116,7 @@ bool iar::utils::Blockchain<T>::save_to_file(const std::string& path) const {
 }
 
 template <typename T>
-bool iar::utils::Blockchain<T>::load_from_file(const std::string& path)  {
+bool cpp::utils::Blockchain<T>::load_from_file(const std::string& path)  {
     std::ifstream ifs(path);
     if (!ifs) return false;
 
@@ -134,7 +134,7 @@ bool iar::utils::Blockchain<T>::load_from_file(const std::string& path)  {
 }
 
 template <typename T>
-Json::Value iar::utils::Blockchain<T>::serialize() const {
+Json::Value cpp::utils::Blockchain<T>::serialize() const {
     Json::Value root;
     for (auto& [id, block] : blocks) {
         Json::Value json_block;
@@ -153,7 +153,7 @@ Json::Value iar::utils::Blockchain<T>::serialize() const {
 }
 
 template <typename T>
-void iar::utils::Blockchain<T>::deserialize(Json::Value& root) {
+void cpp::utils::Blockchain<T>::deserialize(Json::Value& root) {
     blocks.clear();
 
     for (auto& json_block : root["blocks"]) {
@@ -172,7 +172,7 @@ void iar::utils::Blockchain<T>::deserialize(Json::Value& root) {
 }
 
 template <typename T>
-std::string iar::utils::Blockchain<T>::serialize(bool prettify) {
+std::string cpp::utils::Blockchain<T>::serialize(bool prettify) {
     Json::Value root = serialize();
 
     Json::StreamWriterBuilder wbuilder;
@@ -183,7 +183,7 @@ std::string iar::utils::Blockchain<T>::serialize(bool prettify) {
 }
 
 template <typename T>
-bool iar::utils::Blockchain<T>::deserialize(const std::string& content) {
+bool cpp::utils::Blockchain<T>::deserialize(const std::string& content) {
     Json::CharReaderBuilder rbuilder;
     std::unique_ptr<Json::CharReader> const reader(rbuilder.newCharReader());
     std::string errs;

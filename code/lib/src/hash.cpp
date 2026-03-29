@@ -8,7 +8,7 @@
 #include <sstream>
 #include <openssl/sha.h>
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         bool HASH::digest(const std::vector<uint8_t>& input, std::vector<uint8_t>& output, const std::string& algo) {

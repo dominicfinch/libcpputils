@@ -2,7 +2,7 @@
 #include <openssl/evp.h>
 #include <openssl/kdf.h>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 bool hkdf_sha256(const std::vector<uint8_t>& salt,
                         const std::vector<uint8_t>& ikm,

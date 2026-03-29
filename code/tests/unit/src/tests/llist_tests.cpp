@@ -4,7 +4,7 @@
 #include <string>
 
 bool test_append_and_size() {
-    iar::utils::LinkedList<int> list;
+    cpp::utils::LinkedList<int> list;
     list.append(1);
     list.append(2);
     list.append(3);
@@ -12,7 +12,7 @@ bool test_append_and_size() {
 }
 
 bool test_prepend_and_order() {
-    iar::utils::LinkedList<std::string> list;
+    cpp::utils::LinkedList<std::string> list;
     list.prepend("C");
     list.prepend("B");
     list.prepend("A");
@@ -26,7 +26,7 @@ bool test_prepend_and_order() {
 }
 
 bool test_remove_existing_element() {
-    iar::utils::LinkedList<int> list;
+    cpp::utils::LinkedList<int> list;
     list.append(1);
     list.append(2);
     list.append(3);
@@ -41,7 +41,7 @@ bool test_remove_existing_element() {
 }
 
 bool test_remove_nonexistent_element() {
-    iar::utils::LinkedList<int> list;
+    cpp::utils::LinkedList<int> list;
     list.append(1);
     list.append(2);
 
@@ -50,7 +50,7 @@ bool test_remove_nonexistent_element() {
 }
 
 bool test_clear_list() {
-    iar::utils::LinkedList<int> list;
+    cpp::utils::LinkedList<int> list;
     list.append(5);
     list.append(10);
     list.clear();
@@ -58,7 +58,7 @@ bool test_clear_list() {
 }
 
 bool test_for_each_accumulates_values() {
-    iar::utils::LinkedList<int> list;
+    cpp::utils::LinkedList<int> list;
     list.append(1);
     list.append(2);
     list.append(3);
@@ -72,7 +72,7 @@ bool test_for_each_accumulates_values() {
 }
 
 bool test_append_after_clear() {
-    iar::utils::LinkedList<std::string> list;
+    cpp::utils::LinkedList<std::string> list;
     list.append("first");
     list.clear();
     list.append("second");

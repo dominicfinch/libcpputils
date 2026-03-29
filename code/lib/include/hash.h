@@ -9,7 +9,7 @@
 #include <vector>
 #include <openssl/evp.h>
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         class HASH {

@@ -6,7 +6,7 @@
 #include "ecc.h"
 
 bool test_key_generation_and_export_import() {
-    iar::utils::ECC ecc1;
+    cpp::utils::ECC ecc1;
     if (!ecc1.generate_own_keypair()) return false;
 
     std::string pub_pem, priv_pem;
@@ -19,7 +19,7 @@ bool test_key_generation_and_export_import() {
     if (!ecc1.import_public_key("public_key.pem")) return false;
     if (!ecc1.import_private_key("private_key.pem")) return false;
 
-    iar::utils::ECC ecc2;
+    cpp::utils::ECC ecc2;
     if (!ecc2.load_peer_public_key_from_pem(pub_pem)) return false;
 
     std::remove("public_key.pem");
@@ -29,7 +29,7 @@ bool test_key_generation_and_export_import() {
 }
 
 bool test_shared_secret_derivation() {
-    iar::utils::ECC alice, bob;
+    cpp::utils::ECC alice, bob;
     if (!alice.generate_own_keypair() || !bob.generate_own_keypair()) return false;
 
     std::string alice_pub, bob_pub;
@@ -47,7 +47,7 @@ bool test_shared_secret_derivation() {
 }
 
 bool test_signing_and_verification() {
-    iar::utils::ECC signer, verifier;
+    cpp::utils::ECC signer, verifier;
     if (!signer.generate_own_keypair()) return false;
 
     std::string pub;
@@ -64,7 +64,7 @@ bool test_signing_and_verification() {
 }
 
 bool test_encryption_decryption_binary() {
-    iar::utils::ECC sender, receiver;
+    cpp::utils::ECC sender, receiver;
     if (!sender.generate_own_keypair() || !receiver.generate_own_keypair()) return false;
 
     std::string sender_pub, receiver_pub;
@@ -84,7 +84,7 @@ bool test_encryption_decryption_binary() {
 }
 
 bool test_encryption_decryption_strings() {
-    iar::utils::ECC sender, receiver;
+    cpp::utils::ECC sender, receiver;
     if (!sender.generate_own_keypair() || !receiver.generate_own_keypair()) return false;
 
     std::string sender_pub, receiver_pub;
@@ -106,7 +106,7 @@ bool test_encryption_decryption_strings() {
 }
 
 bool test_ecc_load_own_public_key_from_pem() {
-    iar::utils::ECC ecc_original;
+    cpp::utils::ECC ecc_original;
     if (!ecc_original.generate_own_keypair()) {
         std::cerr << "Failed to generate ECC keypair\n";
         return false;
@@ -118,7 +118,7 @@ bool test_ecc_load_own_public_key_from_pem() {
         return false;
     }
 
-    iar::utils::ECC ecc_loaded;
+    cpp::utils::ECC ecc_loaded;
     if (!ecc_loaded.load_own_public_key_from_pem(public_pem)) {
         std::cerr << "Failed to load ECC public key from PEM\n";
         return false;
@@ -144,7 +144,7 @@ bool test_ecc_load_own_public_key_from_pem() {
 
 // Test loading a private key from a valid PEM string
 bool test_ecc_load_own_private_key_from_pem() {
-    iar::utils::ECC ecc_original;
+    cpp::utils::ECC ecc_original;
     if (!ecc_original.generate_own_keypair()) {
         std::cerr << "Failed to generate ECC keypair\n";
         return false;
@@ -156,7 +156,7 @@ bool test_ecc_load_own_private_key_from_pem() {
         return false;
     }
 
-    iar::utils::ECC ecc_loaded;
+    cpp::utils::ECC ecc_loaded;
     if (!ecc_loaded.load_own_private_key_from_pem(private_pem)) {
         std::cerr << "Failed to load ECC private key from PEM\n";
         return false;

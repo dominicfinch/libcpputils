@@ -8,7 +8,7 @@
 #include <cstdio>
 #include <cstring>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 PrivateKey::PrivateKey() : pkey_(nullptr) {}
 
@@ -267,4 +267,4 @@ bool PrivateKey::matches_certificate(const Certificate& cert) const
     return match;
 }
 
-} } // namespace iar::crypto
+} } // namespace cpp::crypto

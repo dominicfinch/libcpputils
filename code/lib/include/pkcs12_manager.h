@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 class PKCS12Manager {
 public:

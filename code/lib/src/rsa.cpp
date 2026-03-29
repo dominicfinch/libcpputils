@@ -9,7 +9,7 @@
 #include <openssl/bio.h>
 #include <openssl/err.h>
 
-namespace iar {
+namespace cpp {
     namespace utils {
 
         RSA::RSA() {

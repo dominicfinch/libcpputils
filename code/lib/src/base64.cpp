@@ -9,7 +9,7 @@
 #include <openssl/buffer.h>
 #include <openssl/bio.h>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     bool Base64::encode(const std::vector<uint8_t>& input, std::vector<uint8_t>& output) {
         BIO* b64 = BIO_new(BIO_f_base64());

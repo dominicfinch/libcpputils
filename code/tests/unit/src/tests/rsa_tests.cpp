@@ -7,12 +7,12 @@
 #include <experimental/filesystem>
 
 bool test_rsa_generate_keypair() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     return rsa.generate_keypair(S_RSA_KEY_SIZE);
 }
 
 bool test_rsa_encrypt_decrypt() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     if (!rsa.generate_keypair(S_RSA_KEY_SIZE)) return false;
 
     std::string plaintext = "Test RSA encryption";
@@ -31,7 +31,7 @@ bool test_rsa_encrypt_decrypt() {
 }
 
 bool test_rsa_export_import_public_key() {
-    iar::utils::RSA sender;
+    cpp::utils::RSA sender;
     if (!sender.generate_keypair(S_RSA_KEY_SIZE)) return false;
 
     // Export public key to string
@@ -40,10 +40,10 @@ bool test_rsa_export_import_public_key() {
 
     // Save to temp file
     std::string pubkey_path = "rsa_pub.pem";
-    if (!iar::utils::write_file_contents(pubkey_path, pubkey_str)) return false;
+    if (!cpp::utils::write_file_contents(pubkey_path, pubkey_str)) return false;
 
     // Create new object and load public key only
-    iar::utils::RSA public_user;
+    cpp::utils::RSA public_user;
     if (!public_user.import_public_key(pubkey_path)) return false;
 
     // Encrypt using public key
@@ -60,7 +60,7 @@ bool test_rsa_export_import_public_key() {
 }
 
 bool test_rsa_export_import_private_key() {
-    iar::utils::RSA rsa1;
+    cpp::utils::RSA rsa1;
     if (!rsa1.generate_keypair(S_RSA_KEY_SIZE)) return false;
 
     // Export both keys
@@ -70,7 +70,7 @@ bool test_rsa_export_import_private_key() {
     if (!rsa1.export_private_key(privkey_path)) return false;
 
     // Load both keys into new RSA instance
-    iar::utils::RSA rsa2;
+    cpp::utils::RSA rsa2;
     if (!rsa2.import_public_key(pubkey_path)) return false;
     if (!rsa2.import_private_key(privkey_path)) return false;
 
@@ -91,14 +91,14 @@ bool test_rsa_fail_on_invalid_key() {
     // So simulate by writing an invalid key to a file
     std::string bad_key = "-----BEGIN PUBLIC KEY-----\nINVALIDDATA\n-----END PUBLIC KEY-----";
     std::string bad_path = "invalid_key.pem";
-    if (!iar::utils::write_file_contents(bad_path, bad_key)) return false;
+    if (!cpp::utils::write_file_contents(bad_path, bad_key)) return false;
 
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     return !rsa.import_public_key(bad_path); // Should fail
 }
 
 bool test_rsa_sign_verify_success() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     if (!rsa.generate_keypair(S_RSA_KEY_SIZE)) return false;
 
     std::string message = "Test message for RSA signing";
@@ -114,7 +114,7 @@ bool test_rsa_sign_verify_success() {
 }
 
 bool test_rsa_sign_verify_tampered_message() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     if (!rsa.generate_keypair(S_RSA_KEY_SIZE)) return false;
 
     std::string message = "Authentic message";
@@ -130,7 +130,7 @@ bool test_rsa_sign_verify_tampered_message() {
 }
 
 bool test_rsa_sign_verify_tampered_signature() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     if (!rsa.generate_keypair(S_RSA_KEY_SIZE)) return false;
 
     std::string message = "Message to sign";
@@ -150,7 +150,7 @@ bool test_rsa_sign_verify_tampered_signature() {
 }
 
 bool test_rsa_sign_invalid_algorithm() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     if (!rsa.generate_keypair(S_RSA_KEY_SIZE)) return false;
 
     std::string message = "Data";
@@ -163,7 +163,7 @@ bool test_rsa_sign_invalid_algorithm() {
 }
 
 bool test_rsa_verify_invalid_algorithm() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     if (!rsa.generate_keypair(S_RSA_KEY_SIZE)) return false;
 
     std::string message = "Data";
@@ -178,10 +178,10 @@ bool test_rsa_verify_invalid_algorithm() {
 }
 
 bool test_rsa_key_copy() {
-    iar::utils::RSA rsa1;
+    cpp::utils::RSA rsa1;
     if (!rsa1.generate_keypair(S_RSA_KEY_SIZE)) return false;
 
-    iar::utils::RSA rsa2(rsa1);
+    cpp::utils::RSA rsa2(rsa1);
 
     std::string pubkey1, privkey1;
     if (!rsa1.public_key(pubkey1)) return false;

@@ -12,7 +12,7 @@
 #include <sstream>
 #include <cstring>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 static void free_pkey(EVP_PKEY*& p) { if (p) { EVP_PKEY_free(p); p = nullptr; } }
 static void free_x509(X509*& x) { if (x) { X509_free(x); x = nullptr; } }

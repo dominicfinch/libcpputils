@@ -7,7 +7,7 @@
 
 #include <sstream>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 P12Repository::P12Repository()
     : private_key_(nullptr) {}
@@ -183,4 +183,4 @@ X509* P12Repository::cert_to_x509(const Certificate& cert) {
     return cert.raw();
 }
 
-} } // namespace iar::utils
+} } // namespace cpp::utils

@@ -26,40 +26,40 @@ static bool file_exists(const std::string& path) {
 // -----------------------------
 
 bool test_certificatebuilder_set_subject() {
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("TestCN");
     std::string pem;
-    iar::utils::ECC ecc; ecc.generate_own_keypair();
+    cpp::utils::ECC ecc; ecc.generate_own_keypair();
     builder.set_public_key_from_ecc(ecc);
     builder.self_sign_with_ecc(ecc);
     return builder.get_certificate_pem(pem) && !pem.empty();
 }
 
 bool test_certificatebuilder_set_validity_days() {
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("TestCN");
     builder.set_validity_days(365);
     std::string pem;
-    iar::utils::RSA rsa; rsa.generate_keypair();
+    cpp::utils::RSA rsa; rsa.generate_keypair();
     builder.set_public_key_from_rsa(rsa);
     builder.self_sign_with_rsa(rsa);
     return builder.get_certificate_pem(pem) && !pem.empty();
 }
 
 bool test_certificatebuilder_set_serial_number() {
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("TestCN");
     builder.set_serial_number(12345);
     std::string pem;
-    iar::utils::RSA rsa; rsa.generate_keypair();
+    cpp::utils::RSA rsa; rsa.generate_keypair();
     builder.set_public_key_from_rsa(rsa);
     builder.self_sign_with_rsa(rsa);
     return builder.get_certificate_pem(pem) && !pem.empty();
 }
 
 bool test_certificatebuilder_set_public_key_from_rsa() {
-    iar::utils::RSA rsa; rsa.generate_keypair();
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::RSA rsa; rsa.generate_keypair();
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("RSAKeyTest");
     builder.set_public_key_from_rsa(rsa);
     builder.self_sign_with_rsa(rsa);
@@ -68,8 +68,8 @@ bool test_certificatebuilder_set_public_key_from_rsa() {
 }
 
 bool test_certificatebuilder_set_public_key_from_ecc() {
-    iar::utils::ECC ecc; ecc.generate_own_keypair();
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::ECC ecc; ecc.generate_own_keypair();
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("ECCKeyTest");
     builder.set_public_key_from_ecc(ecc);
     builder.self_sign_with_ecc(ecc);
@@ -78,8 +78,8 @@ bool test_certificatebuilder_set_public_key_from_ecc() {
 }
 
 bool test_certificatebuilder_self_sign_with_rsa() {
-    iar::utils::RSA rsa; rsa.generate_keypair();
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::RSA rsa; rsa.generate_keypair();
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("SelfSignRSA");
     builder.set_public_key_from_rsa(rsa);
     builder.self_sign_with_rsa(rsa);
@@ -88,8 +88,8 @@ bool test_certificatebuilder_self_sign_with_rsa() {
 }
 
 bool test_certificatebuilder_self_sign_with_ecc() {
-    iar::utils::ECC ecc; ecc.generate_own_keypair();
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::ECC ecc; ecc.generate_own_keypair();
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("SelfSignECC");
     builder.set_public_key_from_ecc(ecc);
     builder.self_sign_with_ecc(ecc);
@@ -98,15 +98,15 @@ bool test_certificatebuilder_self_sign_with_ecc() {
 }
 
 bool test_certificatebuilder_sign_with_ca_rsa() {
-    iar::utils::RSA caRsa, leafRsa;
+    cpp::utils::RSA caRsa, leafRsa;
     caRsa.generate_keypair(); leafRsa.generate_keypair();
 
-    iar::utils::CertificateBuilder ca;
+    cpp::utils::CertificateBuilder ca;
     ca.set_subject("CARoot");
     ca.set_public_key_from_rsa(caRsa);
     ca.self_sign_with_rsa(caRsa);
 
-    iar::utils::CertificateBuilder leaf;
+    cpp::utils::CertificateBuilder leaf;
     leaf.set_subject("LeafRSA");
     leaf.set_public_key_from_rsa(leafRsa);
     leaf.sign_with_ca(ca, caRsa);
@@ -116,15 +116,15 @@ bool test_certificatebuilder_sign_with_ca_rsa() {
 }
 
 bool test_certificatebuilder_sign_with_ca_ecc() {
-    iar::utils::ECC caEcc, leafEcc;
+    cpp::utils::ECC caEcc, leafEcc;
     caEcc.generate_own_keypair(); leafEcc.generate_own_keypair();
 
-    iar::utils::CertificateBuilder ca;
+    cpp::utils::CertificateBuilder ca;
     ca.set_subject("CAECC");
     ca.set_public_key_from_ecc(caEcc);
     ca.self_sign_with_ecc(caEcc);
 
-    iar::utils::CertificateBuilder leaf;
+    cpp::utils::CertificateBuilder leaf;
     leaf.set_subject("LeafECC");
     leaf.set_public_key_from_ecc(leafEcc);
     leaf.sign_with_ca(ca, caEcc);
@@ -134,8 +134,8 @@ bool test_certificatebuilder_sign_with_ca_ecc() {
 }
 
 bool test_certificatebuilder_save_pem() {
-    iar::utils::RSA rsa; rsa.generate_keypair();
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::RSA rsa; rsa.generate_keypair();
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("SavePEM");
     builder.set_public_key_from_rsa(rsa);
     builder.self_sign_with_rsa(rsa);
@@ -144,8 +144,8 @@ bool test_certificatebuilder_save_pem() {
 }
 
 bool test_certificatebuilder_save_der() {
-    iar::utils::RSA rsa; rsa.generate_keypair();
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::RSA rsa; rsa.generate_keypair();
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("SaveDER");
     builder.set_public_key_from_rsa(rsa);
     builder.self_sign_with_rsa(rsa);
@@ -154,8 +154,8 @@ bool test_certificatebuilder_save_der() {
 }
 
 bool test_certificatebuilder_get_certificate_pem() {
-    iar::utils::RSA rsa; rsa.generate_keypair();
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::RSA rsa; rsa.generate_keypair();
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("GetPEM");
     builder.set_public_key_from_rsa(rsa);
     builder.self_sign_with_rsa(rsa);
@@ -164,8 +164,8 @@ bool test_certificatebuilder_get_certificate_pem() {
 }
 
 bool test_certificatebuilder_get_certificate_der() {
-    iar::utils::RSA rsa; rsa.generate_keypair();
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::RSA rsa; rsa.generate_keypair();
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("GetDER");
     builder.set_public_key_from_rsa(rsa);
     builder.self_sign_with_rsa(rsa);
@@ -174,8 +174,8 @@ bool test_certificatebuilder_get_certificate_der() {
 }
 
 bool test_certificatebuilder_export_to_pkcs12() {
-    iar::utils::RSA rsa; rsa.generate_keypair();
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::RSA rsa; rsa.generate_keypair();
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("PKCS12");
     builder.set_public_key_from_rsa(rsa);
     builder.self_sign_with_rsa(rsa);
@@ -187,9 +187,9 @@ bool test_certificatebuilder_export_to_pkcs12() {
 // Certificate tests
 // -----------------------------
 
-static bool generate_self_signed_cert(std::string& pemOut, std::vector<uint8_t>& derOut, iar::utils::RSA& rsa) {
+static bool generate_self_signed_cert(std::string& pemOut, std::vector<uint8_t>& derOut, cpp::utils::RSA& rsa) {
     rsa.generate_keypair();
-    iar::utils::CertificateBuilder builder;
+    cpp::utils::CertificateBuilder builder;
     builder.set_subject("UnitTestCN");
     builder.set_validity_days(365);
     builder.set_serial_number(123);
@@ -222,44 +222,44 @@ static std::string write_temp_file(const std::string& name, const std::vector<ui
 // -----------------------------
 /*
 bool test_load_from_pem() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     std::string pem;
     std::vector<uint8_t> der;
     if (!generate_self_signed_cert(pem, der, rsa)) return false;
 
-    iar::utils::Certificate cert;
+    cpp::utils::Certificate cert;
     return cert.load_from_pem(pem);
 }
 
 bool test_load_from_pem_file() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     std::string pem;
     std::vector<uint8_t> der;
     if (!generate_self_signed_cert(pem, der, rsa)) return false;
 
     std::string path = write_temp_file("cert.pem", pem);
-    iar::utils::Certificate cert;
+    cpp::utils::Certificate cert;
     return cert.load_from_pem_file(path);
 }
 
 bool test_load_from_der_file() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     std::string pem;
     std::vector<uint8_t> der;
     if (!generate_self_signed_cert(pem, der, rsa)) return false;
 
     std::string path = write_temp_file("cert.der", der);
-    iar::utils::Certificate cert;
+    cpp::utils::Certificate cert;
     return cert.load_from_der_file(path);
 }
 
 bool test_get_common_name() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     std::string pem;
     std::vector<uint8_t> der;
     if (!generate_self_signed_cert(pem, der, rsa)) return false;
 
-    iar::utils::Certificate cert;
+    cpp::utils::Certificate cert;
     if (!cert.load_from_pem(pem)) return false;
 
     std::string cn;
@@ -268,12 +268,12 @@ bool test_get_common_name() {
 }
 
 bool test_verify_signature_self_signed() {
-    iar::utils::RSA rsa;
+    cpp::utils::RSA rsa;
     std::string pem;
     std::vector<uint8_t> der;
     if (!generate_self_signed_cert(pem, der, rsa)) return false;
 
-    iar::utils::Certificate cert;
+    cpp::utils::Certificate cert;
     if (!cert.load_from_pem(pem)) return false;
 
     // Self-signed: issuer = subject

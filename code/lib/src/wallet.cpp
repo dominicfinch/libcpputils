@@ -27,7 +27,7 @@
 #include <stdexcept>
 #include <iostream>
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
     CryptoWallet::CryptoWallet() {
 

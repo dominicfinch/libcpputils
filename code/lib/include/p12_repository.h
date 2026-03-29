@@ -8,7 +8,7 @@
 #include <openssl/x509.h>
 #include "certificate.h"
 
-namespace iar { namespace utils {
+namespace cpp { namespace utils {
 
 //class Certificate;
 
@@ -69,4 +69,4 @@ private:
     static X509* cert_to_x509(const Certificate& cert);
 };
 
-} } // namespace iar::utils
+} } // namespace cpp::utils
