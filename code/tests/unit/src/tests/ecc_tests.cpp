@@ -28,6 +28,34 @@ bool test_key_generation_and_export_import() {
     return true;
 }
 
+bool test_key_generation_and_export_import_with_cb()
+{
+    cpp::utils::ECC ecc1;
+    cpp::utils::PasswordCallback cb = []() -> std::string {
+        return "test";
+    };
+
+    if (!ecc1.generate_own_keypair()) return false;
+
+    std::string pub_pem, priv_pem;
+    if (!ecc1.get_own_public_key_pem(pub_pem)) return false;
+    if (!ecc1.get_own_private_key_pem(priv_pem, cb)) return false;
+
+    if (!ecc1.export_public_key("public_key.pem")) return false;
+    if (!ecc1.export_private_key("private_key.pem", cb)) return false;
+
+    if (!ecc1.import_public_key("public_key.pem")) return false;
+    if (!ecc1.import_private_key("private_key.pem", cb)) return false;
+
+    cpp::utils::ECC ecc2;
+    if (!ecc2.load_peer_public_key_from_pem(pub_pem)) return false;
+
+    std::remove("public_key.pem");
+    std::remove("private_key.pem");
+    
+    return true;
+}
+
 bool test_shared_secret_derivation() {
     cpp::utils::ECC alice, bob;
     if (!alice.generate_own_keypair() || !bob.generate_own_keypair()) return false;
@@ -157,7 +185,7 @@ bool test_ecc_load_own_private_key_from_pem() {
     }
 
     cpp::utils::ECC ecc_loaded;
-    if (!ecc_loaded.load_own_private_key_from_pem(private_pem)) {
+    if (!ecc_loaded.load_own_private_key_from_pem_string(private_pem)) {
         std::cerr << "Failed to load ECC private key from PEM\n";
         return false;
     }

@@ -85,14 +85,17 @@ namespace cpp {
                     {
                         auto line_split = utils::split(split, "=");
 
-                        utils::ltrim(line_split[0]);
-                        if(utils::toLower(line_split[0]) == "salt") {
-                            _salt = utils::Hex::decode(line_split[1]);
-                        } else if(utils::toLower(line_split[0]) == "key") {
-                            _master_key = utils::Hex::decode(line_split[1]);
-                        } else if(utils::toLower(line_split[0]) == "iv") {
-                            _iv = utils::Hex::decode(line_split[1]);
-                        }
+                        if(line_split.size() == 2) {
+                            utils::ltrim(line_split[0]);
+                            if(utils::toLower(line_split[0]) == "salt") {
+                                _salt = utils::Hex::decode(line_split[1]);
+                            } else if(utils::toLower(line_split[0]) == "key") {
+                                _master_key = utils::Hex::decode(line_split[1]);
+                            } else if(utils::toLower(line_split[0]) == "iv") {
+                                _iv = utils::Hex::decode(line_split[1]);
+                            }
+                        } else
+                            return false;
                     }
                     return true;
                 }

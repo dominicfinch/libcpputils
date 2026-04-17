@@ -91,14 +91,14 @@ bool ECC::load_own_public_key_from_pem(const std::string& pem) {
     return _keypair != nullptr;
 }
 
-bool ECC::load_own_private_key_from_pem(const std::string& pem) {
-    BIO* bio = BIO_new_mem_buf(pem.data(), pem.size());
+bool ECC::load_own_private_key_from_pem_string(const std::string& pem)
+{
+    std::lock_guard<std::mutex> lock(_lock_mutex);
+    BIO* bio = BIO_new_mem_buf(pem.data(), static_cast<int>(pem.size()));
     if (!bio) return false;
 
-    //if (_keypair) EVP_PKEY_free(_keypair);
     _keypair = PEM_read_bio_PrivateKey(bio, nullptr, nullptr, nullptr);
     BIO_free(bio);
-
     return _keypair != nullptr;
 }
 
@@ -110,22 +110,23 @@ bool ECC::load_own_private_key_from_pem_string(const std::string& pem, PasswordC
     if (!bio) return false;
 
     PasswordCallbackWrapper wrapper{cb};
-
-    EVP_PKEY* key = PEM_read_bio_PrivateKey(
-        bio,
-        nullptr,
-        openssl_password_cb,
-        &wrapper
-    );
+    _keypair = PEM_read_bio_PrivateKey(bio, nullptr, openssl_password_cb, &wrapper);
 
     BIO_free(bio);
+    return _keypair != nullptr;
+}
 
-    if (!key) return false;
+bool ECC::load_own_private_key_from_pem_file(const std::string& fpath)
+{
+    std::lock_guard<std::mutex> lock(_lock_mutex);
 
-    if (_keypair) EVP_PKEY_free(_keypair);
-    _keypair = key;
+    FILE* fp = fopen(fpath.c_str(), "rb");
+    if (!fp) return false;
 
-    return true;
+    _keypair = PEM_read_PrivateKey(fp, nullptr, nullptr, nullptr);
+
+    fclose(fp);
+    return _keypair != nullptr;
 }
 
 bool ECC::load_own_private_key_from_pem_file(const std::string& fpath, PasswordCallback cb)
@@ -135,23 +136,16 @@ bool ECC::load_own_private_key_from_pem_file(const std::string& fpath, PasswordC
     FILE* fp = fopen(fpath.c_str(), "rb");
     if (!fp) return false;
 
-    PasswordCallbackWrapper wrapper{cb};
-
-    EVP_PKEY* key = PEM_read_PrivateKey(
-        fp,
-        nullptr,
-        openssl_password_cb,
-        &wrapper
-    );
+    if(cb)
+    {
+        PasswordCallbackWrapper wrapper{cb};
+        _keypair = PEM_read_PrivateKey(fp, nullptr, openssl_password_cb, &wrapper);
+    } else {
+        _keypair = PEM_read_PrivateKey(fp, nullptr, nullptr, nullptr);
+    }
 
     fclose(fp);
-
-    if (!key) return false;
-
-    if (_keypair) EVP_PKEY_free(_keypair);
-    _keypair = key;
-
-    return true;
+    return _keypair != nullptr;
 }
 
 bool ECC::export_public_key(const std::string& path) {
@@ -165,10 +159,23 @@ bool ECC::export_public_key(const std::string& path) {
     return success;
 }
 
-bool ECC::export_private_key(const std::string& path) {
+bool ECC::export_private_key(const std::string& path)
+{
     bool success = false;
     std::string privkey;
     if (get_own_private_key_pem(privkey)) {
+        if (write_file_contents(path, privkey)) {
+            success = true;
+        }
+    }
+    return success;
+}
+
+bool ECC::export_private_key(const std::string& path, PasswordCallback cb)
+{
+    bool success = false;
+    std::string privkey;
+    if (get_own_private_key_pem(privkey, cb)) {
         if (write_file_contents(path, privkey)) {
             success = true;
         }
@@ -194,12 +201,34 @@ bool ECC::import_public_key(const std::string& path) {
     return success;
 }
 
-bool ECC::import_private_key(const std::string& path) {
+bool ECC::import_private_key(const std::string& path)
+{
     bool success = false;
     if (file_exists(path)) {
         BIO* bio = BIO_new(BIO_s_file());
         if (BIO_read_filename(bio, path.c_str()) > 0) {
             auto * key = PEM_read_bio_PrivateKey(bio, nullptr, nullptr, nullptr);
+
+            if (key != nullptr) {
+                clear_keypair(false);
+                _keypair = key;
+                success = true;
+            }
+        }
+        BIO_free(bio);
+    }
+    return success;
+}
+
+bool ECC::import_private_key(const std::string& path, PasswordCallback cb)
+{
+    bool success = false;
+    
+    PasswordCallbackWrapper wrapper{cb};
+    if (file_exists(path)) {
+        BIO* bio = BIO_new(BIO_s_file());
+        if (BIO_read_filename(bio, path.c_str()) > 0) {
+            auto * key = PEM_read_bio_PrivateKey(bio, nullptr, openssl_password_cb, &wrapper);
 
             if (key != nullptr) {
                 clear_keypair(false);
@@ -233,12 +262,35 @@ bool ECC::get_own_public_key_pem(std::string& pem) {
     return success;
 }
 
-bool ECC::get_own_private_key_pem(std::string& pem) {
+bool ECC::get_own_private_key_pem(std::string& pem)
+{
     bool success = false;
-
     if (_keypair != nullptr) {
         BIO* bio = BIO_new(BIO_s_mem());
         if (PEM_write_bio_PrivateKey(bio, _keypair, nullptr, nullptr, 0, nullptr, nullptr) == 1) {
+            pem.clear();
+
+            unsigned char* data;
+            unsigned int nsize = -1;
+            if ((nsize = BIO_get_mem_data(bio, &data)) > 0) {
+                pem.resize(nsize, '\0');
+                strncpy(&pem[0], (const char*)data, nsize);
+                success = true;
+            }
+        }
+        BIO_free(bio);
+    }
+    return success;
+}
+
+bool ECC::get_own_private_key_pem(std::string& pem, PasswordCallback cb)
+{
+    bool success = false;
+    PasswordCallbackWrapper wrapper{cb};
+
+    if (_keypair != nullptr) {
+        BIO* bio = BIO_new(BIO_s_mem());
+        if (PEM_write_bio_PrivateKey(bio, _keypair, EVP_aes_256_cbc(), nullptr, 0, openssl_password_cb, &wrapper) == 1) {
             pem.clear();
 
             unsigned char* data;
@@ -352,6 +404,8 @@ bool ECC::encrypt(const std::string& plaintext, std::string& ciphertext, std::ve
 bool ECC::encrypt(const std::vector<uint8_t>& plaintext, std::vector<uint8_t>& ciphertext, std::vector<uint8_t>& iv, std::vector<uint8_t>& tag)
 {
     std::vector<uint8_t> secret;
+    if(plaintext.empty()) return false;
+
     if (!derive_shared_secret_with_peer(secret)) return false;
 
     std::vector<uint8_t> key(64);
@@ -392,7 +446,7 @@ bool ECC::decrypt(const std::string& ciphertext, std::string& plaintext, const s
     std::vector<uint8_t> plaintext_vect;
 
     auto result = decrypt(ciphertext_vect, plaintext_vect, iv, tag_vect);
-    
+
     std::stringstream ss;
     ss << plaintext_vect.data();
     plaintext = ss.str();
@@ -425,6 +479,8 @@ bool ECC::decrypt(const std::vector<uint8_t>& ciphertext, std::vector<uint8_t>& 
          EVP_DecryptFinal_ex(ctx, plaintext.data() + len, &len) == 1;
 
     total_len += len;
+    if(plaintext.back() != '\0')        // Just to make sure any C-string conversion stuff knows where the string ends
+        plaintext.push_back('\0');
     plaintext.resize(total_len);
 
     EVP_CIPHER_CTX_free(ctx);

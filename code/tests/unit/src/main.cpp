@@ -153,6 +153,7 @@ int main()
     testRunner.add_test_set("ecc_tests", [](cpp::TestRunner * runner, cpp::test_set_results& results) {
         std::cout << "\nRunning ECC tests...\n";
         runner->execute_test(results, "test_key_generation_and_export_import", test_key_generation_and_export_import);
+        runner->execute_test(results, "test_key_generation_and_export_import_with_cb", test_key_generation_and_export_import_with_cb);
         runner->execute_test(results, "test_shared_secret_derivation", test_shared_secret_derivation);
         runner->execute_test(results, "test_signing_and_verification", test_signing_and_verification);
         runner->execute_test(results, "test_encryption_decryption_binary", test_encryption_decryption_binary);
