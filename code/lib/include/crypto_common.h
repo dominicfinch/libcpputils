@@ -21,4 +21,6 @@ bool hkdf_sha256(const std::vector<uint8_t>&salt,
 
 int openssl_password_cb(char* buf, int size, int, void* userdata);
 
+bool match_hostname_pattern(const std::string& pattern, const std::string& hostname);
+
 } }

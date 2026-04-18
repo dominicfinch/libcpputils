@@ -81,4 +81,34 @@ int openssl_password_cb(char* buf, int size, int, void* userdata)
     return static_cast<int>(pass.size());
 }
 
+bool match_hostname_pattern(const std::string& pattern, const std::string& hostname)
+{
+    // Exact match
+    if (pattern == hostname)
+        return true;
+
+    // Wildcard: *.example.com
+    if (pattern.size() > 2 && pattern[0] == '*' && pattern[1] == '.')
+    {
+        auto suffix = pattern.substr(1); // ".example.com"
+
+        if (hostname.length() >= suffix.length())
+        {
+            auto pos = hostname.length() - suffix.length();
+            if (hostname.compare(pos, suffix.length(), suffix) == 0)
+            {
+                // Ensure wildcard only matches one label
+                // foo.example.com OK
+                // bar.foo.example.com NOT OK
+                auto first_dot = hostname.find('.');
+                if (first_dot != std::string::npos &&
+                    hostname.substr(first_dot) == suffix)
+                    return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 } }

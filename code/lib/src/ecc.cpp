@@ -226,9 +226,9 @@ bool ECC::get_own_public_key_pem(std::string& pem) {
 
     if (_keypair != nullptr) {
         BIO* bio = BIO_new(BIO_s_mem());
-        if (PEM_write_bio_PUBKEY(bio, _keypair) == 1) {
+        if (PEM_write_bio_PUBKEY(bio, _keypair) == 1)
+        {
             pem.clear();
-
             unsigned char* data;
             unsigned int nsize = -1;
             if ((nsize = BIO_get_mem_data(bio, &data)) > 0) {
@@ -252,7 +252,8 @@ bool ECC::get_own_private_key_pem(std::string& pem)
 
             unsigned char* data;
             unsigned int nsize = -1;
-            if ((nsize = BIO_get_mem_data(bio, &data)) > 0) {
+            if ((nsize = BIO_get_mem_data(bio, &data)) > 0)
+            {
                 pem.resize(nsize, '\0');
                 strncpy(&pem[0], (const char*)data, nsize);
                 success = true;
