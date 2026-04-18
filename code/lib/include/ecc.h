@@ -10,17 +10,10 @@
 #include <vector>
 #include <functional>
 #include <openssl/evp.h>
+#include "crypto_common.h"
 
 namespace cpp {
     namespace utils {
-
-        using PasswordCallback = std::function<std::string()>;
-
-        struct PasswordCallbackWrapper {
-            PasswordCallback cb;
-        };
-
-        int openssl_password_cb(char* buf, int size, int, void* userdata);
 
         class ECC {
         public:

@@ -27,66 +27,8 @@ extern "C" {
 
 namespace cpp { namespace utils {
 
-static bool hkdf_sha256(const std::vector<uint8_t>& salt,
-                        const std::vector<uint8_t>& ikm,
-                        const std::vector<uint8_t>& info,
-                        std::vector<uint8_t>& okm, // out
-                        size_t L)
-{
-    if (L == 0) return false;
-
-    EVP_PKEY_CTX* pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_HKDF, NULL);
-    if (!pctx) return false;
-
-    bool ok = false;
-    unsigned char* outbuf = (unsigned char*)OPENSSL_malloc(L);
-    if (!outbuf) { EVP_PKEY_CTX_free(pctx); return false; }
-
-    if (EVP_PKEY_derive_init(pctx) > 0) {
-        if (EVP_PKEY_CTX_set_hkdf_md(pctx, EVP_sha256()) > 0) {
-            // If salt is provided set1; otherwise don't set (HKDF spec treats empty salt as zeros)
-            if (!salt.empty()) {
-                if (EVP_PKEY_CTX_set1_hkdf_salt(pctx, salt.data(), (int)salt.size()) > 0) {
-                    if (EVP_PKEY_CTX_set1_hkdf_key(pctx, ikm.data(), (int)ikm.size()) > 0) {
-                        if (!info.empty()) {
-                            if (EVP_PKEY_CTX_add1_hkdf_info(pctx, info.data(), (int)info.size()) > 0) {
-                                size_t outlen = L;
-                                if (EVP_PKEY_derive(pctx, outbuf, &outlen) > 0) {
-                                    if (outlen == L) {
-                                        okm.assign(outbuf, outbuf + outlen);
-                                        ok = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (EVP_PKEY_CTX_set1_hkdf_key(pctx, ikm.data(), (int)ikm.size()) > 0) {
-                    if (!info.empty()) {
-                        if (EVP_PKEY_CTX_add1_hkdf_info(pctx, info.data(), (int)info.size()) > 0) {
-                            size_t outlen = L;
-                            if (EVP_PKEY_derive(pctx, outbuf, &outlen) > 0) {
-                                if (outlen == L) {
-                                    okm.assign(outbuf, outbuf + outlen);
-                                    ok = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    OPENSSL_cleanse(outbuf, L);
-    OPENSSL_free(outbuf);
-    EVP_PKEY_CTX_free(pctx);
-    return ok;
-}
-
 // --- lexicographic concatenation for symmetric info ---
-static void lexicographic_concat(const std::string& label,
+void lexicographic_concat(const std::string& label,
                                  const std::vector<uint8_t>& a,
                                  const std::vector<uint8_t>& b,
                                  std::vector<uint8_t>& out)
@@ -103,7 +45,7 @@ static void lexicographic_concat(const std::string& label,
 }
 
 // --- Extract 32-byte Ed25519 seed (raw private) from EVP_PKEY ---
-static bool ed25519_seed_from_evp(EVP_PKEY* ed, std::vector<uint8_t>& seed_out)
+bool ed25519_seed_from_evp(EVP_PKEY* ed, std::vector<uint8_t>& seed_out)
 {
     if (!ed) return false;
     size_t len = 0;
@@ -116,7 +58,7 @@ static bool ed25519_seed_from_evp(EVP_PKEY* ed, std::vector<uint8_t>& seed_out)
 
 // --- From Ed25519 32-byte seed produce X25519 (xpriv,xpub) using SHA512 + clamp ---
 // Uses OpenSSL to derive public by creating EVP_PKEY from xpriv and calling EVP_PKEY_get_raw_public_key
-static bool ed25519_seed_to_x25519_pair(const std::vector<uint8_t>& ed_seed,
+bool ed25519_seed_to_x25519_pair(const std::vector<uint8_t>& ed_seed,
                                         std::vector<uint8_t>& xpriv_out,
                                         std::vector<uint8_t>& xpub_out)
 {
@@ -147,7 +89,7 @@ static bool ed25519_seed_to_x25519_pair(const std::vector<uint8_t>& ed_seed,
 }
 
 // --- Convert an EVP_PKEY Ed25519 into an EVP_PKEY X25519 (out must be freed by caller) ---
-static bool convert_ed25519_to_x25519(EVP_PKEY* ed25519_key, EVP_PKEY** x25519_key_out)
+bool convert_ed25519_to_x25519(EVP_PKEY* ed25519_key, EVP_PKEY** x25519_key_out)
 {
     if (!ed25519_key || !x25519_key_out) return false;
     std::vector<uint8_t> seed;
@@ -165,7 +107,7 @@ static bool convert_ed25519_to_x25519(EVP_PKEY* ed25519_key, EVP_PKEY** x25519_k
 }
 
 // --- Get X25519 public bytes derived from Ed25519 private EVP_PKEY (caller gets 32 bytes) ---
-static bool get_x25519_public_from_ed25519_priv(EVP_PKEY* ed_priv, std::vector<uint8_t>& out_xpub)
+bool get_x25519_public_from_ed25519_priv(EVP_PKEY* ed_priv, std::vector<uint8_t>& out_xpub)
 {
     if (!ed_priv) return false;
     std::vector<uint8_t> seed;
@@ -179,7 +121,7 @@ static bool get_x25519_public_from_ed25519_priv(EVP_PKEY* ed_priv, std::vector<u
 }
 
 // --- derive_shared_secret expects my_key being an EVP_PKEY X25519 private and peer_pub is raw 32-byte X25519 public ---
-static bool derive_shared_secret(EVP_PKEY* my_key, const std::vector<uint8_t>& peer_pub, std::vector<uint8_t>& secret)
+bool derive_shared_secret(EVP_PKEY* my_key, const std::vector<uint8_t>& peer_pub, std::vector<uint8_t>& secret)
 {
     if (!my_key) return false;
     if (peer_pub.size() != 32) return false;
@@ -277,6 +219,29 @@ bool ED25519::get_private_key_pem(std::string& pem)
     return success;
 }
 
+bool ED25519::get_private_key_pem(std::string& pem, PasswordCallback cb)
+{
+    bool success = false;
+
+    if (ed25519_key_ != nullptr) {
+        BIO* bio = BIO_new(BIO_s_mem());
+        PasswordCallbackWrapper wrapper {cb};
+        if (PEM_write_bio_PrivateKey(bio, ed25519_key_, EVP_aes_256_cbc(), nullptr, 0, openssl_password_cb, &wrapper) == 1)
+        {
+            pem.clear();
+            unsigned char* data;
+            unsigned int nsize = -1;
+            if ((nsize = BIO_get_mem_data(bio, &data)) > 0) {
+                pem.resize(nsize, '\0');
+                strncpy(&pem[0], (const char*)data, nsize);
+                success = true;
+            }
+        }
+        BIO_free(bio);
+    }
+    return success;
+}
+
 bool ED25519::set_public_key_pem(const std::string& pem)
 {
     BIO* bio = BIO_new_mem_buf(pem.data(), pem.size());
@@ -299,12 +264,36 @@ bool ED25519::set_private_key_pem(const std::string& pem)
     return ed25519_key_ != nullptr;
 }
 
+bool ED25519::set_private_key_pem(const std::string& pem, PasswordCallback cb)
+{
+    BIO* bio = BIO_new_mem_buf(pem.data(), pem.size());
+    if (!bio) return false;
+
+    PasswordCallbackWrapper wrapper{cb};
+    ed25519_key_ = PEM_read_bio_PrivateKey(bio, nullptr, openssl_password_cb, &wrapper);
+    BIO_free(bio);
+
+    return ed25519_key_ != nullptr;
+}
+
 bool ED25519::export_private_key(const std::string& path)
 {
     if(!ed25519_key_) return false;
     FILE* f = fopen(path.c_str(), "wb");
     if(!f) return false;
     bool ok = PEM_write_PrivateKey(f, ed25519_key_, nullptr, nullptr, 0, nullptr, nullptr);
+    fclose(f);
+    return ok;
+}
+
+bool ED25519::export_private_key(const std::string& path, PasswordCallback cb)
+{
+    if(!ed25519_key_) return false;
+    FILE* f = fopen(path.c_str(), "wb");
+    if(!f) return false;
+
+    PasswordCallbackWrapper wrapper{cb};
+    bool ok = PEM_write_PrivateKey(f, ed25519_key_, EVP_aes_256_cbc(), nullptr, 0, openssl_password_cb, &wrapper);
     fclose(f);
     return ok;
 }
@@ -324,6 +313,20 @@ bool ED25519::import_private_key(const std::string& path)
     FILE* f = fopen(path.c_str(), "rb");
     if(!f) return false;
     EVP_PKEY* key = PEM_read_PrivateKey(f, nullptr, nullptr, nullptr);
+    fclose(f);
+    if(!key) return false;
+    if(ed25519_key_) EVP_PKEY_free(ed25519_key_);
+    ed25519_key_ = key;
+    return true;
+}
+
+bool ED25519::import_private_key(const std::string& path, PasswordCallback cb)
+{
+    FILE* f = fopen(path.c_str(), "rb");
+    if(!f) return false;
+
+    PasswordCallbackWrapper wrapper{cb};
+    EVP_PKEY* key = PEM_read_PrivateKey(f, nullptr, openssl_password_cb, &wrapper);
     fclose(f);
     if(!key) return false;
     if(ed25519_key_) EVP_PKEY_free(ed25519_key_);

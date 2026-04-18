@@ -1,6 +1,7 @@
 #include "crypto_common.h"
 #include <openssl/evp.h>
 #include <openssl/kdf.h>
+#include <cstring>
 
 namespace cpp { namespace utils {
 
@@ -60,6 +61,24 @@ bool hkdf_sha256(const std::vector<uint8_t>& salt,
     OPENSSL_free(outbuf);
     EVP_PKEY_CTX_free(pctx);
     return ok;
+}
+
+int openssl_password_cb(char* buf, int size, int, void* userdata)
+{
+    if (!userdata) return 0;
+
+    auto* wrapper = static_cast<PasswordCallbackWrapper*>(userdata);
+    std::string pass = wrapper->cb();
+
+    if (pass.size() > static_cast<size_t>(size))
+        return 0;
+
+    memcpy(buf, pass.data(), pass.size());
+
+    // Optional: cleanse memory (important!)
+    OPENSSL_cleanse(pass.data(), pass.size());
+
+    return static_cast<int>(pass.size());
 }
 
 } }

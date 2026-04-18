@@ -15,26 +15,6 @@
 namespace cpp {
 namespace utils {
 
-int openssl_password_cb(char* buf, int size, int, void* userdata)
-{
-    if (!userdata) return 0;
-
-    auto* wrapper = static_cast<PasswordCallbackWrapper*>(userdata);
-    std::string pass = wrapper->cb();
-
-    if (pass.size() > static_cast<size_t>(size))
-        return 0;
-
-    memcpy(buf, pass.data(), pass.size());
-
-    // Optional: cleanse memory (important!)
-    OPENSSL_cleanse(pass.data(), pass.size());
-
-    return static_cast<int>(pass.size());
-}
-
-
-
 ECC::ECC() : _keypair(nullptr), _peer_key(nullptr) {}
 
 ECC::~ECC() {

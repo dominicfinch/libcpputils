@@ -45,12 +45,35 @@ namespace cpp {
             return success;
         }
 
-        bool RSA::private_key(std::string& pkey) {
+        bool RSA::private_key(std::string& pkey) 
+        {
             bool success = false;
 
             if (key != nullptr) {
                 BIO* bio = BIO_new(BIO_s_mem());
                 if (PEM_write_bio_PrivateKey(bio, key, nullptr, nullptr, 0, nullptr, nullptr) == 1) {
+                    pkey.clear();
+
+                    unsigned char* data;
+                    unsigned int nsize = -1;
+                    if ((nsize = BIO_get_mem_data(bio, &data)) > 0) {
+                        pkey.resize(nsize, '\0');
+                        strncpy(&pkey[0], (const char*)data, nsize);
+                        success = true;
+                    }
+                }
+                BIO_free(bio);
+            }
+            return success;
+        }
+
+        bool RSA::private_key(std::string& pkey, PasswordCallback cb)
+        {
+            bool success = false;
+            if (key != nullptr) {
+                BIO* bio = BIO_new(BIO_s_mem());
+                PasswordCallbackWrapper wrapper{cb};
+                if (PEM_write_bio_PrivateKey(bio, key, EVP_aes_256_cbc(), nullptr, 0, openssl_password_cb, &wrapper) == 1) {
                     pkey.clear();
 
                     unsigned char* data;
@@ -116,12 +139,43 @@ namespace cpp {
             return success;
         }
 
+        bool RSA::export_private_key(const std::string& fpath, PasswordCallback cb)
+        {
+            bool success = false;
+            std::string privkey;
+            if (private_key(privkey, cb)) {
+                if (write_file_contents(fpath, privkey)) {
+                    success = true;
+                }
+            }
+            return success;
+        }
+
         bool RSA::import_private_key(const std::string& fpath) {
             bool success = false;
             if (file_exists(fpath)) {
                 BIO* bio = BIO_new(BIO_s_file());
                 if (BIO_read_filename(bio, fpath.c_str()) > 0) {
                     auto * pkey = PEM_read_bio_PrivateKey(bio, nullptr, nullptr, nullptr);
+
+                    if (pkey != nullptr) {
+                        clear_keypair();
+                        key = pkey;
+                        success = true;
+                    }
+                }
+                BIO_free(bio);
+            }
+            return success;
+        }
+
+        bool RSA::import_private_key(const std::string& fpath, PasswordCallback cb) {
+            bool success = false;
+            if (file_exists(fpath)) {
+                BIO* bio = BIO_new(BIO_s_file());
+                if (BIO_read_filename(bio, fpath.c_str()) > 0) {
+                    PasswordCallbackWrapper wrapper{cb};
+                    auto * pkey = PEM_read_bio_PrivateKey(bio, nullptr, openssl_password_cb, &wrapper);
 
                     if (pkey != nullptr) {
                         clear_keypair();

@@ -8,31 +8,26 @@
 #include <vector>
 #include <memory>
 #include <openssl/evp.h>
+#include "crypto_common.h"
 
 namespace cpp { namespace utils {
 
-static bool hkdf_sha256(const std::vector<uint8_t>&salt,
-                        const std::vector<uint8_t>&ikm,
-                        const std::vector<uint8_t>&info,
-                        std::vector<uint8_t>&okm,
-                        size_t L);
-
-static void lexicographic_concat(const std::string& label,
+void lexicographic_concat(const std::string& label,
                                  const std::vector<uint8_t>& a,
                                  const std::vector<uint8_t>& b,
                                  std::vector<uint8_t>& out);
 
-static bool ed25519_seed_from_evp(EVP_PKEY* ed, std::vector<uint8_t>& seed_out);
+bool ed25519_seed_from_evp(EVP_PKEY* ed, std::vector<uint8_t>& seed_out);
 
-static bool ed25519_seed_to_x25519_pair(const std::vector<uint8_t>& ed_seed,
+bool ed25519_seed_to_x25519_pair(const std::vector<uint8_t>& ed_seed,
                                         std::vector<uint8_t>& xpriv_out,
                                         std::vector<uint8_t>& xpub_out);
 
-static bool convert_ed25519_to_x25519(EVP_PKEY* ed25519_key, EVP_PKEY** x25519_key_out);
+bool convert_ed25519_to_x25519(EVP_PKEY* ed25519_key, EVP_PKEY** x25519_key_out);
 
-static bool get_x25519_public_from_ed25519_priv(EVP_PKEY* ed_priv, std::vector<uint8_t>& out_xpub);
+bool get_x25519_public_from_ed25519_priv(EVP_PKEY* ed_priv, std::vector<uint8_t>& out_xpub);
 
-static bool derive_shared_secret(EVP_PKEY* my_key, const std::vector<uint8_t>& peer_pub, std::vector<uint8_t>& secret);
+bool derive_shared_secret(EVP_PKEY* my_key, const std::vector<uint8_t>& peer_pub, std::vector<uint8_t>& secret);
 
 
 class ED25519 {
@@ -44,15 +39,19 @@ public:
 
     bool get_public_key_pem(std::string& pem);
     bool get_private_key_pem(std::string& pem);
+    bool get_private_key_pem(std::string& pem, PasswordCallback cb);
 
     bool set_public_key_pem(const std::string& pem);
     bool set_private_key_pem(const std::string& pem);
+    bool set_private_key_pem(const std::string& pem, PasswordCallback cb);
 
     bool export_public_key(const std::string& path);
     bool export_private_key(const std::string& path);
+    bool export_private_key(const std::string& path, PasswordCallback cb);
 
-    bool import_private_key(const std::string& path);
     bool import_public_key(const std::string& path);
+    bool import_private_key(const std::string& path);
+    bool import_private_key(const std::string& path, PasswordCallback cb);
 
     bool export_public_key_bytes(std::vector<uint8_t>& pub) const;
     bool export_x25519_public_key_bytes(std::vector<uint8_t>& out) const;

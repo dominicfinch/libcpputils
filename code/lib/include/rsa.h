@@ -10,6 +10,7 @@
 #include <mutex>
 #include <string>
 #include <vector>
+#include "crypto_common.h"
 
 #define XS_RSA_KEY_SIZE     1 << 10                     // 1024
 #define S_RSA_KEY_SIZE      XS_RSA_KEY_SIZE << 1        // 2048
@@ -34,12 +35,15 @@ namespace cpp {
 
             bool public_key(std::string& key);
             bool private_key(std::string& key);
+            bool private_key(std::string& key, PasswordCallback cb);
 
             bool export_public_key(const std::string& fpath);
             bool export_private_key(const std::string& fpath);
+            bool export_private_key(const std::string& fpath, PasswordCallback cb);
 
-            bool import_private_key(const std::string& fpath);
             bool import_public_key(const std::string& fpath);
+            bool import_private_key(const std::string& fpath);
+            bool import_private_key(const std::string& fpath, PasswordCallback cb);
 
             bool encrypt(const std::string& input, std::string& output, int padding = RSA_PKCS1_OAEP_PADDING);
             bool decrypt(const std::string& input, std::string& output, int padding = RSA_PKCS1_OAEP_PADDING);
